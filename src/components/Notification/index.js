@@ -1,5 +1,6 @@
-import React, { Component } from "react";
-import { Link } from 'react-router-dom';
+// eslint-disable-next-line
+import React, { Component, Fragment } from "react";
+import { Card } from 'react-bootstrap';
 import API, { USER_ME, API_SERVER, APPS_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import moment from 'moment-timezone';
@@ -20,8 +21,8 @@ class NotificationClass extends Component {
       badgeRemind: 0,
       filterType: '',
       filterNotification: '',
-      notif : [],
-      notifFilter : []
+      notif: [],
+      notifFilter: []
     };
     this.tabAktivitas = this.tabAktivitas.bind(this);
   }
@@ -121,7 +122,13 @@ class NotificationClass extends Component {
   }
 
   fetchNotif() {
-    API.get(`${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`).then((res) => {
+    var endPoint = ``;
+    if (localStorage.getItem('companyID')) {
+      endPoint = `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}?companyId=${localStorage.getItem('companyID')}`;
+    } else {
+      endPoint = `${API_SERVER}v1/notification/all/${Storage.get('user').data.user_id}`;
+    }
+    API.get(endPoint).then((res) => {
       const Notif = res.data.result[0].filter(item => item.isread === 0 && item.tag === 1);
       const Remind = res.data.result[0].filter(item => item.isread === 0 && item.tag === 2);
       // console.log('state: ', Notif);
@@ -153,37 +160,35 @@ class NotificationClass extends Component {
     })
   }
 
-  fetchCheckAccess(company_id, param)
-  {
-    API.get(`${API_SERVER}v2/notification-alert/check-access`, {company_id, param}).then(res => {
-      if(res.status === 200){
+  fetchCheckAccess(company_id, param) {
+    API.get(`${API_SERVER}v2/notification-alert/check-access`, { company_id, param }).then(res => {
+      if (res.status === 200) {
         console.log(res.data.result, 'test')
-        this.setState({ notif : res.data.result})
+        this.setState({ notif: res.data.result })
       }
     })
   }
 
-  fetchNotification()
-  {
-   let url = '';
-   let types = '';
+  fetchNotification() {
+    let url = '';
+    let types = '';
 
-   if ( types === 1 ) {
+    if (types === 1) {
       url = `${API_SERVER}v2/notif?user_id=${Storage.get('user').data.user_id}&type=3&tag=1&types=1`
-  } else if ( types === 2 ){
-    url = `${API_SERVER}v2/notif?user_id=${Storage.get('user').data.user_id}&type=3&tag=1&types=2`
-  }
-  API.get(url).then(res => {
-    if ( res.status === 200 ){
-      this.setState({ notifFilter : res.data.result});
+    } else if (types === 2) {
+      url = `${API_SERVER}v2/notif?user_id=${Storage.get('user').data.user_id}&type=3&tag=1&types=2`
     }
-  })
-}
+    API.get(url).then(res => {
+      if (res.status === 200) {
+        this.setState({ notifFilter: res.data.result });
+      }
+    })
+  }
 
 
   render() {
     const { t } = this.props
-    let { notificationData, filterType, filterNotification} = this.state;
+    let { notificationData, filterType, filterNotification } = this.state;
 
     if (filterType != "") {
       notificationData = notificationData.filter(item => item.type == filterType);
@@ -198,10 +203,12 @@ class NotificationClass extends Component {
     let dataNotif = notificationData.filter(item => item.tag === 1);
     const dataRemind = notificationData.filter(item => item.tag === 2);
 
-    let meetingNotif = this.state.notifFilter.filter(item => item.types === 1 )
-    if ( meetingNotif ){
-      
+    let meetingNotif = this.state.notifFilter.filter(item => item.types === 1)
+    if (meetingNotif) {
+
     }
+
+    const titleLabel = ["Course", "Forum", "Meeting", "Announcement", "Task", "Files", "Webinar", "PTC", "Tugas", "Kuis", "Ujian", "Notifikasi"];
 
     return (
       <div className="pcoded-main-container">
@@ -212,15 +219,16 @@ class NotificationClass extends Component {
                 <div className="page-wrapper">
 
                   <div className="row">
-                    <h3>{t('notification')}</h3>
                     {/* {console.log(this.state.tabIndex)} */}
                     {this.state.tabIndex === 1 ? (
                       // TAB NOTIFICATIOIN
                       <div className="col-sm-12" style={{ margin: '10px 10px 10px 0' }}>
-                        <div className="row">
+                        <h3 className="fc-blue">{t('notification')}</h3>
+
+                        <div className="row my-3">
                           <div className="col-sm-3">
 
-                            <select value={this.state.filterType} onChange={this.changeFilterType} style={{ width: '100%', height: 40, border: '1px solid #ced4da', borderRadius: '.25rem', color: '#949ca6' }}>
+                            <select value={this.state.filterType} onChange={this.changeFilterType} style={{ width: '100%', height: 40, border: '1px solid #ced4da', borderRadius: '.25rem', color: '#949ca6', padding: '0 6px 0' }}>
                               <option value=''>All</option>
                               <option value='3'>Meeting</option>
                               <option value='4'>Announcement</option>
@@ -245,54 +253,48 @@ class NotificationClass extends Component {
                             <b className="fc-blue ">No notifications at this time ...</b>
                           </div>
                           :
-                          <span>
+                          <Fragment>
                             {
                               dataNotif.map((item, i) => {
                                 return (
-                                  <div onClick={() => this.readNotif(item.id)} className="row" key={item.id} style={{ background: '#FFF', borderRadius: 4, padding: '12px', margin: '10px 10px 10px -15px' }}>
-                                    <span style={{ width: '-webkit-fill-available', position:'relative' }}>
-                                      {
-                                        item.isread == 0 &&
-                                        <span style={{ margin: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: 'red' }}>new</span>
-                                      }
-                                      <b className="fc-blue ">
-                                        {item.type == 1 ? "Course" :
-                                          item.type == 2 ? "Forum" :
-                                            item.type == 3 ? "Meeting" :
-                                              item.type == 4 ? "Pengumuman" :
-                                                item.type == 5 ? "Task" :
-                                                  item.type == 6 ? "Files" :
-                                                    item.type == 7 ? "Webinar" :
-                                                      item.type == 8 ? "PTC" :
-                                                        item.type == 9 ? "Tugas" :
-                                                          item.type == 10 ? "Kuis" :
-                                                            item.type == 11 ? "Ujian" :
-                                                              "Notifikasi"}
-                                      </b>
-                                      &nbsp; &nbsp;
-                                      <small>
-                                        {moment.utc(item.created_at).tz(moment.tz.guess(true)).format('HH:mm')} &nbsp;
-                                        {moment.utc(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}
-                                      </small>
-                                      <p className="fc-muted mt-1">
-                                        {item.description}
-                                      </p>
-
-                                      {
-                                        item.destination &&
-                                        <a href={item.destination == 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} target="_blank" className="button-bordered-grey" style={{position:'absolute', bottom:'0px', right:'0px', fontSize:'10px', padding:'1px 4px'}}>Open</a>
-                                      }
-                                      {
-                                        item.type == '8' && <button onClick={() => this.konfirmasiHadir(item.activity_id)} data-activity={item.activity_id} className="btn btn-v2 btn-primary">Konfirmasi Hadir</button>
-                                      }
-                                      <i className="fa fa-trash float-right" style={{position:'absolute', top:'0px', right:'0px', cursor:'pointer'}} onClick={this.deleteNotif} data-id={item.id}></i>
-                                    </span>
-
-                                  </div>
+                                  <Fragment>
+                                    <div className="row my-2">
+                                      <div className="col-sm-9" onClick={() => this.readNotif(item.id)} key={item.id}>
+                                        <Card style={{ borderRadius: '24px', marginBottom: '2px' }}>
+                                          <Card.Body>
+                                            <div className="row">
+                                              <div className="col-sm-9">
+                                                <h5 className="fc-blue" style={{ fontWeight: 'bold', marginBottom: 0, fontSize: '16px' }}>
+                                                  {titleLabel[item.type - 1]}
+                                                  <small style={{ fontSize: '12px', marginLeft: '8px' }}>
+                                                    {moment.utc(item.created_at).tz(moment.tz.guess(true)).format('HH:mm')} &nbsp;
+                                                    {moment.utc(item.created_at).tz(moment.tz.guess(true)).format('DD/MM/YYYY')}
+                                                  </small>
+                                                </h5>
+                                                <Fragment>{item.description}</Fragment>
+                                              </div>
+                                              <div className="col-sm-3 text-center" style={{ margin: 'auto' }}>
+                                                <a href={item.destination === 'null' ? APPS_SERVER : item.destination == null ? APPS_SERVER : item.destination} className="btn btn-v2 btn-primary mr-2">Open</a>
+                                                <button onClick={this.deleteNotif} data-id={item.id} className="btn btn-v2 btn-danger">Delete</button>
+                                              </div>
+                                            </div>
+                                          </Card.Body>
+                                        </Card>
+                                        {
+                                          item.company_name ?
+                                            <span style={{ fontSize: '10px', position: 'absolute', top: '9px', left: '40px', marginRight: '5px', padding: '1px 6px', borderRadius: '8px', color: 'white', background: '#0091ff' }}>{item.company_name}</span>
+                                            : null
+                                        }
+                                        {
+                                          item.isread === 0 ? <img src="/newasset/new.png" alt="New" style={{ position: 'absolute', top: '-3px', left: '11px', width: '54px' }} /> : null
+                                        }
+                                      </div>
+                                    </div>
+                                  </Fragment>
                                 )
                               })
                             }
-                          </span>
+                          </Fragment>
                         }
                       </div>
                     ) :

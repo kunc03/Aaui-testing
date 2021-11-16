@@ -82,9 +82,6 @@ const datas = [
       }
     })
   }
- 
-
-  
 
   render() {
     const { meeting, training, ghantt } = this.state;

@@ -525,7 +525,7 @@ export default class WebinarCreate extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false }) }} className="btn btn-sm mr-4" style={{
+                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false, isStep3: false }) }} className="btn btn-sm mr-4" style={{
                         border: '1px solid #e9e9e9',
                         borderRadius: '50px',
                       }}>
@@ -634,7 +634,7 @@ export default class WebinarCreate extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3 className="f-w-900 f-18 fc-blue">
-                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: true, isStep2: false }) }} className="btn btn-sm mr-4" style={{
+                      <a onClick={e => { e.preventDefault(); this.setState({ isStep1: false, isStep2: true, isStep3: false }) }} className="btn btn-sm mr-4" style={{
                         border: '1px solid #e9e9e9',
                         borderRadius: '50px',
                       }}>

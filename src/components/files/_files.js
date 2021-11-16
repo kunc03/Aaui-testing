@@ -77,16 +77,16 @@ class FilesTableClass extends Component {
       filterFiles: true,
       filterMOM: true,
       filterRecord: true,
-      gb : [],
+      gb: [],
     };
   }
 
-  rename (id, name, mode){
-    this.setState({modalRename : true, renameFileId: id, renameFileName: name, renameFileNameNew: name, renameMode: mode})
+  rename(id, name, mode) {
+    this.setState({ modalRename: true, renameFileId: id, renameFileName: name, renameFileNameNew: name, renameMode: mode })
   }
 
   changeFilter = e => {
-    this.setState({filterFile: e.target.value})
+    this.setState({ filterFile: e.target.value })
   }
 
   searchFile = (e) => {
@@ -98,20 +98,20 @@ class FilesTableClass extends Component {
     this.setState({ limited: !this.state.limited });
   }
 
-  handleCheck (role) {
-    if (role == 'sekretaris'){
+  handleCheck(role) {
+    if (role == 'sekretaris') {
       this.setState({ aSekretaris: !this.state.aSekretaris });
     }
-    else if (role == 'moderator'){
+    else if (role == 'moderator') {
       this.setState({ aModerator: !this.state.aModerator });
     }
-    else if (role == 'pembicara'){
+    else if (role == 'pembicara') {
       this.setState({ aPembicara: !this.state.aPembicara });
     }
-    else if (role == 'owner'){
+    else if (role == 'owner') {
       this.setState({ aOwner: !this.state.aOwner });
     }
-    else if (role == 'peserta'){
+    else if (role == 'peserta') {
       this.setState({ aPeserta: !this.state.aPeserta });
     }
   }
@@ -206,7 +206,7 @@ class FilesTableClass extends Component {
     }
   }
   renameFile = e => {
-    if (this.state.renameMode === 'file'){
+    if (this.state.renameMode === 'file') {
       let form = {
         name: this.state.renameFileNameNew
       }
@@ -217,9 +217,9 @@ class FilesTableClass extends Component {
           } else {
             let msg = `${Storage.get('user').data.user} change the file name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
             this.sendNotifToAll(msg);
-  
+
             toast.success(`Successfully modified file ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
-            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'' });
+            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew: '' });
             this.fetchFile(this.state.folderId);
             socket.emit('send', { socketAction: 'newFileUploaded', folderId: this.state.folderId })
             this.closeModalRename();
@@ -227,7 +227,7 @@ class FilesTableClass extends Component {
         }
       })
     }
-    else if (this.state.renameMode === 'mom'){
+    else if (this.state.renameMode === 'mom') {
       let form = {
         title: this.state.renameFileNameNew
       }
@@ -238,16 +238,16 @@ class FilesTableClass extends Component {
           } else {
             let msg = `${Storage.get('user').data.user} change the MOM name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
             this.sendNotifToAll(msg);
-  
+
             toast.success(`Successfully modified MOM name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
-            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'', renameMode: '' });
+            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew: '', renameMode: '' });
             this.fetchMOM(this.state.folderId);
             this.closeModalRename();
           }
         }
       })
     }
-    else if (this.state.renameMode === 'record'){
+    else if (this.state.renameMode === 'record') {
       let form = {
         name: this.state.renameFileNameNew,
         project_id: this.state.folderId
@@ -259,9 +259,9 @@ class FilesTableClass extends Component {
           } else {
             let msg = `${Storage.get('user').data.user} change the record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`;
             this.sendNotifToAll(msg);
-  
+
             toast.success(`Successfully modified record name ${this.state.renameFileName} to ${this.state.renameFileNameNew}`);
-            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew:'', renameMode: '' });
+            this.setState({ renameFileId: '', renameFileName: '', renameFileNameNew: '', renameMode: '' });
             this.fetchRekamanBBB(this.state.folderId);
             this.fetchRekaman(this.state.folderId);
             this.closeModalRename();
@@ -399,7 +399,7 @@ class FilesTableClass extends Component {
       this.fetchRekaman(id)
       this.setState({ selectFolder: id == this.props.projectId ? false : true, folderId: id })
     })
-    if (this.props.selectedFolder){
+    if (this.props.selectedFolder) {
       this.props.selectedFolder(id)
     }
   }
@@ -434,24 +434,25 @@ class FilesTableClass extends Component {
           this.setState({
             recordedMeeting: res.data.result,
           })
+          console.log(res.data.result, "TEST MEET")
         }
       })
     }
   }
 
-fetchRekamanBBB(folder){
-  let userId = Storage.get('user').data.user_id;
-  if (folder == 0 || this.props.webinarId){
-    this.setState({dataRecordings:[], isLoading: false})
+  fetchRekamanBBB(folder) {
+    let userId = Storage.get('user').data.user_id;
+    if (folder == 0 || this.props.webinarId) {
+      this.setState({ dataRecordings: [], isLoading: false })
+    }
+    else {
+      API.get(`${API_SERVER}v2/bbb/record/${userId}/${folder}`).then(res => {
+        if (res.status === 200) {
+          this.setState({ dataRecordings: res.data.result, isLoading: false })
+        }
+      })
+    }
   }
-  else{
-    API.get(`${API_SERVER}v2/bbb/record/${userId}/${folder}`).then(res => {
-      if (res.status === 200) {
-        this.setState({ dataRecordings: res.data.result, isLoading: false })
-      }
-    })
-  }
-}
 
   fetchData() {
     let initialFolder = this.props.initialFolder ? this.props.initialFolder : this.props.projectId;
@@ -529,11 +530,11 @@ fetchRekamanBBB(folder){
   }
 
   selectFileShow = (type, val) => {
-    if (this.props.selectedFileShow){
-      if (type === 'pdf' || type==='png' || type==='jpg' || type==='jpeg' || type==='doc' || type==='docx' || type==='xls' || type==='xlsx'){
+    if (this.props.selectedFileShow) {
+      if (type === 'pdf' || type === 'png' || type === 'jpg' || type === 'jpeg' || type === 'doc' || type === 'docx' || type === 'xls' || type === 'xlsx') {
         this.props.selectedFileShow(val)
       }
-      else{
+      else {
         toast.warning('Sorry, this file type not support yet to show')
       }
     }
@@ -558,11 +559,11 @@ fetchRekamanBBB(folder){
       }
     });
 
-    if (!this.props.guest){
+    if (!this.props.guest) {
       this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level, ['CD_FILE_FOLDER'
-    ,'R_FILES_FOLDER','U_FILES'])
+        , 'R_FILES_FOLDER', 'U_FILES'])
     }
-    else{
+    else {
       this.setState({
         gb: [
           {
@@ -590,15 +591,15 @@ fetchRekamanBBB(folder){
   }
 
   fetchCheckAccess(role, company_id, level, param) {
-    API.get(`${API_SERVER}v2/global-settings/check-access`, {role, company_id, level, param}).then(res => {
-      if(res.status === 200) {
+    API.get(`${API_SERVER}v2/global-settings/check-access`, { role, company_id, level, param }).then(res => {
+      if (res.status === 200) {
         this.setState({ gb: res.data.result })
       }
     })
   }
 
   render() {
-    const {t} = this.props
+    const { t } = this.props
     // * GLOBAL SETTINGS * //
 
     let cdFile = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_FILE_FOLDER')[0].status;
@@ -647,42 +648,43 @@ fetchRekamanBBB(folder){
         ).match(new RegExp(searchFile, "gmi"))
       )
     }
-    
+
+
     return (
       <div className="card p-20">
         <span className="mb-4">
           <strong className="f-w-bold f-18 fc-skyblue ">Files</strong>
           {
             this.props.guest === false || !this.props.guest ?
-            <button
-              onClick={upload_file ? e => this.setState({ modalUpload: true }) : notify}
-              className="btn btn-icademy-primary float-right"
-              style={{ padding: "7px 8px !important", marginLeft: 14 }}
-            >
-              <i className="fa fa-upload"></i>
+              <button
+                onClick={upload_file ? e => this.setState({ modalUpload: true }) : notify}
+                className="btn btn-icademy-primary float-right"
+                style={{ padding: "7px 8px !important", marginLeft: 14 }}
+              >
+                <i className="fa fa-upload"></i>
 
-                  Upload
-                  </button>:null
+                Upload
+              </button> : null
           }
-          { access_project_admin == true ? <button
+          {access_project_admin == true ? <button
             onClick={cdFile ? e => this.setState({ modalNewFolder: true }) : notify}
             className="btn btn-icademy-primary float-right"
             style={{ padding: "7px 8px !important" }}
           >
             <i className="fa fa-plus"></i>
 
-                Folder
-                </button> : null}
+            Folder
+          </button> : null}
           {/* <input
                     type="text"
                     placeholder="Search"
                     className="form-control float-right col-sm-3"/> */}
-          
+
           <div className='tag-filter-container'>
-            <div className={`tag-filter ${this.state.filterFolder && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterFolder')}>{this.state.filterFolder ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } Folder</div>
-            <div className={`tag-filter ${this.state.filterFiles && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterFiles')}>{this.state.filterFiles ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } File</div>
-            <div className={`tag-filter ${this.state.filterMOM && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterMOM')}>{this.state.filterMOM ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } MOM</div>
-            <div className={`tag-filter ${this.state.filterRecord && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this,'filterRecord')}>{this.state.filterRecord ? <font style={{color: '#0F0'}}>&#10003;</font> : <font style={{color: '#F00'}}>&#10005;</font> } Record</div>
+            <div className={`tag-filter ${this.state.filterFolder && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this, 'filterFolder')}>{this.state.filterFolder ? <font style={{ color: '#0F0' }}>&#10003;</font> : <font style={{ color: '#F00' }}>&#10005;</font>} Folder</div>
+            <div className={`tag-filter ${this.state.filterFiles && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this, 'filterFiles')}>{this.state.filterFiles ? <font style={{ color: '#0F0' }}>&#10003;</font> : <font style={{ color: '#F00' }}>&#10005;</font>} File</div>
+            <div className={`tag-filter ${this.state.filterMOM && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this, 'filterMOM')}>{this.state.filterMOM ? <font style={{ color: '#0F0' }}>&#10003;</font> : <font style={{ color: '#F00' }}>&#10005;</font>} MOM</div>
+            <div className={`tag-filter ${this.state.filterRecord && 'tag-filter-selected'}`} onClick={this.handleChangeFilter.bind(this, 'filterRecord')}>{this.state.filterRecord ? <font style={{ color: '#0F0' }}>&#10003;</font> : <font style={{ color: '#F00' }}>&#10005;</font>} Record</div>
           </div>
 
           {/* <select value={this.state.filterFile} onChange={this.changeFilter} style={{float:'right', marginBottom: 10, width:200, height:40, paddingLeft:10, marginRight: 10, border: '1px solid #ced4da', borderRadius:'.25rem', color:'#949ca6'}}>
@@ -692,13 +694,13 @@ fetchRekamanBBB(folder){
             <option value='mom'>MOM</option>
             <option value='recorded'>Recorded Meeting</option>
           </select> */}
-          
+
           <input
-                type="text"
-                placeholder="Search"
-                onChange={this.searchFile}
-                style={{marginRight: 10}}
-                className="form-control float-right col-sm-3"/>
+            type="text"
+            placeholder="Search"
+            onChange={this.searchFile}
+            style={{ marginRight: 10 }}
+            className="form-control float-right col-sm-3" />
         </span>
         <div className="table-responsive" style={{ overflowX: 'hidden', overflowY: this.props.scrollHeight ? 'scroll' : 'auto', height: this.props.scrollHeight ? this.props.scrollHeight : 'auto' }}>
           <table className="table table-hover">
@@ -715,7 +717,7 @@ fetchRekamanBBB(folder){
               </tr>
             </thead>
             {
-              folder.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && (this.props.projectId == this.state.folderId) ?
+              folder.length == 0 && this.state.files.length == 0 && this.state.mom.length == 0 && this.state.recordedMeeting.length == 0 && this.state.dataRecordings.length == 0 && (this.props.projectId == this.state.folderId) ?
                 <tbody>
                   <tr>
                     <td className="fc-muted f-14 f-w-300 p-t-20" colspan='9'>There is no files</td>
@@ -730,174 +732,86 @@ fetchRekamanBBB(folder){
                   </tbody>
                   :
                   read_file ?
-                  <tbody>
-                    {
-                      this.state.folderId !== 0 &&
-                      this.state.selectFolder &&
-                      <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                        <td colspan='4' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
-                          <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Back</td>
-                      </tr>
-                    }
-                    {
-                      folder.map(item => {
-                        if (((item.sekretaris == 1 && item.sekretaris == this.state.role.aSekretaris) ||
-                          (item.moderator == 1 && item.moderator == this.state.role.aModerator) ||
-                          (item.pembicara == 1 && item.pembicara == this.state.role.aPembicara) ||
-                          (item.owner == 1 && item.owner == this.state.role.aOwner) ||
-                          (item.peserta == 1 && item.peserta == this.state.role.aPeserta)) &&
-                          (this.state.filterFile === 'all' || this.state.filterFile === 'folder' || this.state.filterFolder === true)) {
-                          return (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, item.id, item.name)}>
-                              <img src='assets/images/component/folder.png' width="32" /> &nbsp;{item.name}</td>
-                            {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
-                            {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
-                            {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
-                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
-                          </td>
-                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {item.creator ? item.creator : '-'}
-                          </td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                              {
-                                access_project_admin ?
-                                  <span class="btn-group dropleft col-sm-1">
-                                    <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      <i
-                                        className="fa fa-ellipsis-v"
-                                        style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                      />
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                                      <button
-                                        style={{ cursor: 'pointer' }}
-                                        class="dropdown-item"
-                                        type="button"
-                                        onClick={this.openModalEdit.bind(this, item.id)}
-                                      >
-                                        Edit
+                    <tbody>
+                      {
+                        this.state.folderId !== 0 &&
+                        this.state.selectFolder &&
+                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                          <td colspan='4' className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, this.state.prevFolderId, null)}>
+                            <img src='assets/images/component/folder-back.png' width="32" /> &nbsp;Back</td>
+                        </tr>
+                      }
+                      {
+                        folder.map(item => {
+                          if (((item.sekretaris == 1 && item.sekretaris == this.state.role.aSekretaris) ||
+                            (item.moderator == 1 && item.moderator == this.state.role.aModerator) ||
+                            (item.pembicara == 1 && item.pembicara == this.state.role.aPembicara) ||
+                            (item.owner == 1 && item.owner == this.state.role.aOwner) ||
+                            (item.peserta == 1 && item.peserta == this.state.role.aPeserta)) &&
+                            (this.state.filterFile === 'all' || this.state.filterFile === 'folder' || this.state.filterFolder === true)) {
+                            return (<tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                              <td className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFolder.bind(this, item.id, item.name)}>
+                                <img src='assets/images/component/folder.png' width="32" /> &nbsp;{item.name}</td>
+                              {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.date}</td> */}
+                              {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.by}</td> */}
+                              {/* <td className="fc-muted f-14 f-w-300 p-t-20" align="center">{item.size}</td> */}
+                              <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                                {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
+                              </td>
+                              <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                                {item.creator ? item.creator : '-'}
+                              </td>
+                              <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                {
+                                  access_project_admin ?
+                                    <span class="btn-group dropleft col-sm-1">
+                                      <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i
+                                          className="fa fa-ellipsis-v"
+                                          style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                                        />
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                        <button
+                                          style={{ cursor: 'pointer' }}
+                                          class="dropdown-item"
+                                          type="button"
+                                          onClick={this.openModalEdit.bind(this, item.id)}
+                                        >
+                                          Edit
                                         </button>
                                         {
                                           cdFile &&
-                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.name)}> Delete </button>
+                                          <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDelete.bind(this, item.id, item.name)}> Delete </button>
                                         }
-                                    </div>
-                                  </span>
-                                  :
-                                  null
-                              }
-                            </td>
-                          </tr>)
-                        }
-                        else {
-                          return (null)
-                        }
-                      })
-                    }
-                    {
-                      (this.state.filterFile === 'all' || this.state.filterFile === 'files' || this.state.filterFiles === true) && files.map(item =>
-                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td className="fc-muted f-14 f-w-300 p-t-20" style={{cursor:'pointer'}} onClick={this.selectFileShow.bind(this, item.type, item.location)}>
-                            <img src={
-                              item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
-                                ? `assets/images/files/${item.type}.svg`
-                                : 'assets/images/files/file.svg'
-                            } width="32" /> &nbsp;{item.name}</td>
-                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
-                          </td>
-                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {item.creator ? item.creator : '-'}
-                          </td>
-                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                            <span class="btn-group dropleft col-sm-1 m-t-10">
-                              <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i
-                                  className="fa fa-ellipsis-v"
-                                  style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                />
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                                <button
-                                  style={{ cursor: 'pointer' }}
-                                  class="dropdown-item"
-                                  type="button"
-                                  onClick={e => {
-                                    this.filesLogs(item);
-                                    window.open(item.location, 'Downloading files');
-                                  }}
-                                >
-                                  Download
-                                      </button>
-                                {
-                                  access_project_admin ?
-                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={()=> this.setState({modalRename : true, renameFileId: item.id, renameFileName: item.name, renameFileNameNew: item.name})}> Rename </button>
+                                      </div>
+                                    </span>
                                     :
                                     null
                                 }
-                                {
-                                  access_project_admin ?
-                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
-                                    :
-                                    null
-                                }
-                              </div>
-                            </span>
-                          </td>
-                        </tr>
-                      )
-                    }
-                    {
-                      (this.state.filterFile === 'all' || this.state.filterFile === 'mom' || this.state.filterMOM === true) && mom.map(item =>
-                        <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                          <td className="fc-muted f-14 f-w-300 p-t-20">
-                            <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
-                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {moment.tz(item.time, moment.tz.guess(true)).format('DD-MM-YYYY')}
-                          </td>
-                          <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                            {item.creator ? item.creator : '-'}
-                          </td>
-                          <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                            <span class="btn-group dropleft col-sm-1 m-t-10">
-                              <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i
-                                  className="fa fa-ellipsis-v"
-                                  style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
-                                />
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
-                                {
-                                  access_project_admin ?
-                                    <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.title, 'mom')}> Rename </button>
-                                    :
-                                    null
-                                }
-                                <button
-                                  style={{ cursor: 'pointer' }}
-                                  class="dropdown-item"
-                                  type="button"
-                                  onClick={e => window.open(`${APPS_SERVER}mom/?id=${item.id}`, 'Downloading files')}
-                                >
-                                  Print PDF
-                                      </button>
-                                {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
-                              </div>
-                            </span>
-                          </td>
-                        </tr>
-                      )
-                    }
-                    {
-                      (this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded' || this.state.filterRecord === true)) &&
-                      recordedMeeting.map(item =>
-                        item.record && item.record.split(',').map(item =>
+                              </td>
+                            </tr>)
+                          }
+                          else {
+                            return (null)
+                          }
+                        })
+                      }
+                      {
+                        (this.state.filterFile === 'all' || this.state.filterFile === 'files' || this.state.filterFiles === true) && files.map(item =>
                           <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
-                            <td className="fc-muted f-14 f-w-300 p-t-20">
-                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.substring(40).replace(/%2520/g, " ")}</td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
-                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                            <td className="fc-muted f-14 f-w-300 p-t-20" style={{ cursor: 'pointer' }} onClick={this.selectFileShow.bind(this, item.type, item.location)}>
+                              <img src={
+                                item.type == 'png' || item.type == 'pdf' || item.type == 'doc' || item.type == 'docx' || item.type == 'ppt' || item.type == 'pptx' || item.type == 'rar' || item.type == 'zip' || item.type == 'jpg' || item.type == 'csv'
+                                  ? `assets/images/files/${item.type}.svg`
+                                  : 'assets/images/files/file.svg'
+                              } width="32" /> &nbsp;{item.name}</td>
+                            <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                              {moment.tz(item.created_at, moment.tz.guess(true)).format('DD-MM-YYYY')}
+                            </td>
+                            <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                              {item.creator ? item.creator : '-'}
+                            </td>
                             <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
                               <span class="btn-group dropleft col-sm-1 m-t-10">
                                 <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -911,63 +825,151 @@ fetchRekamanBBB(folder){
                                     style={{ cursor: 'pointer' }}
                                     class="dropdown-item"
                                     type="button"
-                                    onClick={e => window.open(item, 'Rekaman Meeting')}
+                                    onClick={e => {
+                                      this.filesLogs(item);
+                                      window.open(item.location, 'Downloading files');
+                                    }}
                                   >
-                                    Open
-                                      </button>
+                                    Download
+                                  </button>
+                                  {
+                                    access_project_admin ?
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.name, 'file')}> Rename </button>
+                                      :
+                                      null
+                                  }
+                                  {
+                                    access_project_admin ?
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.dialogDeleteFile.bind(this, item.id, item.name)}> Delete </button>
+                                      :
+                                      null
+                                  }
+                                </div>
+                              </span>
+                            </td>
+                          </tr>
+                        )
+                      }
+                      {
+                        (this.state.filterFile === 'all' || this.state.filterFile === 'mom' || this.state.filterMOM === true) && mom.map(item =>
+                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                            <td className="fc-muted f-14 f-w-300 p-t-20">
+                              <img src='assets/images/files/pdf.svg' width="32" /> &nbsp;MOM : {item.title}</td>
+                            <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                              {moment.tz(item.time, moment.tz.guess(true)).format('DD-MM-YYYY')}
+                            </td>
+                            <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                              {item.creator ? item.creator : '-'}
+                            </td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                              <span class="btn-group dropleft col-sm-1 m-t-10">
+                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i
+                                    className="fa fa-ellipsis-v"
+                                    style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                                  />
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                  {
+                                    access_project_admin ?
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.title, 'mom')}> Rename </button>
+                                      :
+                                      null
+                                  }
+                                  <button
+                                    style={{ cursor: 'pointer' }}
+                                    class="dropdown-item"
+                                    type="button"
+                                    onClick={e => window.open(`${APPS_SERVER}mom/?id=${item.id}`, 'Downloading files')}
+                                  >
+                                    Print PDF
+                                  </button>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>
                               </span>
                             </td>
                           </tr>
                         )
+                      }
+                      {
+                        (this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded' || this.state.filterRecord === true)) &&
+                        recordedMeeting.map(item =>
+                          item.record && item.record.split(',').map(item =>
+                            <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                              <td className="fc-muted f-14 f-w-300 p-t-20">
+                                <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Rekaman : {item.substring(40).replace(/%2520/g, " ")}</td>
+                              <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                              <td className="fc-muted f-14 f-w-300 p-t-10" align="center"></td>
+                              <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                                <span class="btn-group dropleft col-sm-1 m-t-10">
+                                  <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i
+                                      className="fa fa-ellipsis-v"
+                                      style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                                    />
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                    <button
+                                      style={{ cursor: 'pointer' }}
+                                      class="dropdown-item"
+                                      type="button"
+                                      onClick={e => window.open(item, 'Rekaman Meeting')}
+                                    >
+                                      Open
+                                    </button>
+                                    {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
+                                  </div>
+                                </span>
+                              </td>
+                            </tr>
+                          )
                         )
-                        }
-                        {
+                      }
+                      {
                         this.state.selectFolder === false && (this.state.filterFile === 'all' || this.state.filterFile === 'recorded' || this.state.filterRecord === true) &&
                         dataRecordings.map((item) =>
-                            <tr style={{borderBottom: '1px solid #DDDDDD'}}>
-                                <td className="fc-muted f-14 f-w-300 p-t-20">
-                                    <img src='assets/images/files/mp4.svg' width="32"/> &nbsp;Record : {item.name} <i style={{color:'#da9700', fontSize:'12px'}}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
-                                <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                                  {moment(item.date).local().format('DD-MM-YYYY HH:mm')}
-                                </td>
-                                <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
-                                  {item.creator ? item.creator : '-'}
-                                </td>
-                                <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
-                                  <span class="btn-group dropleft col-sm-1 m-t-10">
-                                    <button style={{padding:'6px 18px', border:'none', marginBottom:0, background:'transparent'}} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      <i
-                                        className="fa fa-ellipsis-v"
-                                        style={{ fontSize: 14, marginRight:0, color:'rgb(148 148 148)' }}
-                                      />
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
-                                      {
-                                        access_project_admin ?
-                                          <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.name, 'record')}> Rename </button>
-                                          :
-                                          null
-                                      }
-                                      <button
-                                        style={{cursor:'pointer'}}
-                                        class="dropdown-item"
-                                        type="button"
-                                        onClick={e=>window.open(item.link, 'Rekaman Meeting')}
-                                      >
-                                          Open
-                                      </button>
+                          <tr style={{ borderBottom: '1px solid #DDDDDD' }}>
+                            <td className="fc-muted f-14 f-w-300 p-t-20">
+                              <img src='assets/images/files/mp4.svg' width="32" /> &nbsp;Record : {item.name} <i style={{ color: '#da9700', fontSize: '12px' }}>{item.state !== 'published' ? 'Processing' : ''}</i></td>
+                            <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                              {moment(item.date).local().format('DD-MM-YYYY HH:mm')}
+                            </td>
+                            <td className="fc-muted f-12 f-w-300 p-t-20 l-h-30" align="center">
+                              {item.creator ? item.creator : '-'}
+                            </td>
+                            <td className="fc-muted f-14 f-w-300 p-t-10" align="center">
+                              <span class="btn-group dropleft col-sm-1 m-t-10">
+                                <button style={{ padding: '6px 18px', border: 'none', marginBottom: 0, background: 'transparent' }} class="btn btn-secondary btn-sm" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i
+                                    className="fa fa-ellipsis-v"
+                                    style={{ fontSize: 14, marginRight: 0, color: 'rgb(148 148 148)' }}
+                                  />
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{ fontSize: 14, padding: 5, borderRadius: 0 }}>
+                                  {
+                                    access_project_admin ?
+                                      <button style={{ cursor: 'pointer' }} class="dropdown-item" type="button" onClick={this.rename.bind(this, item.id, item.name, 'record')}> Rename </button>
+                                      :
+                                      null
+                                  }
+                                  <button
+                                    style={{ cursor: 'pointer' }}
+                                    class="dropdown-item"
+                                    type="button"
+                                    onClick={e => window.open(item.link, 'Rekaman Meeting')}
+                                  >
+                                    Open
+                                  </button>
                                   {/* <button style={{cursor:'pointer'}} class="dropdown-item" type="button" onClick={()=>toast.warning('Coming Soon')}> Delete </button> */}
                                 </div>
                               </span>
                             </td>
                           </tr>
-                      )
-                    }
-                  </tbody>
-                  :
-                  <span>access denied</span>
+                        )
+                      }
+                    </tbody>
+                    :
+                    <span>access denied</span>
             }
           </table>
         </div>
@@ -978,7 +980,7 @@ fetchRekamanBBB(folder){
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1007,7 +1009,7 @@ fetchRekamanBBB(folder){
         >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Konfirmasi
+              Confirmation
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1019,14 +1021,14 @@ fetchRekamanBBB(folder){
               onClick={this.closeModalDelete.bind(this)}
             >
               Cancel
-                      </button>
+            </button>
             <button
               className="btn btn-icademy-primary btn-icademy-red"
               onClick={this.deleteProject.bind(this)}
             >
               <i className="fa fa-trash"></i>
-                        Hapus
-                      </button>
+              Delete
+            </button>
           </Modal.Footer>
         </Modal>
         <Modal
@@ -1139,14 +1141,14 @@ fetchRekamanBBB(folder){
                   onClick={this.closeModalAdd.bind(this)}
                 >
                   Cancel
-                      </button>
+                </button>
                 <button
                   className="btn btn-icademy-primary"
                   onClick={this.saveFolder.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                        Save
-                      </button>
+                  Save
+                </button>
               </Modal.Footer>
             </Card>
           </Modal.Body>
@@ -1261,14 +1263,14 @@ fetchRekamanBBB(folder){
                   onClick={this.closeModalEdit.bind(this)}
                 >
                   Cancel
-                      </button>
+                </button>
                 <button
                   className="btn btn-icademy-primary"
                   onClick={this.editFolder.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                        Save
-                      </button>
+                  Save
+                </button>
               </Modal.Footer>
             </Card>
           </Modal.Body>
@@ -1308,14 +1310,14 @@ fetchRekamanBBB(folder){
                   onClick={this.closeModalRename.bind(this)}
                 >
                   Cancel
-                      </button>
+                </button>
                 <button
                   className="btn btn-icademy-primary"
                   onClick={this.renameFile.bind(this)}
                 >
                   <i className="fa fa-save"></i>
-                        Save
-                      </button>
+                  Save
+                </button>
               </Modal.Footer>
             </Card>
           </Modal.Body>
@@ -1336,10 +1338,10 @@ fetchRekamanBBB(folder){
                 <Row>
                   <Col>
                     <div className="form-group">
-                      <label style={{float:'left',clear:'both'}}>Attachment</label>
-                      <label for='attachmentId' style={{cursor:'pointer', overflow:'hidden', float:'left',clear:'both'}}>
+                      <label style={{ float: 'left', clear: 'both' }}>Attachment</label>
+                      <label for='attachmentId' style={{ cursor: 'pointer', overflow: 'hidden', float: 'left', clear: 'both' }}>
                         <div className="button-bordered-grey">
-                          {this.state.attachmentId.length ? `${this.state.attachmentId.length} ${this.state.attachmentId.length === 1  ? 'file' : 'files'} selected` : 'Choose'}
+                          {this.state.attachmentId.length ? `${this.state.attachmentId.length} ${this.state.attachmentId.length === 1 ? 'file' : 'files'} selected` : 'Choose'}
                         </div>
                         <input
                           accept="all"
@@ -1350,13 +1352,13 @@ fetchRekamanBBB(folder){
                           multiple
                           placeholder="media chapter"
                           className="form-control file-upload-icademy"
-                          onClick={e=> e.target.value = null}
-                          style={{display:'none'}}
+                          onClick={e => e.target.value = null}
+                          style={{ display: 'none' }}
                         />
                       </label>
-                      <Form.Text style={{float:'left',clear:'both'}}>
+                      <Form.Text style={{ float: 'left', clear: 'both' }}>
                         Support multiple files (make sure all the files does not exceed 500MB)
-                              {/* dan ukuran file tidak melebihi 20MB. */}
+                        {/* dan ukuran file tidak melebihi 20MB. */}
                       </Form.Text>
                     </div>
                   </Col>
@@ -1370,7 +1372,7 @@ fetchRekamanBBB(folder){
               onClick={this.closeModalUpload.bind(this)}
             >
               Cancel
-                      </button>
+            </button>
             <button
               className="btn btn-icademy-primary"
               onClick={this.uploadFile.bind(this)}

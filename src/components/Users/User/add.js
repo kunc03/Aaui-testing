@@ -17,6 +17,7 @@ class UserAdd extends Component {
 
     optionComapny: [],
     valueCompany: [],
+    level_multicompany: 'client',
 
     identity: "",
     name: "",
@@ -112,10 +113,10 @@ class UserAdd extends Component {
       formData.identity === '' ||
       formData.email === '' ||
       formData.level === ''
-    ){
+    ) {
       toast.warning('Please fill required field.')
     }
-    else{
+    else {
       API.post(`${API_SERVER}v1/user`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
@@ -128,6 +129,7 @@ class UserAdd extends Component {
                   let formData = {
                     user_id: userId,
                     company_id: this.state.valueCompany[i],
+                    level_multicompany: this.state.level_multicompany
                   };
                   API.post(`${API_SERVER}v1/user/assign`, formData)
                 }
@@ -171,7 +173,7 @@ class UserAdd extends Component {
                 <div className="page-wrapper">
                   <div className="row">
                     <div className="col-xl-12">
-                      <h3 className="f-24 f-w-800">Tambah User Management</h3>
+                      <h3 className="f-24 f-w-800">Add User Management</h3>
                       <div className="card">
                         <div className="card-block">
 
@@ -188,6 +190,20 @@ class UserAdd extends Component {
                                 }
                               </select>
                             </div>
+
+                            <div className="form-group">
+                              <label className="label-input">Level</label>
+                              <Form.Text className="text-danger">Required</Form.Text>
+                              <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
+                                <option value="">-- Select --</option>
+                                {
+                                  levelUser.map(item => (
+                                    <option value={item.level}>{item.level === 'client' ? 'User' : item.level}</option>
+                                  ))
+                                }
+                              </select>
+                            </div>
+
                             <div className="form-group">
                               <label className="label-input">Multiple Company</label>
                               <MultiSelect
@@ -204,6 +220,25 @@ class UserAdd extends Component {
                                 valuePlaceholder="Select Company"
                               />
                             </div>
+
+                            {
+                              this.state.valueCompany.length > 0 ?
+
+                                <div className="form-group">
+                                  <label className="label-input">Level Multicompany</label>
+                                  <Form.Text className="text-danger">Required</Form.Text>
+                                  <select style={{ textTransform: 'capitalize' }} name="level_multicompany" className="form-control" onChange={evt => this.setState({ level_multicompany: evt.target.value })} >
+                                    <option value="">-- Select --</option>
+                                    {
+                                      levelUser.map(item => (
+                                        <option value={item.level}>{item.level === 'client' ? 'User' : item.level}</option>
+                                      ))
+                                    }
+                                  </select>
+                                </div>
+                                : null
+                            }
+
                             <div className="form-group">
                               <label className="label-input">Group</label>
                               <Form.Text className="text-danger">Required</Form.Text>
@@ -290,19 +325,6 @@ class UserAdd extends Component {
                             <div className="form-group">
                               <label className="label-input">Address</label>
                               <textarea name="address" className="form-control" placeholder="Address" onChange={this.onChangeInput}></textarea>
-                            </div>
-
-                            <div className="form-group">
-                              <label className="label-input">Level</label>
-                              <Form.Text className="text-danger">Required</Form.Text>
-                              <select style={{ textTransform: 'capitalize' }} name="level" className="form-control" onChange={this.onChangeInput} required>
-                                <option value="">-- Select --</option>
-                                {
-                                  levelUser.map(item => (
-                                    <option value={item.level}>{item.level === 'client' ? 'User' : item.level}</option>
-                                  ))
-                                }
-                              </select>
                             </div>
 
                             <div className="form-group">

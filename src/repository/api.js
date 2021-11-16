@@ -16,7 +16,7 @@ export const API_SERVER = DEV_MODE === 'development' ? API_SERVER_DEV : DEV_MODE
 export const APPS_SERVER = DEV_MODE === 'development' ? APPS_SERVER_DEV : DEV_MODE === 'staging' ? APPS_SERVER_STG : APPS_SERVER_PROD;
 
 export const API_JITSI = 'meet.icademy.id';
-export const API_SOCKET = "https://socket.icademy.stg.kelola.co.id";
+export const API_SOCKET = "https://socket.icademy.id";
 
 export const BBB_URL = "https://con.icademy.id/bigbluebutton/";
 export const BBB_KEY = "4fXLSWqBe6AqYaBPlSbHa1BNEPhMMfctlzmG0WcFdw";
@@ -39,6 +39,7 @@ export const FORUM = `${API_SERVER}v1/forum`;
 export default class API {
   static getConfig = (bearer = true) => {
     let token = Storage.get('token');
+
     if (bearer) {
       return {
         headers: {
@@ -73,6 +74,43 @@ export default class API {
 
     if (headers) {
       config.headers = { ...config.headers, ...headers };
+    }
+
+    if (endpoint.search('/auth/me/') > -1) {
+      let companyId = Storage.get('companyID');
+
+      if (typeof companyId != 'number') {
+        companyId = null
+      }
+
+      config.headers.currentposition = companyId;
+
+      if (companyId) {
+        let localdata = Storage.get('user');
+        axios.get(endpoint, config).then(res => {
+          if (res.status === 200) {
+
+            if (res.data.result.data_multi_company) {
+              localdata.data.level = res.data.result.data_multi_company;
+            } else {
+              localdata.data.level = res.data.result.level;
+            }
+            Storage.set('user', localdata)
+            //console.log(localdata, "TEST")
+          }
+        })
+      }
+    }
+
+    if (endpoint.search('/files-mom/') > -1) {
+      let companyId = Storage.get('companyID');
+
+      if (typeof companyId != 'number') {
+        let localdata = Storage.get('user');
+        companyId = localdata.data.company_id
+      }
+
+      config.headers.currentposition = companyId || null;
     }
 
     return axios.get(endpoint, config);

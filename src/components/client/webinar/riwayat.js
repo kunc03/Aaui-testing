@@ -17,6 +17,7 @@ import { Doughnut } from 'react-chartjs-2';
 export default class WebinarRiwayat extends Component {
 
   state = {
+    isCheckAll: false,
     isLoading: false,
     hasilTest: [],
     hasilEssay: [],
@@ -25,7 +26,7 @@ export default class WebinarRiwayat extends Component {
     nama: '',
     ttd: '',
     checkAll: false,
-    tanggal:'',
+    tanggal: '',
     tanggalEnd: '',
     company_id: '',
     filterPeserta: 'Semua',
@@ -47,6 +48,7 @@ export default class WebinarRiwayat extends Component {
     jumlahHadir: 0,
     jumlahTidakHadir: 0,
     qna: [],
+    poll: [],
     jawabanKuesioner: {
       pertanyaan: [
         "",
@@ -69,9 +71,9 @@ export default class WebinarRiwayat extends Component {
     cert_topic: '',
     sign: [
       {
-      cert_sign_name: '',
-      cert_sign_title: '',
-      signature: ''
+        cert_sign_name: '',
+        cert_sign_title: '',
+        signature: ''
       }
     ],
 
@@ -85,6 +87,17 @@ export default class WebinarRiwayat extends Component {
         toast.warning("Error fetch API")
       else
         this.setState({ qna: res.data.result })
+    })
+  }
+  fetchPoll() {
+    API.get(`${API_SERVER}v2/webinar-test-polling/${this.state.webinarId}`).then(res => {
+      if (res.status === 200) {
+        if (res.data.error) {
+          toast.error('Error fetch data')
+        } else {
+          this.setState({ poll: res.data.result })
+        }
+      }
     })
   }
   fetchCompanyInfo() {
@@ -117,14 +130,76 @@ export default class WebinarRiwayat extends Component {
   }
 
   handleModal = () => {
+    let item = this.state.peserta
+    if (this.state.filterPeserta === 'Hadir') {
+      item = item.filter(item => item.status === 2)
+    }
+    else if (this.state.filterPeserta === 'Tidak Hadir') {
+      item = item.filter(item => item.status !== 2)
+    }
+    item.map((item, index) => {
+      item.checked = null;
+    })
     this.setState({
+      item,
+      checkAll: false,
       isModalDownloadFileWebinar: false,
-      isModalSertifikat: false
+      isModalSertifikat: false,
+      certificate_orientation: 'landscape',
+      certificate_background: '',
+      nama: '',
+      ttd: '',
+      sertifikat: [],
+      cert_title: 'CERTIFICATE OF COMPLETION',
+      cert_subtitle: 'THIS CERTIFICATE IS PROUDLY PRESENTED TO',
+      cert_description: 'FOR SUCCESSFULLY COMPLETING ALL CONTENTS ON WEBINAR',
+      cert_topic: '',
+      sign: [
+        {
+          cert_sign_name: '',
+          cert_sign_title: '',
+          signature: ''
+        }
+      ],
     });
+
+  }
+
+  fetchDataWithoutLoading() {
+    API.get(`${API_SERVER}v2/webinar/history/${this.state.webinarId}`).then(res => {
+      if (res.data.error) toast.warning("Gagal fetch API");
+      let peserta = res.data.result.peserta
+      let pesertaDanTamu = peserta.concat(res.data.result.tamu)
+      this.setState({
+        id: this.state.webinarId,
+        company_id: res.data.result.company_id,
+        certificate_orientation: res.data.result.certificate_orientation,
+        certificate_background: res.data.result.certificate_background,
+        gambar: res.data.result.gambar,
+        judul: res.data.result.judul,
+        cert_topic: res.data.result.judul,
+        isi: res.data.result.isi,
+        tanggal: res.data.result.start_time,
+        tanggalEnd: res.data.result.end_time,
+        // projectId: res.data.result.projectId,
+        dokumenId: res.data.result.dokumenId,
+        status: res.data.result.status,
+        peserta: pesertaDanTamu,
+        jumlahTamu: res.data.result.tamu.length,
+        jumlahPeserta: peserta.length,
+        projectId: res.data.result.project_id,
+        jumlahHadir: pesertaDanTamu.filter((item) => item.status == 2).length,
+        jumlahTidakHadir: pesertaDanTamu.filter((item) => item.status != 2).length,
+        isLoading: false
+      })
+      this.setState({ pembicara: [] })
+      res.data.result.pembicara.map(item => this.state.pembicara.push(item.name))
+      this.checkProjectAccess()
+    })
   }
 
   fetchData() {
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
     API.get(`${API_SERVER}v2/webinar/history/${this.state.webinarId}`).then(res => {
       if (res.data.error) toast.warning("Gagal fetch API");
       let peserta = res.data.result.peserta
@@ -163,7 +238,7 @@ export default class WebinarRiwayat extends Component {
         if (res.data.error) {
           toast.error('Error fetch data')
         } else {
-          this.setState({hasilEssay: res.data.result})
+          this.setState({ hasilEssay: res.data.result })
         }
       }
     })
@@ -171,6 +246,7 @@ export default class WebinarRiwayat extends Component {
   componentDidMount() {
     this.fetchData()
     this.fetchQNA()
+    this.fetchPoll()
     this.fetchJawabanKuesioner()
     this.fetchJawabanTest()
     this.fetchEssay()
@@ -196,6 +272,7 @@ export default class WebinarRiwayat extends Component {
   handleChangeChecked(e, item) {
     item['checked'] = e.target.checked;
   }
+
   checkAll(e) {
     let item = this.state.peserta
     if (this.state.filterPeserta === 'Hadir') {
@@ -208,6 +285,17 @@ export default class WebinarRiwayat extends Component {
       item.checked = e.target.checked;
     })
     this.setState({ item, checkAll: e.target.checked })
+  }
+
+  clickAction(e, i, items) {
+    let item = this.state.peserta
+    if (this.state.checkAll) {
+      item[i].checked = false;
+    } else {
+      item[i].checked = true;
+    }
+    this.setState({ item })
+
   }
 
   filterPeserta(e) {
@@ -234,7 +322,7 @@ export default class WebinarRiwayat extends Component {
         let sign = this.state.sign;
         sign[e.target.getAttribute('data-index')][e.target.id] = e.target.files[0];
         sign[e.target.getAttribute('data-index')][`${e.target.id}_img`] = URL.createObjectURL(e.target.files[0]);
-        this.setState({sign: sign});
+        this.setState({ sign: sign });
       } else {
         e.target.value = null;
         toast.warning('File max 5MB')
@@ -250,7 +338,7 @@ export default class WebinarRiwayat extends Component {
   handleChangeTextArr = (e) => {
     let sign = this.state.sign;
     sign[e.target.getAttribute('data-index')][e.target.name] = e.target.value;
-    this.setState({sign: sign});
+    this.setState({ sign: sign });
   };
 
   onChangeForm = e => {
@@ -274,7 +362,7 @@ export default class WebinarRiwayat extends Component {
   }
 
   sertifikat = () => {
-    let check = this.state.sign.filter((x)=>
+    let check = this.state.sign.filter((x) =>
       x.cert_sign_name === '' || (x.signature === '' || x.signature === null) || x.cert_sign_title === ''
     ).length;
     if (check > 0) {
@@ -304,25 +392,31 @@ export default class WebinarRiwayat extends Component {
       formData.append('certificate_background', this.state.certificate_background);
       formData.append('certificate_orientation', this.state.certificate_orientation);
       formData.append('peserta', JSON.stringify(sertifikat));
-      this.state.sign.map((x)=>{
+      this.state.sign.map((x) => {
         formData.append('signature', x.signature);
       })
 
       API.post(`${API_SERVER}v2/webinar/sertifikat`, formData).then(async (res) => {
-        toast.success('Mengirim sertifikat kepada peserta');
-        this.handleModal();
+        if (!res.data.error) {
+          toast.success('Mengirim sertifikat kepada peserta');
+          this.handleModal();
+          setTimeout(async () => {
+            this.fetchDataWithoutLoading();
+          }, 10000)
+        }
+        // window.location.reload();
       });
     }
   }
 
-  downloadPDF(){
+  downloadPDF() {
     // var doc = new jsPDF();
     const doc = new jsPDF({
       orientation: "landscape"
     });
     doc.setFontSize(18);
     doc.text("Webinar Report", 120, 20);
-    
+
     doc.setFontSize(11);
     doc.text("Title", 20, 30);
     doc.text(`: ${this.state.judul}`, 50, 30);
@@ -331,7 +425,7 @@ export default class WebinarRiwayat extends Component {
     doc.text("Time", 20, 40);
     doc.text(`: ${moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - ${moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}`, 50, 40);
     doc.text("Total Invitation", 20, 45);
-    doc.text(`: ${this.state.jumlahHadir+this.state.jumlahTidakHadir}`, 50, 45);
+    doc.text(`: ${this.state.jumlahHadir + this.state.jumlahTidakHadir}`, 50, 45);
     doc.text("Present", 20, 50);
     doc.text(`: ${this.state.jumlahHadir}`, 50, 50);
     doc.text("Not Present", 20, 55);
@@ -339,13 +433,18 @@ export default class WebinarRiwayat extends Component {
 
     doc.setFontSize(12);
     doc.text("Attendences", 20, 60);
-    doc.autoTable({ html: '#table-peserta', startY: 65, styles: {fontSize: 8}})
+    doc.autoTable({ html: '#table-peserta', startY: 65, styles: { fontSize: 8 } })
     doc.text("Questions", 20, doc.lastAutoTable.finalY + 10);
-    doc.autoTable({ html: '#table-pertanyaan', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+    doc.autoTable({ html: '#table-pertanyaan', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
+    doc.text("Poll", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-poll', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
     doc.text("Questioner", 20, doc.lastAutoTable.finalY + 10);
-    doc.autoTable({ html: '#table-kuesioner', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+    doc.autoTable({ html: '#table-kuesioner', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
     doc.text("Pre Test & Post Test", 20, doc.lastAutoTable.finalY + 10);
-    doc.autoTable({ html: '#table-test', startY: doc.lastAutoTable.finalY + 15, styles: {fontSize: 8}})
+    doc.autoTable({ html: '#table-test', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
+
+    doc.text("Essay", 20, doc.lastAutoTable.finalY + 10);
+    doc.autoTable({ html: '#table-essay', startY: doc.lastAutoTable.finalY + 15, styles: { fontSize: 8 } })
 
     doc.save(`${this.state.judul}.pdf`);
   }
@@ -388,14 +487,6 @@ export default class WebinarRiwayat extends Component {
       }
       return (
         <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
-          <div className="float-right" style={{ width: 400 }}>
-            <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{fontSize:12, width:'auto', float:'right'}} onChange={(e) => this.filterPeserta(e)}>
-              <option value="Semua" selected> All</option>
-              <option value="Hadir"> Present</option>
-              <option value="Tidak Hadir"> Not Present</option>
-            </select>
-            <Button className="btn btn-icademy-primary btn-12" style={{float:'right', marginRight:'20px'}} onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
-          </div>
           <table id="table-peserta" className="table table-striped">
             <thead>
               <tr>
@@ -421,11 +512,11 @@ export default class WebinarRiwayat extends Component {
                   let diffHour = Math.floor((diff % 86400000) / 3600000);
                   let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
                   let durasi = item.jam_mulai ? diffHour + ' hr ' + diffMin + ' min' : '-';
-                  
+
                   let audio = '';
                   if (item.audio !== 'Off') {
                     let splitAudio = item.audio.split(':');
-                    audio = splitAudio.length > 2 ? `${pad(splitAudio[0])}:${pad(splitAudio[1])}:${pad(splitAudio[2])}` : `${pad(splitAudio[0])}:${pad(splitAudio[1])}`; 
+                    audio = splitAudio.length > 2 ? `${pad(splitAudio[0])}:${pad(splitAudio[1])}:${pad(splitAudio[2])}` : `${pad(splitAudio[0])}:${pad(splitAudio[1])}`;
                   } else {
                     audio = item.audio;
                   }
@@ -433,18 +524,24 @@ export default class WebinarRiwayat extends Component {
                   let camera = '';
                   if (item.camera !== 'Off') {
                     let splitCamera = item.camera.split(':');
-                    camera = splitCamera.length > 2 ? `${pad(splitCamera[0])}:${pad(splitCamera[1])}:${pad(splitCamera[2])}` : `${pad(splitCamera[0])}:${pad(splitCamera[1])}`; 
+                    camera = splitCamera.length > 2 ? `${pad(splitCamera[0])}:${pad(splitCamera[1])}:${pad(splitCamera[2])}` : `${pad(splitCamera[0])}:${pad(splitCamera[1])}`;
                   } else {
                     camera = item.camera;
                   }
 
                   return (<tr key={i}>
-                    <td><input type="checkbox" id={i} checked={items[i].checked} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                    {
+
+                      (item.status == 2) ?
+                        <td><input type="checkbox" id={i} checked={items[i].checked} onClick={(e) => this.clickAction(e, i, items[i])} onChange={(e) => this.handleChangeChecked(e, item)} /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                        :
+                        <td><input type="checkbox" id={i} checked={null} onChange={(e) => this.handleChangeChecked(e, item)} disabled /> {item.status_sertifikat ? 'Sent' : 'No'}</td>
+                    }
                     <td>{item.name}</td>
                     <td>{item.email}</td>
                     <td>{item.phone}</td>
                     <td>{item.status == 2 ? 'Present' : 'Not present'}</td>
-                    <td>{moment(jamMulai, 'HH:mm').local().format('HH:mm')}</td>
+                    <td>{item.jam_mulai ? moment(jamMulai, 'HH:mm').local().format('HH:mm') : '-'}</td>
                     <td>{item.voucher ? 'Guest' : 'Participants'}</td>
                     <td>{durasi}</td>
                     <td>{audio}</td>
@@ -479,6 +576,36 @@ export default class WebinarRiwayat extends Component {
                   <td>{item.phone}</td>
                   <td>{item.jenis_peserta == 'tamu' ? 'Guest' : 'Participants'}</td>
                   <td>{item.description}</td>
+                </tr>)
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+    );
+    const Poll = ({ items }) => (
+      <div className="wrap" style={{ marginTop: 10, maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden', paddingRight: 10 }}>
+        <table id="table-poll" className="table table-striped">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Question</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              items.map((item, i) => {
+                return (<tr key={i}>
+                  <td>{i + 1}</td>
+                  <td><div style={{ float: 'left' }} dangerouslySetInnerHTML={{ __html: item.tanya }} /></td>
+                  <td>
+                    {
+                      item.answer.map((x, i) =>
+                        <><div>{x.value} ( {x.percent}% )</div>{item.answer[i + 1] ? <br /> : ''}</>
+                      )
+                    }
+                  </td>
                 </tr>)
               })
             }
@@ -653,117 +780,137 @@ export default class WebinarRiwayat extends Component {
               </div>
               {
                 this.state.isLoading ?
-                <div>Loading...</div>
-                :
-                <>
-                <div style={{ marginTop: '10px' }}>
-                  <div className="row">
-                    <div className="col-sm-8">
-                      <h5 style={{fontSize:17}}>{this.state.judul}</h5>
-                      <h6>Speaker : {this.state.pembicara.toString()}</h6>
-                      <p>
-                        <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
-                      </p>
-                      <h6>{moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h6>
-                    </div>
-  
-                    <div className="col-sm-4">
-                      <button
-                        className="btn btn-icademy-primary btn-12"
-                        onClick={this.downloadPDF.bind(this)}
-                        style={{ marginRight: 14 }}
-                      >
-                        <i className="fa fa-file-pdf"></i>
-                          Download PDF Report
-                        </button>
-                      <button
-                        className="btn btn-icademy-primary btn-12"
-                        onClick={e => this.setState({ isModalDownloadFileWebinar: true })}
-                        style={{ marginRight: 14 }}
-                      >
-                        <i className="fa fa-folder"></i>
-                          Files
-                        </button>
-                      {/* <Link to={`/webinar/kuesioner/${this.props.match.params.webinarId}`} >
+                  <div>Loading...</div>
+                  :
+                  <>
+                    <div style={{ marginTop: '10px' }}>
+                      <div className="row">
+                        <div className="col-sm-8">
+                          <h5 style={{ fontSize: 17 }}>{this.state.judul}</h5>
+                          <h6>Speaker : {this.state.pembicara.toString()}</h6>
+                          <p>
+                            <div dangerouslySetInnerHTML={{ __html: this.state.isi }} />
+                          </p>
+                          <h6>{moment(this.state.tanggal).local().format('DD MMMM YYYY HH:mm')} - {moment(this.state.tanggalEnd).local().format('DD MMMM YYYY HH:mm')}</h6>
+                        </div>
+
+                        <div className="col-sm-4">
+                          <button
+                            className="btn btn-icademy-primary btn-12"
+                            onClick={this.downloadPDF.bind(this)}
+                            style={{ marginRight: 14 }}
+                          >
+                            <i className="fa fa-file-pdf"></i>
+                            Download PDF Report
+                          </button>
+                          <button
+                            className="btn btn-icademy-primary btn-12"
+                            onClick={e => this.setState({ isModalDownloadFileWebinar: true })}
+                            style={{ marginRight: 14 }}
+                          >
+                            <i className="fa fa-folder"></i>
+                            Files
+                          </button>
+                          {/* <Link to={`/webinar/kuesioner/${this.props.match.params.webinarId}`} >
                         <button
                           className="btn btn-icademy-primary"
                         >
                           <i className="fa fa-file"></i>
                           Feedback Form
                         </button></Link> */}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-  
-                <div className="row mt-2">
-                  <div className="col-sm-4">
-                    <Doughnut data={dataSelesai} />
-                  </div>
-                  <div className="col-sm-4">
-                    <Doughnut data={dataVia} />
-                  </div>
-                </div>
-  
-                <div className="row mt-5">
-                  <div className="col-sm-12">
-                    <ReactHTMLTableToExcel
-                      className="btn btn-icademy-warning btn-12"
-                      table="table-peserta"
-                      filename={'Attendance ' + this.state.judul}
-                      sheet="Attendance"
-                      buttonText="Export Attendance to Excel" />
-                    <Peserta items={this.state.peserta} />
-                  </div>
-                </div>
-  
-                <div className="row mt-5">
-                  <div className="col-sm-12">
-                    <ReactHTMLTableToExcel
-                      className="btn btn-icademy-warning btn-12"
-                      table="table-pertanyaan"
-                      filename={'Questions ' + this.state.judul}
-                      sheet="Questions"
-                      buttonText="Export Questions to Excel" />
-                    <Pertanyaan items={this.state.qna} />
-                  </div>
-                </div>
-  
-                <div className="row mt-5">
-                  <div className="col-sm-12">
-                    <ReactHTMLTableToExcel
-                      className="btn btn-icademy-warning btn-12"
-                      table="table-kuesioner"
-                      filename={'Feedback Form Result ' + this.state.judul}
-                      sheet="Feedback Form"
-                      buttonText="Export Feedback Form to Excel" />
-                    <JawabanKuesioner items={this.state.jawabanKuesioner} />
-                  </div>
-                </div>
-  
-                <div className="row mt-5">
-                  <div className="col-sm-12">
-                    <ReactHTMLTableToExcel
-                      className="btn btn-icademy-warning btn-12"
-                      table="table-test"
-                      filename={'Test Result ' + this.state.judul}
-                      sheet="Test"
-                      buttonText="Export Test Result to Excel" />
-                    <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
-                  </div>
-                </div>
-  
-                <div className="row mt-5">
-                  <div className="col-sm-12">
-                    <ReactHTMLTableToExcel
-                      className="btn btn-icademy-warning btn-12"
-                      table="table-essay"
-                      filename={'Test Result ' + this.state.judul}
-                      sheet="Test"
-                      buttonText="Export Essay Result to Excel" />
-                    <HasilEssay items={this.state.hasilEssay} />
-                  </div>
-                </div>
-                </>
+
+                    <div className="row mt-2">
+                      <div className="col-sm-4">
+                        <Doughnut data={dataSelesai} />
+                      </div>
+                      <div className="col-sm-4">
+                        <Doughnut data={dataVia} />
+                      </div>
+                    </div>
+
+                    <div className="row mt-5">
+                      <div className="col-sm-12">
+                        <ReactHTMLTableToExcel
+                          className="btn btn-icademy-warning btn-12"
+                          table="table-peserta"
+                          filename={'Attendance ' + this.state.judul}
+                          sheet="Attendance"
+                          buttonText="Export Attendance to Excel" />
+                        <div className="wrap float-right" style={{ width: 400 }}>
+                          <select name="filterPeserta" value={this.state.filterPeserta} className="form-control" style={{ fontSize: 12, width: 'auto', float: 'right' }} onChange={(e) => this.filterPeserta(e)}>
+                            <option value="Semua" selected> All</option>
+                            <option value="Hadir"> Present</option>
+                            <option value="Tidak Hadir"> Not Present</option>
+                          </select>
+                          <Button className="btn btn-icademy-primary btn-12" style={{ float: 'right', marginRight: '20px' }} onClick={this.modalSertifikat.bind(this)}>Create Certificate</Button>
+                        </div>
+                        <Peserta items={this.state.peserta} />
+                      </div>
+                    </div>
+
+                    <div className="row mt-5">
+                      <div className="col-sm-12">
+                        <ReactHTMLTableToExcel
+                          className="btn btn-icademy-warning btn-12"
+                          table="table-pertanyaan"
+                          filename={'Questions ' + this.state.judul}
+                          sheet="Questions"
+                          buttonText="Export Questions to Excel" />
+                        <Pertanyaan items={this.state.qna} />
+                      </div>
+                    </div>
+
+                    <div className="row mt-5">
+                      <div className="col-sm-12">
+                        <ReactHTMLTableToExcel
+                          className="btn btn-icademy-warning btn-12"
+                          table="table-poll"
+                          filename={'Poll ' + this.state.judul}
+                          sheet="Questions"
+                          buttonText="Export Poll to Excel" />
+                        <Poll items={this.state.poll} />
+                      </div>
+                    </div>
+
+                    <div className="row mt-5">
+                      <div className="col-sm-12">
+                        <ReactHTMLTableToExcel
+                          className="btn btn-icademy-warning btn-12"
+                          table="table-kuesioner"
+                          filename={'Feedback Form Result ' + this.state.judul}
+                          sheet="Feedback Form"
+                          buttonText="Export Feedback Form to Excel" />
+                        <JawabanKuesioner items={this.state.jawabanKuesioner} />
+                      </div>
+                    </div>
+
+                    <div className="row mt-5">
+                      <div className="col-sm-12">
+                        <ReactHTMLTableToExcel
+                          className="btn btn-icademy-warning btn-12"
+                          table="table-test"
+                          filename={'Test Result ' + this.state.judul}
+                          sheet="Test"
+                          buttonText="Export Test Result to Excel" />
+                        <HasilTest items={this.state.hasilTest} peserta={this.state.peserta} />
+                      </div>
+                    </div>
+
+                    <div className="row mt-5">
+                      <div className="col-sm-12">
+                        <ReactHTMLTableToExcel
+                          className="btn btn-icademy-warning btn-12"
+                          table="table-essay"
+                          filename={'Test Result ' + this.state.judul}
+                          sheet="Test"
+                          buttonText="Export Essay Result to Excel" />
+                        <HasilEssay items={this.state.hasilEssay} />
+                      </div>
+                    </div>
+                  </>
               }
             </Card.Body>
           </Card>
@@ -777,21 +924,24 @@ export default class WebinarRiwayat extends Component {
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                 Create Certificate
-          </Modal.Title>
+              </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Form>
                 <Form.Group>
-                  <div className="certificate-view" style={{ height : this.state.certificate_orientation === 'landscape' ? 'auto' : '750px', width: this.state.certificate_orientation === 'landscape' ? '750px' : '600px', padding: '10px', textAlign: 'center', border: '3px solid #787878', fontSize: '25px', position:'relative',  margin: 'auto'}}>
-                  {
-                  this.state.certificate_background ? 
-                  <img src={this.state.certificate_background} style={{width:'100%', height:'100%', position:'absolute', top:'0px', left:'0px', zIndex:'0'}} />
-                  : null
-                  }
-                    <div style={{ height : this.state.certificate_orientation === 'landscape' ? 'auto' : '730px', width: this.state.certificate_orientation === 'landscape' ? '724px' : '574px', padding: '10px', textAlign: 'center', border: this.state.certificate_background ? '' : '1px solid #787878', position:'relative', paddingTop : this.state.certificate_orientation === 'landscape' ? '10px' : '100px' }}><br />
+                  <div className="certificate-view" style={{ height: this.state.certificate_orientation === 'landscape' ? 'auto' : '750px', width: this.state.certificate_orientation === 'landscape' ? '750px' : '600px', padding: '10px', textAlign: 'center', border: '3px solid #787878', fontSize: '25px', position: 'relative', margin: 'auto' }}>
+                    {
+                      this.state.certificate_background ?
+                        <img src={this.state.certificate_background} style={{ width: '100%', height: '100%', position: 'absolute', top: '0px', left: '0px', zIndex: '0' }} />
+                        : null
+                    }
+                    <div style={{ height: this.state.certificate_orientation === 'landscape' ? 'auto' : '730px', width: this.state.certificate_orientation === 'landscape' ? '724px' : '574px', padding: '10px', textAlign: 'center', border: this.state.certificate_background ? '' : '1px solid #787878', position: 'relative', paddingTop: this.state.certificate_orientation === 'landscape' ? '10px' : '100px' }}><br />
 
                       <label for='cert_logo' style={{ display: 'block' }}>
-                        <img style={{ height: '50px', cursor: 'pointer' }} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo} />
+                        <span style={{ position: 'relative' }}>
+                          <img style={{ height: '75px', cursor: 'pointer' }} src={this.state.cert_logo == '' || this.state.cert_logo == null ? this.state.companyLogo : typeof this.state.cert_logo === 'object' && this.state.cert_logo !== null ? URL.createObjectURL(this.state.cert_logo) : this.state.cert_logo} />
+                          <i className="fa fa-edit" style={{ fontSize: 14, position: 'absolute', right: 0 }}></i>
+                        </span>
                       </label>
                       <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="cert_logo" name="cert_logo" onChange={this.handleChange} className="ml-5 btn btn-sm btn-default" />
                       <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
@@ -808,29 +958,32 @@ export default class WebinarRiwayat extends Component {
                       </span> <br /><br />
                       <span style={{ fontSize: '18px' }}><b><input type='text' onChange={this.handleChangeText} name='cert_topic' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} value={this.state.cert_topic} /></b></span> <br /><br />
                       <span style={{ fontSize: '10px' }}>{moment(this.state.tanggal).local().format('dddd, MMMM Do YYYY')}</span><br />
-                      <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                         {
-                          this.state.sign.map((item, index)=>
-                          <span>
-                          <label style={{ display: 'block', cursor: 'pointer' }}>
-                            <img style={{ height: '80px' }} src={this.state.sign[index].signature == '' || this.state.sign[index].signature == null ? `/newasset/imginput.png` : typeof this.state.sign[index].signature === 'object' && this.state.sign[index].signature !== null ? URL.createObjectURL(this.state.sign[index].signature) : this.state.sign[index].signature} />
-                            <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChangeArr} data-index={index} className="ml-5 btn btn-sm btn-default" />
-                          </label>
-                          <span style={{ fontSize: '12px' }}>
-                            <input type='text' onChange={this.handleChangeTextArr} data-index={index} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Name' value={this.state.sign[index].cert_sign_name} />
-                          </span>
-                          <span style={{ fontSize: '12px' }}>
-                            <input type='text' onChange={this.handleChangeTextArr} data-index={index} name='cert_sign_title' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Title' value={this.state.sign[index].cert_sign_title} />
-                          </span>
-                          </span>
+                          this.state.sign.map((item, index) =>
+                            <span>
+                              <label style={{ display: 'block', cursor: 'pointer' }}>
+                                <span style={{ position: 'relative' }}>
+                                  <img style={{ height: '80px' }} src={this.state.sign[index].signature == '' || this.state.sign[index].signature == null ? `/newasset/imginput.png` : typeof this.state.sign[index].signature === 'object' && this.state.sign[index].signature !== null ? URL.createObjectURL(this.state.sign[index].signature) : this.state.sign[index].signature} />
+                                  <i className="fa fa-edit" style={{ fontSize: 14, position: 'absolute', right: 0 }}></i>
+                                </span>
+                                <input type="file" style={{ display: 'none', cursor: 'pointer' }} id="signature" name="signature" onChange={this.handleChangeArr} data-index={index} className="ml-5 btn btn-sm btn-default" />
+                              </label>
+                              <span style={{ fontSize: '12px' }}>
+                                <input type='text' onChange={this.handleChangeTextArr} data-index={index} name='cert_sign_name' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Name' value={this.state.sign[index].cert_sign_name} />
+                              </span>
+                              <span style={{ fontSize: '12px' }}>
+                                <input type='text' onChange={this.handleChangeTextArr} data-index={index} name='cert_sign_title' style={{ width: '80%', border: 'none', borderBottom: '1px dashed #CCC', textAlign: 'center' }} placeholder='Title' value={this.state.sign[index].cert_sign_title} />
+                              </span>
+                            </span>
                           )
                         }
                       </div>
-                      <br/><br/>
+                      <br /><br />
                       {
                         this.state.sign.length < 3 ?
-                        <span style={{ fontSize: '16px', cursor:'pointer' }} onClick={() => {this.state.sign.push({ cert_sign_name: '', cert_sign_title: '', signature: '' }); this.forceUpdate();}}>+ Add Signature</span>
-                        : null
+                          <span style={{ fontSize: '16px', cursor: 'pointer' }} onClick={() => { this.state.sign.push({ cert_sign_name: '', cert_sign_title: '', signature: '' }); this.forceUpdate(); }}>+ Add Signature</span>
+                          : null
                       }
                     </div>
                   </div>
@@ -840,8 +993,8 @@ export default class WebinarRiwayat extends Component {
             </Modal.Body>
             <Modal.Footer>
               <Button className="btn btn-icademy-primary" onClick={() => this.sertifikat()}>
-              Send Certificate to Selected Participant's Email
-          </Button>
+                Send Certificate to Selected Participant's Email
+              </Button>
             </Modal.Footer>
           </Modal>
         </div>

@@ -74,7 +74,7 @@ class FormUser extends Component {
   save = (e) => {
     this.setState({isSaving: true})
     e.preventDefault();
-    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || this.state.imageIdentityPreview === 'assets/images/no-image.png' || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
+    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false})
     }
@@ -477,7 +477,7 @@ class FormUser extends Component {
                                                     </div>
                                                     <div className="row">
                                                         <div className="form-field-top-label">
-                                                            <label for="imageIdentity">Identity Card Photo<required>*</required></label>
+                                                            <label for="imageIdentity">Identity Card Photo</label>
                                                             <center>
                                                                 <label style={{cursor:'pointer', borderRadius:'4px', overflow:'hidden'}}>
                                                                     <a href={this.state.imageIdentityPreview} target="_blank">
@@ -502,7 +502,7 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="license_number">License Number</label>
-                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm || this.props.match.params.id}/>
+                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         {
                                                             this.state.license_number ?

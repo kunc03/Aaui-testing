@@ -10,8 +10,10 @@ import { MultiSelect } from 'react-sm-select';
 import TableFiles from '../../files/_files';
 import TableMeetings from '../../meeting/meeting';
 import WebinarKuesionerAdd from './kuesioneradd';
+import WebinarPollAdd from './polladd';
 import WebinarPretestAdd from './pretestadd';
 import WebinarPosttestAdd from './posttestadd';
+import WebinarPollingAdd from './pollingadd';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SocketContext from '../../../socket';
@@ -68,6 +70,9 @@ class WebinarAddClass extends Component {
     optionsImportTC: [],
     loadingImportTC: false,
 
+    // poll
+    modalPolling: false,
+
     // form tamu
     nama: '',
     email: '',
@@ -83,6 +88,7 @@ class WebinarAddClass extends Component {
     modalKuesioner: false,
     modalPretest: false,
     modalPosttest: false,
+    modalPolling: false,
 
     //role
     sekretarisId: [],
@@ -127,9 +133,14 @@ class WebinarAddClass extends Component {
       isModalPembicara: false,
       isModalPeserta: false,
       modalKuesioner: false,
+      modalPolling: false,
       modalPretest: false,
       modalPosttest: false,
       modalEssay: false,
+      modalPolling: false,
+      importId: [],
+      importIdTC: [],
+      pesertaId: []
     });
   }
 
@@ -174,7 +185,7 @@ class WebinarAddClass extends Component {
       id: this.state.webinarId,
       pengguna: this.state.kirimEmailPeserta,
       tamu: this.state.kirimEmailTamu,
-      time: `${moment.tz(this.state.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} until ${moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`
+      time: `${moment.tz(this.state.tanggal, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} until ${moment.tz(this.state.tanggalEnd, moment.tz.guess(true)).format("DD MMMM YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`
     };
 
     API.post(`${API_SERVER}v2/webinar/send_email`, form).then(res => {
@@ -209,7 +220,7 @@ class WebinarAddClass extends Component {
     })
   }
   handleDynamicInput = (e) => {
-      this.setState({ isi: e });
+    this.setState({ isi: e });
   }
   componentDidMount() {
     this.fetchData();
@@ -227,13 +238,13 @@ class WebinarAddClass extends Component {
         judul: res.data.result.judul,
         isi:
           res.data.result.isi ? res.data.result.isi
-          :
-          `Welcome to "${res.data.result.judul}" webinar.<br/>
+            :
+            `<p>Welcome to "${res.data.result.judul}" webinar.<br/>
           If this webinar is accessible, a "Join the webinar" button will appear at the top right.<br/>
           You can download the attached file via the "Documents" section at the bottom left.<br/>
           You can ask questions during the webinar via the "Questions" section at the bottom right.<br/>
           <br/>
-          This webinar uses ICADEMY.`,
+          This webinar uses ICADEMY.<p>`,
         tanggal: tanggal,
         tanggalEnd: tanggalEnd,
         jamMulai: jam_mulai,
@@ -250,7 +261,7 @@ class WebinarAddClass extends Component {
         essay: res.data.result.essay,
         essay_sent: res.data.result.essay_sent
       })
-      if (!this.state.gambar){
+      if (!this.state.gambar) {
         this.setState({
           gambar: res.data.result.gambar,
         })
@@ -270,7 +281,7 @@ class WebinarAddClass extends Component {
         });
       });
     })
-    
+
     API.get(`${API_SERVER}v2/webinar/list-by-company-plain/${this.state.companyId}`).then(res => {
       if (res.data.error) {
         // toast.warning("Error fetch API");
@@ -285,12 +296,12 @@ class WebinarAddClass extends Component {
         });
       }
     })
-    
+
     API.get(`${API_SERVER}v2/training/company/${this.state.companyId}`).then(res => {
-      if (res.data.error){
-          toast.error('Error read company list for import feature')
+      if (res.data.error) {
+        toast.error('Error read company list for import feature')
       }
-      else{
+      else {
         this.setState({ optionsImportTC: [] })
         res.data.result.map(item => {
           this.state.optionsImportTC.push({
@@ -332,15 +343,19 @@ class WebinarAddClass extends Component {
       end_time: moment.tz(this.state.tanggalEnd, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       status: this.state.status
     };
-    API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
-      if (res.data.error)
-        toast.warning("Error fetch API")
-      else
-        if (this.state.gambar) {
-          let formData = new FormData();
-          formData.append('gambar', this.state.gambar);
-          await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
-        }
+    if (form.start_time > form.end_time) {
+      toast.warning(`End Time cannot be less than Start Time `);
+    } else {
+
+      API.put(`${API_SERVER}v2/webinar/detail`, form).then(async res => {
+        if (res.data.error)
+          toast.warning("Error fetch API")
+        else
+          if (this.state.gambar) {
+            let formData = new FormData();
+            formData.append('gambar', this.state.gambar);
+            await API.put(`${API_SERVER}v2/webinar/cover/${form.id}`, formData);
+          }
 
       // send notification
       let oldJamMul = moment(this.state.oldJamMulai).tz(moment.tz.guess(true)).format('DD MMMM YYYY HH:mm');
@@ -348,17 +363,19 @@ class WebinarAddClass extends Component {
       if (oldJamMul != jamMul) {
         let sendNotif = {
           type: 7,
+          company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
           user_id: this.state.peserta.map(item => item.user_id),
           activity_id: this.state.webinarId,
-          desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (${moment.tz.guess(true)} Time Zone)`,
-          dest: `${APPS_SERVER}webinars`,
+          desc: `"${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${oldJamMul} has changed to ${jamMul} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+          dest: `${APPS_SERVER}webinar/live/${this.state.webinarId}`,
         };
-        API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res=>{
+        API.post(`${API_SERVER}v1/notification/broadcast-bulk`, sendNotif).then(res => {
           back && this.props.history.goBack();
         })
       }
       toast.success("Save webinar information")
     })
+    }
   }
 
   backButton() {
@@ -382,10 +399,11 @@ class WebinarAddClass extends Component {
             this.fetchData();
             let sendNotif = {
               type: 7,
+              company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
               user_id: formData.userId,
               activity_id: this.state.webinarId,
-              desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
-              dest: `${APPS_SERVER}webinars`,
+              desc: `You are invited to "${this.state.judul}" ${this.props.match.params.training === 'by-training' ? 'live Class' : 'webinar'} that will start on ${moment(this.state.tanggal).local().format("DD MMMM YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone`,
+              dest: `${APPS_SERVER}webinar/live/${this.state.webinarId}`,
             };
             API.post(`${API_SERVER}v1/notification/broadcast`, sendNotif);
           }
@@ -401,13 +419,13 @@ class WebinarAddClass extends Component {
       webinarId: this.state.webinarId,
       importId: this.state.importId.toString(),
     };
-    if (formData.importId){
-      this.setState({loadingImport: true});
+    if (formData.importId) {
+      this.setState({ loadingImport: true });
       API.post(`${API_SERVER}v2/webinar/import-participant`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Copy participant & guest failed')
-            this.setState({loadingImport: false});
+            this.setState({ loadingImport: false });
           } else {
             toast.success(`Success copy participant & guest`)
             this.setState({ importId: [], loadingImport: false });
@@ -416,18 +434,18 @@ class WebinarAddClass extends Component {
         }
       })
     }
-    else{
+    else {
       toast.warning('Silahkan pilih webinar terlebih dahulu')
     }
   }
 
   importGuest = e => {
     e.preventDefault();
-    if (!this.state.file){
+    if (!this.state.file) {
       toast.warning('Choose the file first')
     }
-    else{
-      this.setState({isUploading: true})
+    else {
+      this.setState({ isUploading: true })
       let form = new FormData();
       form.append('webinar_id', this.state.webinarId);
       form.append('file', this.state.file)
@@ -437,7 +455,7 @@ class WebinarAddClass extends Component {
             toast.error(res.data.result)
             this.setState({ isUploading: false, file: '' });
           }
-          else{
+          else {
             toast.success('Data import success')
             this.setState({ isUploading: false, file: '' });
             this.fetchData();
@@ -446,20 +464,20 @@ class WebinarAddClass extends Component {
       })
     }
   }
-  
+
   importPesertaTC = e => {
     e.preventDefault();
     const formData = {
       webinarId: this.state.webinarId,
       importId: this.state.importIdTC.toString(),
     };
-    if (formData.importId){
-      this.setState({loadingImportTC: true});
+    if (formData.importId) {
+      this.setState({ loadingImportTC: true });
       API.post(`${API_SERVER}v2/webinar/import-participant-tc`, formData).then(res => {
         if (res.status === 200) {
           if (res.data.error) {
             toast.error('Copy participant failed')
-            this.setState({loadingImportTC: false});
+            this.setState({ loadingImportTC: false });
           } else {
             toast.success(`Success copy participant`)
             this.setState({ importIdTC: [], loadingImportTC: false });
@@ -468,7 +486,7 @@ class WebinarAddClass extends Component {
         }
       })
     }
-    else{
+    else {
       toast.warning('Silahkan pilih training company terlebih dahulu')
     }
   }
@@ -516,7 +534,7 @@ class WebinarAddClass extends Component {
   }
 
   handleDynamicInputEssay = (e) => {
-      this.setState({ essay: e });
+    this.setState({ essay: e });
   }
 
   saveEssay = (e) => {
@@ -546,9 +564,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th>{ t('name') }</th>
+            <th>{t('name')}</th>
             <th>Email</th>
-            <th>{ t('phone') }</th>
+            <th>{t('phone')}</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -563,7 +581,7 @@ class WebinarAddClass extends Component {
                 <td>{item.nama}</td>
                 <td>{item.email}</td>
                 <td>{item.telepon}</td>
-                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Sent' : item.status == 2 ? 'Present' : item.status == 3 ? 'Not Present' : 'Not Yet Sent'}</td>
                 <td>
                   <i className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
@@ -579,9 +597,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allChecked} checked={this.state.allChecked} onChange={this.handleAllCheck} /></th>
-            <th>{ t('name') }</th>
+            <th>{t('name')}</th>
             <th>Email</th>
-            <th>{ t('phone') }</th>
+            <th>{t('phone')}</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -602,7 +620,7 @@ class WebinarAddClass extends Component {
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
-                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Sent' : item.status == 2 ? 'Present' : item.status == 3 ? 'Not Present' : 'Not Yet Sent'}</td>
                 <td>
                   <i onClick={this.deletePeserta.bind(this, item.id)} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
@@ -618,9 +636,9 @@ class WebinarAddClass extends Component {
         <thead>
           <tr>
             <th><input type="checkbox" value={this.state.allCheckedTamu} checked={this.state.allCheckedTamu} onChange={this.handleAllCheckTamu} /></th>
-            <th>{ t('name') }</th>
+            <th>{t('name')}</th>
             <th>Email</th>
-            <th>{ t('phone') }</th>
+            <th>{t('phone')}</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -641,7 +659,7 @@ class WebinarAddClass extends Component {
                 <td>{item.name}</td>
                 <td>{item.email}</td>
                 <td>{item.phone}</td>
-                <td>{item.status == 1 ? 'Terkirim' : item.status == 2 ? 'Hadir' : item.status == 3 ? 'Tidak Hadir' : 'Belum Dikirim'}</td>
+                <td>{item.status == 1 ? 'Sent' : item.status == 2 ? 'Present' : item.status == 3 ? 'Not Present' : 'Not Yet Sent'}</td>
                 <td>
                   <i onClick={this.deleteTamu.bind(this, item.id)} data-email={item.email} className="fa fa-trash" style={{ cursor: 'pointer' }}></i>
                 </td>
@@ -684,8 +702,12 @@ class WebinarAddClass extends Component {
                       <button onClick={() => this.setState({ modalPretest: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Pre Test</button>
                     }
                     {
-                      this.state.id && (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
                       <button onClick={() => this.setState({ modalEssay: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Essay</button>
+                    }
+                    {
+                      (levelUser != 'client' || this.state.sekretarisId.filter((item) => item.user_id == this.state.userId).length >= 1) &&
+                      <button onClick={() => this.setState({ modalPolling: true })} className="btn btn-icademy-primary float-right" style={{ marginRight: 10 }}><i className="fa fa-plus"></i> Polling</button>
                     }
                   </div>
                   <p className="m-b-0">
@@ -715,70 +737,70 @@ class WebinarAddClass extends Component {
 
                     <div className="form-group">
                       <label className="bold">Description<required>*</required></label>
-                      <input id={`myFile`} type="file" name={`myFile`} style={{display:"none"}} onChange="" />
+                      <input id={`myFile`} type="file" name={`myFile`} style={{ display: "none" }} onChange="" />
                       {
-                          this.state.isi !== 'Loading...' ?
+                        this.state.isi !== 'Loading...' ?
                           <Editor
-                              apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
-                              initialValue={this.state.isi}
-                              value={this.state.isi}
-                              init={{
+                            apiKey="j18ccoizrbdzpcunfqk7dugx72d7u9kfwls7xlpxg7m21mb5"
+                            initialValue={this.state.isi}
+                            value={this.state.isi}
+                            init={{
                               height: 400,
                               width: "100%",
                               menubar: false,
                               convert_urls: false,
                               image_class_list: [
-                                  {title: 'None', value: ''},
-                                  {title: 'Responsive', value: 'img-responsive'},
-                                  {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
+                                { title: 'None', value: '' },
+                                { title: 'Responsive', value: 'img-responsive' },
+                                { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
                               ],
                               file_browser_callback_types: 'image media',
                               file_picker_callback: function (callback, value, meta) {
-                                  if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
+                                if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
                                   var input = document.getElementById(`myFile`);
                                   input.click();
                                   input.onchange = function () {
 
-                                      var dataForm = new FormData();
-                                      dataForm.append('file', this.files[0]);
+                                    var dataForm = new FormData();
+                                    dataForm.append('file', this.files[0]);
 
-                                      window.$.ajax({
+                                    window.$.ajax({
                                       url: `${API_SERVER}v2/media/upload`,
                                       type: 'POST',
                                       data: dataForm,
                                       processData: false,
                                       contentType: false,
-                                      success: (data)=>{
-                                          callback(data.result.url);
-                                          this.value = '';
+                                      success: (data) => {
+                                        callback(data.result.url);
+                                        this.value = '';
                                       }
-                                      })
+                                    })
 
                                   };
-                                  }
+                                }
                               },
                               plugins: [
-                                  "advlist autolink lists link image charmap print preview anchor",
-                                  "searchreplace visualblocks code fullscreen",
-                                  "insertdatetime media table paste code help wordcount"
+                                "advlist autolink lists link image charmap print preview anchor",
+                                "searchreplace visualblocks code fullscreen",
+                                "insertdatetime media table paste code help wordcount"
                               ],
-                              media_live_embeds : true,
+                              media_live_embeds: true,
                               toolbar:
-                                  // eslint-disable-next-line no-multi-str
-                                  "undo redo | fontsizeselect bold italic backcolor forecolor | \
+                                // eslint-disable-next-line no-multi-str
+                                "undo redo | fontsizeselect bold italic backcolor forecolor | \
                               alignleft aligncenter alignright alignjustify | image | media | \
                                   bullist numlist outdent indent | removeformat | help"
-                              }}
-                              onEditorChange={e => this.handleDynamicInput(e)}
+                            }}
+                            onEditorChange={e => this.handleDynamicInput(e)}
                           />
-                          :null
+                          : null
                       }
                     </div>
 
                     <div className="form-group row">
-                      <div style={{paddingLeft:'15px'}}>
+                      <div style={{ paddingLeft: '15px' }}>
                         <label>Start Time<required>*</required></label>
-                        <div style={{clear:'both'}}>
+                        <div style={{ clear: 'both' }}>
                           <DatePicker
                             dateFormat="dd MMMM yyyy HH:mm"
                             selected={this.state.tanggal}
@@ -788,9 +810,9 @@ class WebinarAddClass extends Component {
                           />
                         </div>
                       </div>
-                      <div style={{marginLeft:20}}>
+                      <div style={{ marginLeft: 20 }}>
                         <label>End Time<required>*</required></label>
-                        <div style={{clear:'both'}}>
+                        <div style={{ clear: 'both' }}>
                           <DatePicker
                             dateFormat="dd MMMM yyyy HH:mm"
                             selected={this.state.tanggalEnd}
@@ -853,31 +875,31 @@ class WebinarAddClass extends Component {
 
                     {
                       this.props.match.params.training === 'by-training' ?
-                      null :
-                      <div className="form-group row">
-                        <div className="col-sm-12">
-                          <label className="bold">Folder & File</label>
+                        null :
+                        <div className="form-group row">
                           <div className="col-sm-12">
-                            <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                              { this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
+                            <label className="bold">Folder & File</label>
+                            <div className="col-sm-12">
+                              <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                                {this.state.dokumenId ? <TableFiles access_project_admin={this.state.access_project_admin} projectId={this.state.dokumenId} webinarId={this.state.webinarId} /> : 'you have not chosen the location of the folder where the document will be saved. Edit the webinar and select a folder to enable this feature.'}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                     }
                     {
                       this.props.match.params.training === 'by-training' ?
-                      null :
-                      <div className="form-group row">
-                        <div className="col-sm-12">
-                          <label className="bold">Meeting Room</label>
+                        null :
+                        <div className="form-group row">
                           <div className="col-sm-12">
-                            <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
-                              <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
+                            <label className="bold">Meeting Room</label>
+                            <div className="col-sm-12">
+                              <div id="scrollin" style={{ height: '300px', marginBottom: '0px', overflowY: 'scroll', border: '1px solid #CCC' }}>
+                                <TableMeetings webinarId={this.state.webinarId} access_project_admin={this.state.access_project_admin} projectId={this.props.match.params.projectId} />
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
                     }
 
                     {/* <div className="form-group row">
@@ -977,7 +999,7 @@ class WebinarAddClass extends Component {
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
                   <label>Copy from other webinar</label>
-                  <div class="input-group" style={{background: 'none'}}>
+                  <div class="input-group" style={{ background: 'none' }}>
                     <MultiSelect
                       id={`userId`}
                       options={this.state.optionsImport}
@@ -998,35 +1020,35 @@ class WebinarAddClass extends Component {
               </div>
               {
                 this.props.match.params.training === 'by-training' ?
-                <div style={{ marginTop: "20px" }} className="form-group">
-                  <div className="form-group">
-                    <label>Copy from training company</label>
-                    <div class="input-group" style={{background: 'none'}}>
-                      <MultiSelect
-                        id={`userId`}
-                        options={this.state.optionsImportTC}
-                        value={this.state.importIdTC}
-                        onChange={importIdTC => this.setState({ importIdTC })}
-                        mode="single"
-                        enableSearch={true}
-                        resetable={true}
-                        valuePlaceholder="Select Training Company"
-                      />
-                      <span className="input-group-btn">
-                        <button disabled={this.state.loadingImportTC} className="btn btn-default" onClick={this.importPesertaTC.bind(this)}>
-                          <i className="fa fa-plus"></i> {this.state.loadingImportTC ? '....' : 'Import'}
-                        </button>
-                      </span>
+                  <div style={{ marginTop: "20px" }} className="form-group">
+                    <div className="form-group">
+                      <label>Copy from training company</label>
+                      <div class="input-group" style={{ background: 'none' }}>
+                        <MultiSelect
+                          id={`userId`}
+                          options={this.state.optionsImportTC}
+                          value={this.state.importIdTC}
+                          onChange={importIdTC => this.setState({ importIdTC })}
+                          mode="single"
+                          enableSearch={true}
+                          resetable={true}
+                          valuePlaceholder="Select Training Company"
+                        />
+                        <span className="input-group-btn">
+                          <button disabled={this.state.loadingImportTC} className="btn btn-default" onClick={this.importPesertaTC.bind(this)}>
+                            <i className="fa fa-plus"></i> {this.state.loadingImportTC ? '....' : 'Import'}
+                          </button>
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                :null
+                  : null
               }
               <h5> Participants </h5>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group">
                   <label> Find Participants</label>
-                  <div class="input-group" style={{background: 'none'}}>
+                  <div class="input-group" style={{ background: 'none' }}>
                     <MultiSelect
                       id={`userId`}
                       options={this.state.optionsName}
@@ -1051,32 +1073,32 @@ class WebinarAddClass extends Component {
 
               <h5> Guest</h5>
               <label>Import guest from excel</label>
-                                                    <div>
-                                                        <a href={`${API_SERVER}template-excel/template-import-webinar-guest.xlsx`}>
-                                                          <button className="button-bordered">
-                                                              <i
-                                                                  className="fa fa-download"
-                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
-                                                              />
-                                                              Download Template
-                                                          </button>
-                                                        </a>
-                                                    </div>
-                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.importGuest} style={{paddingLeft:0}}>
-                                                        <label for='file-import' style={{cursor:'pointer', overflow:'hidden'}}>
-                                                          <div className="button-bordered-grey">
-                                                              {this.state.file ? this.state.file.name : 'Choose'}
-                                                          </div>
-                                                        </label>
-                                                        <input type="file" id='file-import' name='file-import' onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
-                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
-                                                            <i
-                                                                className="fa fa-upload"
-                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
-                                                            />
-                                                            {this.state.isUploading ? 'Uploading...' : 'Import'}
-                                                        </button>
-                                                    </form>
+              <div>
+                <a href={`${API_SERVER}template-excel/template-import-webinar-guest.xlsx`}>
+                  <button className="button-bordered">
+                    <i
+                      className="fa fa-download"
+                      style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                    />
+                    Download Template
+                  </button>
+                </a>
+              </div>
+              <form className="col-sm-12 form-field-top-label" onSubmit={this.importGuest} style={{ paddingLeft: 0 }}>
+                <label for='file-import' style={{ cursor: 'pointer', overflow: 'hidden' }}>
+                  <div className="button-bordered-grey">
+                    {this.state.file ? this.state.file.name : 'Choose'}
+                  </div>
+                </label>
+                <input type="file" id='file-import' name='file-import' onChange={this.handleChangeFile} onClick={e => e.target.value = null} />
+                <button type="submit" className="button-gradient-blue" style={{ marginLeft: 20 }}>
+                  <i
+                    className="fa fa-upload"
+                    style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                  />
+                  {this.state.isUploading ? 'Uploading...' : 'Import'}
+                </button>
+              </form>
               <div style={{ marginTop: "20px" }} className="form-group">
                 <div className="form-group row">
                   <div className="col-sm-3">
@@ -1124,6 +1146,24 @@ class WebinarAddClass extends Component {
               </button> */}
             </Modal.Body>
           </Modal>
+          {/* <Modal
+            show={this.state.modalPolling}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Poll
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="form-group">
+                <WebinarPollAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
+            </Modal.Body>
+          </Modal> */}
           <Modal
             show={this.state.modalKuesioner}
             onHide={this.handleModal}
@@ -1131,12 +1171,28 @@ class WebinarAddClass extends Component {
           >
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
-              Feedback Form
+                Feedback Form
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <div className="form-group">
                 <WebinarKuesionerAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
+              </div>
+            </Modal.Body>
+          </Modal>
+          <Modal
+            show={this.state.modalPolling}
+            onHide={this.handleModal}
+            dialogClassName="modal-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Polling
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="form-group">
+                <WebinarPollingAdd webinarId={this.state.webinarId} closeModal={this.handleModal} />
               </div>
             </Modal.Body>
           </Modal>
@@ -1172,47 +1228,47 @@ class WebinarAddClass extends Component {
                 initialValue={this.state.essay}
                 value={this.state.essay}
                 init={{
-                height: 400,
-                width: "100%",
-                menubar: false,
-                convert_urls: false,
-                image_class_list: [
-                    {title: 'None', value: ''},
-                    {title: 'Responsive', value: 'img-responsive'},
-                    {title: 'Thumbnail', value: 'img-responsive img-thumbnail'}
-                ],
-                file_browser_callback_types: 'image media',
-                file_picker_callback: function (callback, value, meta) {
+                  height: 400,
+                  width: "100%",
+                  menubar: false,
+                  convert_urls: false,
+                  image_class_list: [
+                    { title: 'None', value: '' },
+                    { title: 'Responsive', value: 'img-responsive' },
+                    { title: 'Thumbnail', value: 'img-responsive img-thumbnail' }
+                  ],
+                  file_browser_callback_types: 'image media',
+                  file_picker_callback: function (callback, value, meta) {
                     if (meta.filetype == 'image' || meta.filetype == 'media' || meta.filetype == 'file') {
-                    var input = document.getElementById(`myFile`);
-                    input.click();
-                    input.onchange = function () {
+                      var input = document.getElementById(`myFile`);
+                      input.click();
+                      input.onchange = function () {
 
                         var dataForm = new FormData();
                         dataForm.append('file', this.files[0]);
 
                         window.$.ajax({
-                        url: `${API_SERVER}v2/media/upload`,
-                        type: 'POST',
-                        data: dataForm,
-                        processData: false,
-                        contentType: false,
-                        success: (data)=>{
+                          url: `${API_SERVER}v2/media/upload`,
+                          type: 'POST',
+                          data: dataForm,
+                          processData: false,
+                          contentType: false,
+                          success: (data) => {
                             callback(data.result.url);
                             this.value = '';
-                        }
+                          }
                         })
 
-                    };
+                      };
                     }
-                },
-                plugins: [
+                  },
+                  plugins: [
                     "advlist autolink lists link image charmap print preview anchor",
                     "searchreplace visualblocks code fullscreen",
                     "insertdatetime media table paste code help wordcount"
-                ],
-                media_live_embeds : true,
-                toolbar:
+                  ],
+                  media_live_embeds: true,
+                  toolbar:
                     // eslint-disable-next-line no-multi-str
                     "undo redo | fontsizeselect bold italic backcolor forecolor | \
                 alignleft aligncenter alignright alignjustify | image | media | \
@@ -1249,7 +1305,7 @@ class WebinarAddClass extends Component {
 
 const WebinarAdd = props => (
   <SocketContext.Consumer>
-    { socket => <WebinarAddClass {...props} socket={socket} />}
+    {socket => <WebinarAddClass {...props} socket={socket} />}
   </SocketContext.Consumer>
 )
 

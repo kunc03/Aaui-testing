@@ -127,12 +127,13 @@ class Plan extends Component {
   }
 
   saveCourse = (index) => {
+    console.log('ALINSS', this.state.data[index].scheduled)
     let data = this.state.data;
     data[index].isSaving = true;
     this.setState({data: data});
     let form = {
       require_course_id : this.state.data[index].require_course_id,
-      scheduled : this.state.data[index].scheduled.length ? this.state.data[index].scheduled : '0',
+      scheduled : this.state.data[index].scheduled !== '' ? this.state.data[index].scheduled : '0',
       start_time: moment.tz(this.state.data[index].start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
       end_time: moment.tz(this.state.data[index].end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss")
     }

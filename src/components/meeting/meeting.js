@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Children, Component } from "react";
 import { Link } from "react-router-dom";
 import API, { API_SERVER, USER_ME, APPS_SERVER, BBB_URL, BBB_KEY, API_SOCKET } from '../../repository/api';
 // import '../ganttChart/node_modules/@trendmicro/react-dropdown/dist/react-dropdown.css';
@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 import { MultiSelect } from 'react-sm-select';
 import 'react-sm-select/dist/styles.css';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 // import moment from "react-moment";
 import Moment from 'moment-timezone';
 import ToggleSwitch from "react-switch";
@@ -30,6 +30,7 @@ import { Fragment } from "react";
 import { compose } from "redux";
 import io from 'socket.io-client';
 import { withTranslation } from "react-i18next";
+import Tooltip from '@material-ui/core/Tooltip';
 
 const socket = io(`${API_SOCKET}`);
 socket.on("connect", () => {
@@ -53,9 +54,11 @@ class MeetingTable extends Component {
 
     this.state = {
       isOpenBooking: false,
+      arrNamePeserta: [],
       idBooking: '',
       isSaving: false,
       isLoadBooking: false,
+      hide_add_participant: false,
       isFetch: false,
       users: [],
       dataUser: [],
@@ -202,8 +205,8 @@ class MeetingTable extends Component {
         room_name: this.state.classRooms.room_name,
         is_private: this.state.classRooms.is_private,
         is_scheduled: this.state.classRooms.is_scheduled,
-        schedule_start: `${Moment.tz(this.state.classRooms.schedule_start).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
-        schedule_end: `${Moment.tz(this.state.classRooms.schedule_end).local().format("DD-MM-YYYY HH:mm")} (${moment.tz.guess(true)} Time Zone)`,
+        schedule_start: `${Moment.tz(this.state.classRooms.schedule_start).local().format("DD-MM-YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+        schedule_end: `${Moment.tz(this.state.classRooms.schedule_end).local().format("DD-MM-YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
         userInvite: this.state.valueInvite,
         message: APPS_SERVER + 'redirect/meeting/information/' + this.state.classRooms.class_id,
         messageNonStaff: APPS_SERVER + 'meeting/' + this.state.classRooms.class_id
@@ -309,7 +312,7 @@ class MeetingTable extends Component {
   }
   closemodalJadwal = (id) => {
     this.fetchMeeting(true)
-    this.setState({ modalJadwal: false, isOpenBooking: false, infoParticipant: [], tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '', akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: '' });
+    this.setState({ modalJadwal: false, hide_add_participant: false, isOpenBooking: false, infoParticipant: [], tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '', akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [], idBooking: '' });
   }
 
   closeModalConfirmation = e => {
@@ -476,10 +479,38 @@ class MeetingTable extends Component {
 
         if (this.state.optionsModerator.length == 0 || this.state.optionsPeserta.length == 0) {
           API.get(this.props.projectId != 0 ? sqlFromProject : sqlNotFromProject).then(response => {
+            let tmp_duplicate = [];
+
+            let originCompany = null;
+            try {
+              originCompany = Storage.get('user').data.company_id
+            } catch (e) {
+            }
+
             response.data.result.map(item => {
-              this.state.optionsModerator.push({ value: item.user_id, label: item.name });
-              this.state.optionsPeserta.push({ value: item.user_id, label: item.name });
+
+
+              //let idx = tmp_duplicate.findIndex(str => str.value == item.user_id || str.label === item.name);
+              let dupLabel = item.name;
+              let company_names = item.company_name
+              if (company_names.length > 10) {
+                company_names = item.company_name.substr(0, 15) + '...';
+              }
+
+              let colors = 'blue';
+              if (item.company_id != originCompany) {
+                colors = 'red';
+              }
+
+              tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
+              // if (idx > -1) {
+
+              // } else {
+              //   tmp_duplicate.push({ value: item.user_id, label: dupLabel, company: company_names, email: item.email, colorCompany: colors })
+              // }
             });
+            this.setState({ optionsModerator: tmp_duplicate, optionsPeserta: tmp_duplicate })
+            console.log(tmp_duplicate, "TEST")
           })
             .catch(function (error) {
               console.log(error);
@@ -495,10 +526,14 @@ class MeetingTable extends Component {
               console.log(error);
             });
         }
+        // console.log(this.state.optionsPeserta, "TEST 1");
+        // console.log(this.state.valuePeserta, "TEST 2");
+
         API.get(`${API_SERVER}v1/branch/company/${this.state.companyId}`).then(res => {
           if (res.status === 200) {
-            // console.log(res, 'sdaaaaaaaaaaaaaaaa')
             this.setState({ listBranch: res.data.result[0] })
+
+            this.state.optionsGroup.push({ value: null, label: 'Select manually' })
             res.data.result[0].map(item => {
               this.state.optionsGroup.push({ value: item.branch_id, label: item.branch_name });
             });
@@ -524,8 +559,8 @@ class MeetingTable extends Component {
           room_name: this.state.infoClass.room_name,
           is_private: this.state.infoClass.is_private,
           is_scheduled: this.state.infoClass.is_scheduled,
-          schedule_start: Moment.tz(this.state.infoClass.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-          schedule_end: Moment.tz(this.state.infoClass.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+          schedule_start: `${Moment.tz(this.state.infoClass.schedule_start).local().format("DD-MM-YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+          schedule_end: `${Moment.tz(this.state.infoClass.schedule_end).local().format("DD-MM-YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
           userInvite: [Storage.get('user').data.user_id],
           //url
           message: APPS_SERVER + 'redirect/meeting/information/' + this.state.infoClass.class_id,
@@ -543,10 +578,11 @@ class MeetingTable extends Component {
         })
         let formNotif = {
           user_id: this.state.infoClass.moderator,
+          company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
           type: 3,
           activity_id: this.state.infoClass.class_id,
-          desc: Storage.get('user').data.user + ' Akan ' + confirmation + ' Pada Meeting : ' + this.state.infoClass.room_name,
-          dest: null,
+          desc: Storage.get('user').data.user + ' will ' + (confirmation === 'Hadir' ? 'present' : 'not attend') + ' meeting at ' + this.state.infoClass.room_name,
+          dest: `${APPS_SERVER}meet/${this.state.infoClass.class_id}`,
         }
         API.post(`${API_SERVER}v1/notification/broadcast`, formNotif).then(res => {
           if (res.status === 200) {
@@ -571,6 +607,7 @@ class MeetingTable extends Component {
             const participant = res.data.result.user_id ? res.data.result.user_id.split(',').map(Number) : [];
             this.setState({ valuePeserta: this.state.valuePeserta.concat(participant) })
           }
+
         })
       }
     }
@@ -677,8 +714,8 @@ class MeetingTable extends Component {
                   room_name: res.data.result.room_name,
                   is_private: res.data.result.is_private,
                   is_scheduled: res.data.result.is_scheduled,
-                  schedule_start: Moment.tz(res.data.result.schedule_start, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
-                  schedule_end: Moment.tz(res.data.result.schedule_end, 'Asia/Jakarta').format("DD-MM-YYYY HH:mm"),
+                  schedule_start: `${Moment.tz(res.data.result.schedule_start).local().format("DD-MM-YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                  schedule_end: `${Moment.tz(res.data.result.schedule_end).local().format("DD-MM-YYYY HH:mm")} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
                   userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
                   //url
                   message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.class_id,
@@ -957,90 +994,118 @@ class MeetingTable extends Component {
       toast.warning('Date, start time, and end time are mandatory.')
     }
     else {
-      this.setState({ isSaving: true });
       const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
       const jamMulai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
       const jamSelesai = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('HH:mm');
 
-      let isPrivate = this.state.private == true ? 1 : 0;
-      let isAkses = this.state.akses == true ? 1 : 0;
-      let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
+      let date_start = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm');
+      let date_end = Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm');
 
-      let form = {
-        meeting_id: this.state.bookingMeetingId,
-        tanggal: tanggal,
-        jam_mulai: jamMulai,
-        jam_selesai: jamSelesai,
-        user_id: Storage.get('user').data.user_id,
-        keterangan: this.state.keterangan,
+      if (date_start > date_end) {
+        toast.warning(`"End Time cannot be less than "Start Time" `);
+      } else {
 
-        is_private: isPrivate,
-        is_required_confirmation: isRequiredConfirmation,
-        peserta: this.state.valuePeserta,
+        this.setState({ isSaving: true });
 
-        is_akses: isAkses,
-        moderator: this.state.akses ? this.state.valueModerator : [],
-      }
+        let isPrivate = this.state.private == true ? 1 : 0;
+        let isAkses = this.state.akses == true ? 1 : 0;
+        let isRequiredConfirmation = this.state.requireConfirmation == true ? 1 : 0;
 
-      API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
-        if (res.status === 200) {
-          if (!res.data.error) {
-            toast.success('Saved.')
+        let form = {
+          meeting_id: this.state.bookingMeetingId,
+          tanggal: tanggal,
+          jam_mulai: jamMulai,
+          jam_selesai: jamSelesai,
+          user_id: Storage.get('user').data.user_id,
+          keterangan: this.state.keterangan,
 
-            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+          is_private: isPrivate,
+          is_required_confirmation: isRequiredConfirmation,
+          peserta: this.state.valuePeserta,
 
-            // share
-            this.setState({ sendingEmail: true })
-            let form1 = {
-              user: Storage.get('user').data.user,
-              email: this.state.emailInvite,
-              room_name: this.state.roomName,
-              is_private: isPrivate,
-              is_scheduled: 1,
-              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
-              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
-              userInvite: this.state.valueModerator == [] ? form.peserta.concat(this.state.valueModerator) : form.peserta,
-              message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
-              messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
-            }
+          engine: this.state.engine,
+          mode: this.state.mode,
 
-            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
-              if (res.status === 200) {
-                if (!res.data.error) {
-                  this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
-                  toast.success("Email sent to participant")
-                } else {
-                  toast.error("Email failed to send, please check the email address.")
-                  this.setState({ sendingEmail: false, isSaving: false })
-                }
-              }
-            })
+          is_akses: isAkses,
+          moderator: this.state.akses ? this.state.valueModerator : [],
 
-            socket.emit('send', {
-              socketAction: 'updateDataBooking',
-              meeting_id: this.state.bookingMeetingId,
-              user_id: Storage.get('user').data.user_id,
-              room_name: this.state.roomName
-            })
-
-            this.setState({
-              tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id]
-            })
-
-            this.fetchMeeting(true)
-
-          } else {
-            if (res.data.type === 'warning') {
-              toast.warning(res.data.result);
-            }
-            else {
-              toast.error("Error, failed to book a meeting schedule.");
-            }
-            this.setState({ isSaving: false });
-          }
+          date_start: date_start,
+          date_end: date_end,
         }
-      })
+
+
+        API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
+          if (res.status === 200) {
+            if (!res.data.error) {
+              toast.success('Saved.')
+
+              // send notif
+              let notif = {
+                user_id: this.state.valuePeserta,
+                company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
+                activity_id: res.data.result.id,
+                type: 3,
+                desc: `You are invited meeting "${this.state.roomName}" that will start on "${Moment(form.tanggal).format('LL')} ${form.jam_mulai}-${form.jam_selesai} (${moment.tz.guess(true)} Time Zone)"`,
+                dest: `${APPS_SERVER}meet/${res.data.result.id}`,
+                types: 1
+              }
+              API.post(`${API_SERVER}v1/notification/broadcast-bulk`, notif).then((res) => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
+
+              this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+
+              // share
+              this.setState({ sendingEmail: true })
+              let form1 = {
+                user: Storage.get('user').data.user,
+                email: this.state.emailInvite,
+                room_name: this.state.roomName,
+                is_private: isPrivate,
+                is_scheduled: 1,
+                schedule_start: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                schedule_end: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                userInvite: this.state.valueModerator == [] ? form.peserta.concat(this.state.valueModerator) : form.peserta,
+                message: APPS_SERVER + 'redirect/meeting/information/' + res.data.result.id,
+                messageNonStaff: APPS_SERVER + 'meet/' + res.data.result.id
+              }
+
+              API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
+                if (res.status === 200) {
+                  if (!res.data.error) {
+                    this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
+                    toast.success("Email sent to participant")
+                  } else {
+                    toast.error("Email failed to send, please check the email address.")
+                    this.setState({ sendingEmail: false, isSaving: false })
+                  }
+                }
+              })
+
+              socket.emit('send', {
+                socketAction: 'updateDataBooking',
+                meeting_id: this.state.bookingMeetingId,
+                user_id: Storage.get('user').data.user_id,
+                room_name: this.state.roomName
+              })
+
+              this.setState({
+                tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
+                akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id]
+              })
+
+              this.fetchMeeting(true)
+
+            } else {
+              if (res.data.type === 'warning') {
+                toast.warning(res.data.result);
+              }
+              else {
+                toast.error("Error, failed to book a meeting schedule.");
+              }
+              this.setState({ isSaving: false });
+            }
+          }
+        })
+      }
 
     }
   }
@@ -1059,9 +1124,11 @@ class MeetingTable extends Component {
   }
   editBooking(id) {
     let dataBooking = this.state.dataBooking.booking.filter((x) => x.id === id)[0];
+
     this.setState({
       bookingMeetingId: id, classId: this.state.classId, roomName: this.state.roomName,
       modalJadwal: true,
+      hide_add_participant: true,
       idBooking: id,
       tanggal: new Date(Moment(dataBooking.tgl_mulai).local().format('YYYY-MM-DD')),
       jamMulai: new Date(Moment(dataBooking.tgl_mulai).local().format('YYYY-MM-DD HH:mm')),
@@ -1082,7 +1149,7 @@ class MeetingTable extends Component {
       toast.warning('Date, start time, and end time are mandatory.')
     }
     else {
-      this.setState({ isSaving: true });
+      this.setState({ isSaving: true, hide_add_participant: false });
       const tanggal = this.state.tanggal.getFullYear() + '-' + ('0' + (this.state.tanggal.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.tanggal.getDate()).slice(-2);
       const jamMulai = ('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2);
       const jamSelesai = ('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2);
@@ -1105,67 +1172,75 @@ class MeetingTable extends Component {
 
         is_akses: isAkses,
         moderator: this.state.akses ? this.state.valueModerator : [],
+
+        date_start: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm'),
+        date_end: Moment.tz(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`), 'Asia/Jakarta').format('YYYY-MM-DD HH:mm')
       }
 
-      API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
-        if (res.status === 200) {
-          if (!res.data.error) {
-            toast.success('Saved.')
+      if (form.date_start > form.date_end) {
+        toast.warning(`End Time cannot be less than Start Time `);
+      } else {
+        API.put(`${API_SERVER}v2/meeting/booking/${this.state.idBooking}`, form).then(res => {
+          if (res.status === 200) {
+            if (!res.data.error) {
+              toast.success('Saved.')
 
-            this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
+              this.onClickJadwal(form.meeting_id, this.state.dataBooking.room_name)
 
-            // share
-            this.setState({ sendingEmail: true })
-            let form1 = {
-              user: Storage.get('user').data.user,
-              email: this.state.emailInvite,
-              room_name: this.state.roomName,
-              is_private: isPrivate,
-              is_scheduled: 1,
-              schedule_start: `${tanggal} ${jamMulai} (${moment.tz.guess(true)} Time Zone)`,
-              schedule_end: `${tanggal} ${jamSelesai} (${moment.tz.guess(true)} Time Zone)`,
-              userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
-              message: APPS_SERVER + 'redirect/meeting/information/' + this.state.idBooking,
-              messageNonStaff: APPS_SERVER + 'meet/' + this.state.idBooking
-            }
-
-            API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
-              if (res.status === 200) {
-                if (!res.data.error) {
-                  this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
-                  toast.success("Email sent to participant")
-                } else {
-                  toast.error("Email failed to send, please check the email address.")
-                  this.setState({ sendingEmail: false, isSaving: false })
-                }
+              // share
+              this.setState({ sendingEmail: true })
+              let form1 = {
+                user: Storage.get('user').data.user,
+                email: this.state.emailInvite,
+                room_name: this.state.roomName,
+                is_private: isPrivate,
+                is_scheduled: 1,
+                schedule_start: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamMulai.getHours()).slice(-2) + ':' + ('0' + this.state.jamMulai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                schedule_end: `${Moment(new Date(`${tanggal} ${('0' + this.state.jamSelesai.getHours()).slice(-2) + ':' + ('0' + this.state.jamSelesai.getMinutes()).slice(-2)}`)).local().format('YYYY-MM-DD HH:mm')} (GMT${moment().local().format('Z')} ${moment.tz.guess(true)} Time Zone)`,
+                userInvite: this.state.valueModerator === [0] ? this.state.valuePeserta.concat(this.state.valueModerator) : this.state.valuePeserta,
+                message: APPS_SERVER + 'redirect/meeting/information/' + this.state.idBooking,
+                messageNonStaff: APPS_SERVER + 'meet/' + this.state.idBooking
               }
-            })
 
-            socket.emit('send', {
-              socketAction: 'updateDataBooking',
-              meeting_id: this.state.bookingMeetingId,
-              user_id: Storage.get('user').data.user_id,
-              room_name: this.state.roomName
-            })
+              API.post(`${API_SERVER}v1/liveclass/share`, form1).then(res => {
+                if (res.status === 200) {
+                  if (!res.data.error) {
+                    this.setState({ emailInvite: [], sendingEmail: false, isSaving: false });
+                    toast.success("Email sent to participant")
+                  } else {
+                    toast.error("Email failed to send, please check the email address.")
+                    this.setState({ sendingEmail: false, isSaving: false })
+                  }
+                }
+              })
 
-            this.setState({
-              tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
-              akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id], idBooking: ''
-            })
+              socket.emit('send', {
+                socketAction: 'updateDataBooking',
+                meeting_id: this.state.bookingMeetingId,
+                user_id: Storage.get('user').data.user_id,
+                room_name: this.state.roomName
+              })
 
-            this.fetchMeeting(true)
+              this.setState({
+                tanggal: '', jamMulai: '', jamSelesai: '', keterangan: '',
+                akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [Storage.get('user').data.user_id], idBooking: ''
+              })
 
-          } else {
-            if (res.data.type === 'warning') {
-              toast.warning(res.data.result);
+              this.fetchMeeting(true)
+
+            } else {
+              if (res.data.type === 'warning') {
+                toast.warning(res.data.result);
+              }
+              else {
+                toast.error("Error, failed to book a meeting schedule.");
+              }
+              this.setState({ isSaving: false });
             }
-            else {
-              toast.error("Error, failed to book a meeting schedule.");
-            }
-            this.setState({ isSaving: false });
           }
-        }
-      })
+        })
+      }
+
 
     }
   }
@@ -1274,11 +1349,14 @@ class MeetingTable extends Component {
   }
 
   startMeetingNow = (classId, roomName) => {
+    var startDate = Moment.tz(new Date(), 'Asia/Jakarta');
+    var checkEndDate = Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours')
+    var finalEndDate = checkEndDate.format('DD-MM-YYYY') === startDate.format('DD-MM-YYYY') ? checkEndDate.format('HH:mm') : '23:59';
     let form = {
       meeting_id: classId,
       tanggal: Moment.tz(new Date(), 'Asia/Jakarta').format('YYYY-MM-DD'),
-      jam_mulai: Moment.tz(new Date(), 'Asia/Jakarta').format('HH:mm'),
-      jam_selesai: Moment.tz(new Date(), 'Asia/Jakarta').add(2, 'hours').format('HH:mm'),
+      jam_mulai: startDate.format('HH:mm'),
+      jam_selesai: finalEndDate,
       user_id: Storage.get('user').data.user_id,
       keterangan: `Meeting by ${Storage.get('user').data.user}`,
 
@@ -1288,17 +1366,27 @@ class MeetingTable extends Component {
 
       is_akses: 1,
       moderator: [Storage.get('user').data.user_id],
+
+      date_start: startDate.format('YYYY-MM-DD HH:mm'),
+      date_end: checkEndDate.format('YYYY-MM-DD HH:mm'),
     }
 
     API.post(`${API_SERVER}v2/meeting/booking`, form).then(res => {
       if (res.status === 200) {
         if (!res.data.error) {
           toast.success('Save the meeting schedule booking.')
-          this.setState({
-            tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
-            akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
-            modalJadwal: false
-          })
+
+          // send notif
+          let notif = {
+            user_id: Storage.get('user').data.user_id,
+            company_id: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : Storage.get('user').data.company_id,
+            activity_id: res.data.result.id,
+            type: 3,
+            desc: `You are started meeting "${roomName}" that will start on "${Moment(form.tanggal).format('LL')} ${form.jam_mulai}-${form.jam_selesai} (${moment.tz.guess(true)} Time Zone)"`,
+            dest: `${APPS_SERVER}meet/${res.data.result.id}`,
+            types: 1
+          }
+          API.post(`${API_SERVER}v1/notification/broadcast`, notif).then((res) => this.props.socket.emit('send', { companyId: Storage.get('user').data.company_id }));
 
           socket.emit('send', {
             socketAction: 'updateDataBooking',
@@ -1306,6 +1394,13 @@ class MeetingTable extends Component {
             user_id: Storage.get('user').data.user_id,
             room_name: roomName
           })
+
+          this.setState({
+            tanggal: '', jamMulai: '', jamSelesai: '', bookingMeetingId: '', keterangan: '',
+            akses: 0, private: true, requireConfirmation: 0, valueGroup: [], valueModerator: [], valuePeserta: [],
+            modalJadwal: false
+          })
+
           this.fetchBooking(classId, roomName)
 
           window.open(`/meet/${res.data.result.id}`, '_blank').focus();
@@ -1322,6 +1417,121 @@ class MeetingTable extends Component {
   }
 
   render() {
+
+    // const optionPeserta = props => {
+    //   const { innerProps, innerRef } = props;
+    //   console.log(innerProps, innerRef, "TEST")
+    //   // this.state.optionPeserta.map((str)=>{
+    //   return (
+    //     <article ref={innerRef} {...innerProps} className="custom-option">
+    //       <h4>{props.data.label}</h4>
+    //       <div className="sub">{props.data.label} </div>
+    //     </article>
+    //   )
+    // };
+    const options = [
+      { value: "Abe", label: "Abe", customAbbreviation: "A" },
+      { value: "John", label: "John", customAbbreviation: "J" },
+      { value: "Dustin", label: "Dustin", customAbbreviation: "D" }
+    ];
+
+    const formatOptionLabel2 = ({ value, label, customAbbreviation }) => (
+      <div style={{ display: "flex" }}>
+        <div>{label}</div>
+        <div style={{ marginLeft: "10px", color: "#ccc" }}>
+          {customAbbreviation}
+        </div>
+      </div>
+    );
+
+    const ValueContainer = ({ children, getValue, ...props }) => {
+      let values = getValue();
+      let valueLabel = [];
+
+      //if (values.length > 0) valueLabel.push(props.selectProps.getOptionLabel(values[0]));
+      //if (values.length > 1) valueLabel += ` (${values.length})`;
+
+      // Keep standard placeholder and input from react-select
+      let childrenToRender = React.Children
+        .toArray(children)
+        .filter((child) => ['Input', 'DummyInput', 'Placeholder']
+          .indexOf(child.type.name) >= 0);
+
+
+      console.log(props.selectProps.inputValue, "TEST 12")
+
+      return (
+        <components.ValueContainer {...props}>
+          {!props.selectProps.inputValue && valueLabel}
+          {children.selectOption}
+        </components.ValueContainer>
+      );
+    };
+
+    const formatOptionLabel3 = ({ value, label, company, email, colorCompany }) => (
+      <div className="form-group row" style={{ borderBottom: '1px #eee' }}>
+        <div className="col-sm-6">
+          <Form.Label className="f-w-bold">
+            {label}
+          </Form.Label>
+          <Form.Text className="text-muted" style={{ fontStyle: 'italic' }}>
+            {email}
+          </Form.Text>
+        </div>
+
+        <div className="col-sm-2">
+          {
+            colorCompany === 'red' ?
+              <span className="badge badge-success" style={{ fontSize: "10px", width: '80px' }}>{company}</span>
+              :
+              <span className="badge badge-primary" style={{ fontSize: "10px", width: '80px' }}>{company}</span>
+          }
+        </div>
+      </div>
+    );
+    const formatOptionLabel = ({ value, label, company, email, colorCompany }) => (
+      <div className="row" style={{ borderBottom: '1px #eee' }}>
+        <div className="col-sm-9">
+          <Form.Text className="text-muted">
+            <b>{label}</b>
+            <br />
+            <span style={{ fontStyle: 'italic' }}>{email}</span>
+          </Form.Text>
+        </div>
+
+        <div className="col-sm-3" style={{ float: 'right' }}>
+          {
+            colorCompany === 'red' ?
+              <span className="badge badge-success">{company}</span>
+              :
+              <span className="badge badge-primary">{company}</span>
+          }
+        </div>
+      </div>
+    );
+
+    const CustomControl = () => (
+
+      <Select
+        //options={options}
+        //components={{ Option: optionPeserta }}
+        formatOptionLabel={formatOptionLabel}
+        //value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
+        options={options}
+        isMulti
+        closeMenuOnSelect={false}
+        closeMenuOnScroll={false}
+        menuShouldScrollIntoView={true}
+        onChange={valuePeserta => {
+          let arr = [];
+          valuePeserta.map((item) => arr.push(item.value));
+          this.setState({
+            valuePeserta: arr
+          })
+        }}
+      />
+    );
+
 
     // ** GLOBAL SETTINGS ** //
     let cdMeeting = this.state.gb.length && this.state.gb.filter(item => item.code === 'CD_MEETING')[0].status;
@@ -1434,14 +1644,14 @@ class MeetingTable extends Component {
       bodyTabble = bodyTabble.filter(item => item.status !== 'Locked')
     }
 
-    console.log(bodyTabble, 'bodyTabble')
-    console.log(this.state.infoClass, 'bodyTabble')
+    // console.log(bodyTabble, 'bodyTabble')
+    // console.log(this.state.infoClass, 'bodyTabble')
 
     let access = Storage.get('access');
     let levelUser = Storage.get('user').data.level;
 
-    let infoDateStart = new Date(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_mulai}`);
-    let infoDateEnd = new Date(`${Moment(this.state.infoClass.tanggal).format('YYYY-MM-DD')} ${this.state.infoClass.jam_selesai}`);
+    let infoDateStart = new Date(`${Moment(this.state.infoClass.date_start).format('YYYY-MM-DD HH:mm')}`);
+    let infoDateEnd = new Date(`${Moment(this.state.infoClass.date_end).format('YYYY-MM-DD HH:mm')}`);
 
     console.log('infoDate', Moment().isBetween(infoDateStart ? infoDateStart : Moment(), infoDateEnd ? infoDateEnd : Moment()))
 
@@ -1594,18 +1804,18 @@ class MeetingTable extends Component {
           <Modal.Body>
             <div className="row">
               <div className="col-sm-12">
-                <table className="table table-hover">
+                <table className="table table-hover table-list_booking">
                   <thead>
                     <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                      <td>Date </td>
-                      <td>Starting Hours </td>
-                      <td>End Hours </td>
-                      <td>By</td>
-                      <td>Moderator</td>
-                      <td>Participants</td>
-                      <td>Description</td>
-                      <td>Share</td>
-                      <td>Action</td>
+                      <td><b>Date </b></td>
+                      <td style={{ width: '110px' }}><b>Starting Hours </b></td>
+                      <td style={{ width: '86px' }}><b>End Hours </b></td>
+                      <td><b>By</b></td>
+                      <td><b>Moderator</b></td>
+                      <td style={{ width: '80px' }}><b>Participants</b></td>
+                      <td><b>Description</b></td>
+                      <td style={{textAlign:'center'}}><b>Share</b></td>
+                      <td><b>Action</b></td>
                     </tr>
                   </thead>
                   <tbody>
@@ -1645,34 +1855,37 @@ class MeetingTable extends Component {
                                   <td>{item.moderator_name ? item.moderator_name : '-'}</td>
                                   <td className="text-center cursor" data-target={`#col${item.id}`} data-toggle="collapse">{item.participants.length}</td>
                                   <td>{item.keterangan ? item.keterangan : '-'}</td>
-                                  <td>
+                                  <td style={{textAlign:'center'}}>
                                     {
-                                      item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                                        <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
-                                          onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
-                                          <i className="fa fa-copy cursor">&nbsp; Copy</i>
-                                        </CopyToClipboard>
+                                      //item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                      item.isShare == true ?
+                                      <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : GMT${moment().local().format('Z')} ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                        onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
+                                        <Tooltip title="Copy Invitation" arrow placement="top">
+                                          <i className="fa fa-copy cursor"></i>
+                                        </Tooltip>
+                                      </CopyToClipboard>
                                         : '-'
                                     }
                                   </td>
                                   <td>
-                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                    <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor mr-2 mb-1" style={{ fontSize: "1em", cursor: 'pointer' }}>Information</span>
                                     {
                                       //checkParty && range 
                                       item.isJoin || (checkParty && range) ?
                                         <a rel="noopener noreferrer" target='_blank' href={`/meet/${item.id}`}>
-                                          <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
+                                          <span className="badge badge-pill badge-success mr-2 mb-1 cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Join</span>
                                         </a>
                                         : null
                                     }
                                     {
-                                      item.user_id === Storage.get('user').data.user_id ?
-                                        <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                      (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
+                                        <span class="badge badge-pill badge-secondary mr-2 mb-1" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                         : null
                                     }
                                     {
-                                      item.user_id === Storage.get('user').data.user_id ?
-                                        <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                      (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
+                                        <span class="badge badge-pill badge-danger mr-2 mb-1" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                         : null
                                     }
                                   </td>
@@ -1755,20 +1968,27 @@ class MeetingTable extends Component {
                       <div className="form-group row">
                         <div className="col-sm-6">
                           <Form.Label className="f-w-bold">
-                            Participant From Group
+                            Add Participants
                           </Form.Label>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <div className="col-sm-6">
+                          <Form.Text className="text-muted">
+                            + Add from groups
+                          </Form.Text>
                           <Select
                             value={[...this.state.optionsGroup].filter(x => this.state.valueGroup.includes(x.value))}
                             options={this.state.optionsGroup}
                             isMulti
-                            closeMenuOnSelect={false}
+                            closeMenuOnSelect={true}
+                            hideSelectedOption={true}
                             onChange={valuePeserta => {
                               this.groupSelect(valuePeserta)
+                              this.setState({ hide_add_participant: 'visible' });
                             }}
                           />
-                          <Form.Text className="text-muted">
-                            Select participants from the group for a private meeting.
-                          </Form.Text>
                         </div>
                       </div>
                     </Form.Group>
@@ -1776,52 +1996,59 @@ class MeetingTable extends Component {
                 }
 
                 {
-                  this.state.private ?
+                  this.state.hide_add_participant ?
 
                     <Form.Group controlId="formJudul">
+
                       <div className="form-group row">
                         <div className="col-sm-6">
-                          <Form.Label className="f-w-bold">
-                            Add Participants
-                          </Form.Label>
+                          <Form.Text className="text-muted">
+                            + Add more participants from user list
+                          </Form.Text>
                           <Select
+                            //components={{ ValueContainer }}
+                            formatOptionLabel={formatOptionLabel}
                             value={[...this.state.optionsPeserta].filter(x => this.state.valuePeserta.includes(x.value))}
                             options={this.state.optionsPeserta}
                             isMulti
                             closeMenuOnSelect={false}
+                            hideSelectedOption={true}
+                            menuShouldScrollIntoView={true}
+                            selectProps='label'
                             onChange={valuePeserta => {
                               let arr = [];
-                              valuePeserta.map((item) => arr.push(item.value));
+                              let arr_name = [];
+                              valuePeserta.map((item) => {
+                                arr.push(item.value);
+                                arr_name.push({ label: item.label })
+                              });
                               this.setState({
-                                valuePeserta: arr
+                                valuePeserta: arr,
+                                arrNamePeserta: arr_name
                               })
                             }}
                           />
-                          <Form.Text className="text-muted">
-                            Select participant for private meeting.
-                          </Form.Text>
                         </div>
                       </div>
+
+                      <div className="form-group row">
+                        <div className="col-sm-6">
+                          <Form.Text className="text-muted">
+                            + Email
+                          </Form.Text>
+                          <TagsInput
+                            value={this.state.emailInvite}
+                            onChange={this.handleChangeEmail.bind(this)}
+                            addOnPaste={true}
+                            addOnBlur={true}
+                            inputProps={{ placeholder: `Insert Email` }}
+                          />
+                        </div>
+                      </div>
+
                     </Form.Group>
                     : null
                 }
-
-                <div className="form-group row">
-                  <div className="col-sm-6">
-                    <label style={{ fontWeight: "bold" }}>Email</label>
-                    <TagsInput
-                      value={this.state.emailInvite}
-                      onChange={this.handleChangeEmail.bind(this)}
-                      addOnPaste={true}
-                      addOnBlur={true}
-                      inputProps={{ placeholder: `Participant's Email` }}
-                    />
-                    <Form.Text>
-                      Guest other than icademy users.<br />
-                      Insert email to invite. Use [Tab] or [Enter] key to insert multiple email.
-                    </Form.Text>
-                  </div>
-                </div>
 
                 {
                   this.state.private ?
@@ -1881,6 +2108,40 @@ class MeetingTable extends Component {
                     </Form.Group>
                     : null
                 }
+
+                {/* <div className="form-group row">
+                  <div className="col-sm-6">
+                    <Form.Label className="f-w-bold">Engine<required>*</required></Form.Label>
+                    <Select id="engine"
+                      options={[
+                        { label: 'ICADEMY', value: 'bbb' },
+                        { label: 'ZOOM', value: 'zoom' }
+                      ]}
+                      value={[{ label: 'ICADEMY', value: 'bbb' }, { label: 'ZOOM', value: 'zoom' }].filter(x => this.state.engine === x.value)}
+                      onChange={engine => { this.setState({ engine: engine ? engine.value : '' }); }}
+                    />
+                    <p className="form-notes">
+                      Choose meeting engine.
+                    </p>
+                  </div>
+                </div> */}
+
+                {/* <div className="form-group row">
+                  <div className="col-sm-6">
+                    <Form.Label className="f-w-bold">Mode<required>*</required></Form.Label>
+                    <Select id="mode"
+                      options={[
+                        { label: 'WEB', value: 'web' },
+                        { label: 'APP', value: 'app' }
+                      ]}
+                      value={[{ label: 'WEB', value: 'web' }, { label: 'APP', value: 'app' }].filter(x => this.state.mode === x.value)}
+                      onChange={engine => { this.setState({ mode: engine ? engine.value : '' }); console.log(engine, 'engine') }}
+                    />
+                    <p className="form-notes">
+                      Choose meeting mode.
+                    </p>
+                  </div>
+                </div> */}
 
               </div>
 
@@ -2033,6 +2294,11 @@ class MeetingTable extends Component {
                   :
                   null
             }
+            {
+              this.state.infoClass === [] || this.state.infoClass.length === 0 || this.state.infoClass.class_id === null ?
+                `No meeting found with this meeting ID or has been deleted.`
+                : null
+            }
             <div className="row">
               <div className="col-sm-6">
                 <div className="title-head f-w-900 f-16" style={{ marginBottom: 20 }}>
@@ -2043,7 +2309,7 @@ class MeetingTable extends Component {
             <div class="row">
               <div className="col-sm-6">
                 {
-                  this.state.infoClass.hasOwnProperty('room_name') ?
+                  this.state.infoClass.hasOwnProperty('room_name') && this.state.infoClass.room_name !== null ?
                     <h3 className="f-14">{this.state.infoClass.keterangan}</h3>
                     : null
                 }
@@ -2063,7 +2329,7 @@ class MeetingTable extends Component {
                 }
               </div>
               {
-                this.state.infoClass.hasOwnProperty('tanggal') ?
+                this.state.infoClass.hasOwnProperty('tanggal') && this.state.infoClass.tanggal !== null ?
                   <div className="col-sm-6">
                     <h3 className="f-14">
                       Start : {moment(this.state.infoClass.tgl_mulai).local().format("DD-MM-YYYY HH:mm")}
@@ -2120,8 +2386,9 @@ class MeetingTable extends Component {
           </Modal.Body>
           <Modal.Footer>
             {
-              this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                <CopyToClipboard text={`Meeting Room : ${this.state.infoClass.room_name}\nSchedule : ${moment(this.state.infoClass.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(this.state.infoClass.tgl_mulai).local().format('HH:mm')} - ${moment(this.state.infoClass.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
+              // this.state.infoParticipant.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+              this.state.infoClass.isShare == true ?
+                <CopyToClipboard text={`Meeting Room : ${this.state.infoClass.room_name}\nSchedule : ${moment(this.state.infoClass.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(this.state.infoClass.tgl_mulai).local().format('HH:mm')} - ${moment(this.state.infoClass.tgl_selesai).local().format('HH:mm')}\nTime Zone : GMT${moment().local().format('Z')} ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${this.state.infoClass.keterangan}\nURL : ${APPS_SERVER}meet/${this.state.infoClass.id}`}
                   onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                   <button className="btn btn-v2 btn-primary"><i className="fa fa-copy cursor"></i>&nbsp; Copy Invitation</button>
                 </CopyToClipboard>
@@ -2148,18 +2415,18 @@ class MeetingTable extends Component {
             <div className="title-head f-w-900 f-16 mb-2">
               Schedule & Booking Meeting
             </div>
-            <table className="table table-hover table-striped">
+            <table className="table table-hover table-striped table-list_booking">
               <thead>
                 <tr style={{ borderBottom: '1px solid #C7C7C7' }}>
-                  <td>Date</td>
-                  <td>Starting Hours</td>
-                  <td>End Hours</td>
-                  <td>By</td>
-                  <td>Moderator</td>
-                  <td className="text-center">Participants</td>
-                  <td>Description</td>
-                  <td>Share</td>
-                  <td>Action</td>
+                  <td><b>Date </b></td>
+                  <td style={{ width: '110px' }}><b>Starting Hours </b></td>
+                  <td style={{ width: '86px' }}><b>End Hours </b></td>
+                  <td><b>By</b></td>
+                  <td><b>Moderator</b></td>
+                  <td className="text-center" style={{ width: '80px' }}><b>Participants</b></td>
+                  <td><b>Description</b></td>
+                  <td><b>Share</b></td>
+                  <td><b>Action</b></td>
                 </tr>
               </thead>
               <tbody>
@@ -2202,8 +2469,9 @@ class MeetingTable extends Component {
                               <td>{item.keterangan ? item.keterangan : '-'}</td>
                               <td>
                                 {
-                                  item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
-                                    <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
+                                  // item.participants.filter(x => x.user_id === Storage.get('user').data.user_id).length ?
+                                  item.isShare == true ?
+                                    <CopyToClipboard text={`Meeting Room : ${this.state.roomName}\nSchedule : ${moment(item.tgl_mulai).local().format('dddd, MMMM Do YYYY')}, ${moment(item.tgl_mulai).local().format('HH:mm')} - ${moment(item.tgl_selesai).local().format('HH:mm')}\nTime Zone : GMT${moment().local().format('Z')} ${moment.tz.guess(true)}\nDuration : ${durasi}\nDescription : ${item.keterangan}\nURL : ${APPS_SERVER}meet/${item.id}`}
                                       onCopy={() => { this.setState({ copied: true }); toast.info('Copied to your clipboard.') }}>
                                       <i className="fa fa-copy cursor">&nbsp; Copy</i>
                                     </CopyToClipboard>
@@ -2211,23 +2479,23 @@ class MeetingTable extends Component {
                                 }
                               </td>
                               <td>
-                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor">Information</span>
+                                <span onClick={() => this.onClickInformation(item.meeting_id, item.id)} className="badge badge-pill badge-info cursor" style={{ fontSize: "1em", cursor: 'pointer' }} >Information</span>
                                 {
                                   // checkParty && range
                                   item.isJoin || (checkParty && range) ?
                                     <a rel="noopener noreferrer" target='_blank' href={(this.state.infoClass.engine === 'zoom') ? this.state.checkZoom[0].link : `/meet/${item.id}`}>
-                                      <span className="badge badge-pill badge-success ml-2 cursor">Join</span>
+                                      <span className="badge badge-pill badge-success ml-2 cursor" style={{ fontSize: "1em", cursor: 'pointer' }}>Join</span>
                                     </a>
                                     : null
                                 }
                                 {
-                                  item.user_id === Storage.get('user').data.user_id ?
-                                    <span class="badge badge-pill badge-secondary ml-2" style={{ cursor: 'pointer' }} onClick={this.editBooking.bind(this, item.id)}>Edit</span>
+                                  (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
+                                    <span class="badge badge-pill badge-secondary ml-2" onClick={this.editBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Edit</span>
                                     : null
                                 }
                                 {
-                                  item.user_id === Storage.get('user').data.user_id ?
-                                    <span class="badge badge-pill badge-danger ml-2" style={{ cursor: 'pointer' }} onClick={this.cancelBooking.bind(this, item.id)}>Cancel</span>
+                                  (item.user_id === Storage.get('user').data.user_id) && !item.expired ?
+                                    <span class="badge badge-pill badge-danger ml-2" onClick={this.cancelBooking.bind(this, item.id)} style={{ fontSize: "1em", cursor: 'pointer' }}>Cancel</span>
                                     : null
                                 }
                               </td>

@@ -8,8 +8,8 @@ import moment from 'moment-timezone';
 
 class Header extends Component {
   state = {
-    user: 'Anonymous',
-    level: 'Member',
+    user: '',
+    level: '',
     avatar: '/assets/images/user/avatar-1.png',
     notificationData: [],
 
@@ -33,7 +33,12 @@ class Header extends Component {
     localStorage.setItem('companyID', id);
     localStorage.setItem('companyName', name);
     localStorage.setItem('logo', logo);
-    window.location.reload();
+    let href = window.location.href;
+    if (href.search("detail-project") > -1) {
+      window.location.replace("/");
+    } else {
+      window.location.reload();
+    }
   };
 
   fetchCompany() {
@@ -49,7 +54,19 @@ class Header extends Component {
         } else {
           this.setState({ company: response.data.result.company });
         }
-        this.setState({ logoMulti: this.state.company.filter((item)=> item.company_id == localStorage.getItem('companyID'))[0].logo })
+        this.setState({ logoMulti: this.state.company.filter((item) => item.company_id == localStorage.getItem('companyID'))[0].logo })
+
+        let comp = Storage.get('user').data
+        let idx = this.state.company.findIndex((str) => { return str.company_id == comp.company_id })
+        if (idx == -1) {
+          this.state.company.push(comp)
+        } else {
+          if (typeof parseInt(localStorage.getItem('companyID')) !== 'number') {
+            this.state.company.pop(idx)
+          }
+        }
+        console.log(idx, this.state.company, "TEST")
+        console.log(this.state.company, 9090);
       })
       .catch(function (error) {
         console.log(error);
@@ -431,6 +448,8 @@ class Header extends Component {
     } else {
       menuContent = menuClients;
     }
+
+    console.log(company, "TEST");
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{ marginBottom: -1, background: '#FFF' }}>
         <div className="m-header">
@@ -569,7 +588,7 @@ class Header extends Component {
 
           <ul className="navbar-nav ml-auto">
 
-            <span className="fc-muted">{moment(this.state.dateNow).local().format('DD MMMM YYYY')} ({moment.tz.guess(true)})</span>
+            <span className="fc-muted">{moment().local().format('DD MMMM YYYY')} (GMT{moment(this.state.dateNow).local().format('Z')} {moment.tz.guess(true)})</span>
             {/* <li>
               <div className="dropdown">
                 <a className href="javascript:" data-toggle="dropdown">
@@ -618,123 +637,125 @@ class Header extends Component {
           </ul>
 
 
-          {(level == 'superadmin' || level == 'admin') && (
-            <ul className="navbar-nav">
-              <li>
-                <div className="dropdown">
-                  <a href="javascript:;" data-toggle="dropdown">
-                    <img
-                      src={`newasset/company.svg`}
-                      alt=""
-                      width={25}
-                    ></img>
-                  </a>
-                  <div className="dropdown-menu dropdown-menu-right notification">
-                    <div className="noti-head">
-                      <h6 className="d-inline-block m-b-0">
-                        <b>{this.state.company.length > 0
-                          ? 'Select Company'
-                          : 'Not multiple company'}
-                        </b>
-                      </h6>
-                    </div>
-                    <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
-                      {level == 'admin' && (
-                        <li
-                          className="notification"
-                          style={{ cursor: 'pointer' }}
-                          onClick={this.pilihCompany}
-                          data-id={this.state.company_id}
-                          data-logo={this.state.logo}
-                        >
-                          <div
-                            className="media"
-                            data-id={this.state.company_id}
-                            data-logo={this.state.logo}
-                          >
-                            <img
-                              data-id={this.state.company_id}
-                              data-logo={this.state.logo}
-                              className="img-radius"
-                              src={this.state.logo}
-                              alt=""
-                            />
-                            <div
-                              className="media-body"
-                              data-id={this.state.company_id}
-                              data-logo={this.state.logo}
-                            >
-                              <p
-                                data-id={this.state.company_id}
-                                data-logo={this.state.logo}
-                              >
-                                <b
-                                  data-id={this.state.company_id}
-                                  data-logo={this.state.logo}
-                                >
-                                  {this.state.myCompanyName}
-                                </b>
-                              </p>
-                              {localStorage.getItem('companyID') ==
-                                this.state.company_id && (
-                                  <p
-                                    data-id={this.state.company_id}
-                                    data-logo={this.state.logo}
-                                    style={{ color: 'green' }}
-                                  >
-                                    active
-                                  </p>
-                                )}
-                            </div>
-                          </div>
-                        </li>
-                      )}
-                      {company.map((item, i) => (
-                        <li
-                          className="notification"
-                          style={{ cursor: 'pointer' }}
-                          onClick={this.pilihCompany}
+          {/* {(level == 'superadmin' || level == 'admin') && ( */}
+          <ul className="navbar-nav">
+            <li>
+              <div className="dropdown">
+                <a href="javascript:;" data-toggle="dropdown">
+                  <img
+                    src={`newasset/company.svg`}
+                    alt=""
+                    width={25}
+                  ></img>
+                </a>
+                <div className="dropdown-menu dropdown-menu-right notification">
+                  <div className="noti-head">
+                    <h6 className="d-inline-block m-b-0">
+                      <b>{this.state.company.length > 0
+                        ? 'Select Company'
+                        : 'Not multiple company'}
+                      </b>
+                    </h6>
+                  </div>
+                  <ul className="noti-body" style={{ maxHeight: 400, overflowY: 'scroll', overflowX: 'hidden' }}>
+                    { //(level == 'admin' || level == 'client') && (
+                      // <li
+                      //   className="notification"
+                      //   style={{ cursor: 'pointer' }}
+                      //   onClick={this.pilihCompany}
+                      //   data-id={this.state.company_id}
+                      //   data-logo={this.state.logo}
+                      // >
+                      //   <div
+                      //     className="media"
+                      //     data-id={this.state.company_id}
+                      //     data-logo={this.state.logo}
+                      //   >
+                      //     <img
+                      //       data-id={this.state.company_id}
+                      //       data-logo={this.state.logo}
+                      //       className="img-radius"
+                      //       src={this.state.logo}
+                      //       alt=""
+                      //     />
+                      //     <div
+                      //       className="media-body"
+                      //       data-id={this.state.company_id}
+                      //       data-logo={this.state.logo}
+                      //     >
+                      //       <p
+                      //         data-id={this.state.company_id}
+                      //         data-logo={this.state.logo}
+                      //       >
+                      //         <b
+                      //           data-id={this.state.company_id}
+                      //           data-logo={this.state.logo}
+                      //         >
+                      //           {this.state.myCompanyName}
+                      //         </b>
+                      //       </p>
+                      //       {localStorage.getItem('companyID') ==
+                      //         this.state.company_id && (
+                      //           <p
+                      //             data-id={this.state.company_id}
+                      //             data-logo={this.state.logo}
+                      //             style={{ color: 'green' }}
+                      //           >
+                      //             active
+                      //           </p>
+                      //         )}
+                      //     </div>
+                      //   </div>
+                      // </li>
+                      //)
+                    }
+                    {company.map((item, i) => (
+
+                      <li
+                        className="notification"
+                        style={{ cursor: 'pointer' }}
+                        onClick={this.pilihCompany}
+                        data-id={item.company_id}
+                        data-logo={item.logo}
+                        data-name={item.company_name}
+                      >
+                        <div
+                          className="media"
                           data-id={item.company_id}
                           data-logo={item.logo}
                           data-name={item.company_name}
                         >
+                          <img
+                            data-id={item.company_id}
+                            data-logo={item.logo}
+                            data-name={item.company_name}
+                            className="img-radius"
+                            src={item.logo}
+                            alt=""
+                          />
                           <div
-                            className="media"
+                            className="media-body"
                             data-id={item.company_id}
                             data-logo={item.logo}
                             data-name={item.company_name}
                           >
-                            <img
-                              data-id={item.company_id}
-                              data-logo={item.logo}
-                              data-name={item.company_name}
-                              className="img-radius"
-                              src={item.logo}
-                              alt=""
-                            />
-                            <div
-                              className="media-body"
+                            <p
                               data-id={item.company_id}
                               data-logo={item.logo}
                               data-name={item.company_name}
                             >
-                              <p
+                              <b
                                 data-id={item.company_id}
                                 data-logo={item.logo}
                                 data-name={item.company_name}
                               >
-                                <b
-                                  data-id={item.company_id}
-                                  data-logo={item.logo}
-                                  data-name={item.company_name}
-                                >
-                                  {item.company_name}
-                                </b>
+                                {item.company_name}
+                              </b>
 
-                                <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Aktif' : null}</span>
-                              </p>
+                              <span style={{ color: item.company_id == localStorage.getItem('companyID') ? 'green' : 'red', float: 'right' }}>{item.company_id == localStorage.getItem('companyID') ? 'Active' : null}</span>
+                            </p>
 
-                              {/* {parseInt(localStorage.getItem('companyID')) ==
+                            {/* {parseInt(localStorage.getItem('companyID')) ==
                                 item.company_id && (
                                 <p
                                   data-id={item.company_id}
@@ -743,16 +764,16 @@ class Header extends Component {
                                   {item.status}
                                 </p>
                               )} */}
-                            </div>
                           </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </li>
-            </ul>
-          )}
+              </div>
+            </li>
+          </ul>
+          {/* )} */}
         </div>
       </header>
     );
