@@ -848,7 +848,7 @@ class FormExam extends Component {
                                                             <div className="form-field-top-label" style={{ maxWidth: 240 }}>
                                                                 <label for="scheduled">Repeatable</label>
                                                                 <ToggleSwitch className="form-toggle-switch" name="repeatable" onChange={this.ToggleSwitchRepeat.bind(this)} checked={this.state.repeatable} />
-                                                                <p className="form-notes">{this.state.repeatable ? 'Repeatable Quiz' : 'Unrepeatable Quiz'}</p>
+                                                                <p className="form-notes">{this.state.repeatable ? `Repeatable ${this.props.match.params.type === 'quiz' ? 'Quiz' : 'Exam'}` : `Unrepeatable ${this.props.match.params.type === 'quiz' ? 'Quiz' : 'Exam'}`}</p>
                                                             </div>
                                                         </div>
                                                     </div>
