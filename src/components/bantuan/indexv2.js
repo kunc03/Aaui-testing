@@ -66,12 +66,8 @@ filterTags(val){
                                 <h3 className="f-w-bold f-18 fc-blue mb-4">TUTORIALS</h3>
                                 <div className="row col-sm-12" style={{marginBottom:20}}>
                                     <div className={`tutorial-filter-items ${this.state.tags === 'All' && 'active'}`} onClick={this.filterTags.bind(this, 'All')}>All</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Project' && 'active'}`} onClick={this.filterTags.bind(this, 'Project')}>Project</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Meeting' && 'active'}`} onClick={this.filterTags.bind(this, 'Meeting')}>Meeting</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Webinar' && 'active'}`} onClick={this.filterTags.bind(this, 'Webinar')}>Webinar</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Learning' && 'active'}`} onClick={this.filterTags.bind(this, 'Learning')}>Learning</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Training' && 'active'}`} onClick={this.filterTags.bind(this, 'Training')}>Training</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Others' && 'active'}`} onClick={this.filterTags.bind(this, 'Others')}>Others</div>
+                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Mobile User' && 'active'}`} onClick={this.filterTags.bind(this, 'Mobile User')}>Mobile User</div>
+                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Admin' && 'active'}`} onClick={this.filterTags.bind(this, 'Admin')}>Admin</div>
                                 </div>
                                 <div className="row">
                                     {
