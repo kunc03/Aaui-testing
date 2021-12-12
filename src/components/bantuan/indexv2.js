@@ -67,7 +67,6 @@ filterTags(val){
                                 <div className="row col-sm-12" style={{marginBottom:20}}>
                                     <div className={`tutorial-filter-items ${this.state.tags === 'All' && 'active'}`} onClick={this.filterTags.bind(this, 'All')}>All</div>
                                     <div  className={`tutorial-filter-items ${this.state.tags === 'Mobile User' && 'active'}`} onClick={this.filterTags.bind(this, 'Mobile User')}>Mobile User</div>
-                                    <div  className={`tutorial-filter-items ${this.state.tags === 'Admin' && 'active'}`} onClick={this.filterTags.bind(this, 'Admin')}>Admin</div>
                                 </div>
                                 <div className="row">
                                     {
