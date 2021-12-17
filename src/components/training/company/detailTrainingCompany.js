@@ -60,8 +60,14 @@ class DetailCompany extends Component {
                                           {this.props.id ? <Allocation trainingCompany={this.props.id} lockEdit={true} /> : null}
                                         </div>
                                         <div className="col-sm-6">
-                                          <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.id} level="admin" import={true}/>
-                                          <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.id} level="user" import={true}/>
+                                          {
+                                            this.props.id ?
+                                            <>
+                                              <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.id} level="admin" import={true}/>
+                                              <ListData goTo={this.goTo.bind(this)} trainingCompany={this.props.id} level="user" import={true}/>
+                                            </>
+                                            : null
+                                          }
                                         </div>
                                       </div>
                                       <div className="row">
