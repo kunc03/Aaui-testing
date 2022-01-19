@@ -406,6 +406,15 @@ class Report extends Component {
         },
       },
       {
+        cell: row => moment(row.expired).local().format("DD-MM-YYYY"),
+        name: 'Expired Date',
+        selector: 'expired',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
         cell: row => row.certificate_status === null ? '-' :
         row.certificate_status === 'Sent' ? <a href={row.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
         row.certificate_status === 'Processing' ? <Badge variant="warning">{row.certificate_status}</Badge> :
