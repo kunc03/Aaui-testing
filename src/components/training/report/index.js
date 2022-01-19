@@ -274,15 +274,16 @@ class Report extends Component {
         grow: 2,
       },
       {
-        cell: row => moment(row.born_date).local().format("DD-MM-YYYY"),
+        cell: row => moment(row.born_date).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(row.born_date).local().format("DD-MM-YYYY"),
         name: 'Born Date',
         selector: 'born_date',
         sortable: true,
       },
       {
-        name: 'Born Place',
-        selector: 'born_place',
+        name: 'City',
+        selector: 'city',
         sortable: true,
+        cell: row => row.city === 'null' ? '' : row.city,
       },
       {
         name: 'Identity Card Number',
@@ -406,6 +407,14 @@ class Report extends Component {
         },
       },
       {
+        name: 'Expired',
+        selector: 'expired',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
         cell: row => row.certificate_status === null ? '-' :
         row.certificate_status === 'Sent' ? <a href={row.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
         row.certificate_status === 'Processing' ? <Badge variant="warning">{row.certificate_status}</Badge> :
@@ -482,6 +491,30 @@ class Report extends Component {
           <td>Submission Condition</td>
           <td>:</td>
           <td>{data.submission_condition}</td>
+        </tr>
+        <tr>
+          <td>Born Date</td>
+          <td>:</td>
+          <td>{moment(data.born_date).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(data.born_date).local().format("DD-MM-YYYY")}</td>
+          <td>City</td>
+          <td>:</td>
+          <td>{data.city}</td>
+        </tr>
+        <tr>
+          <td>Identity Card Number</td>
+          <td>:</td>
+          <td>{data.identity}</td>
+          <td>Gender</td>
+          <td>:</td>
+          <td>{data.gender}</td>
+        </tr>
+        <tr>
+          <td>Address</td>
+          <td>:</td>
+          <td>{data.address}</td>
+          <td>Expired</td>
+          <td>:</td>
+          <td>{moment(data.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(data.expired).local().format("DD-MM-YYYY")}</td>
         </tr>
       </table>
     );
