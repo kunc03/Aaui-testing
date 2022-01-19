@@ -274,6 +274,32 @@ class Report extends Component {
         grow: 2,
       },
       {
+        cell: row => moment(row.born_date).local().format("DD-MM-YYYY"),
+        name: 'Born Date',
+        selector: 'born_date',
+        sortable: true,
+      },
+      {
+        name: 'Born Place',
+        selector: 'born_place',
+        sortable: true,
+      },
+      {
+        name: 'Identity Card Number',
+        selector: 'identity',
+        sortable: true,
+      },
+      {
+        name: 'Gender',
+        selector: 'gender',
+        sortable: true,
+      },
+      {
+        name: 'Address',
+        selector: 'address',
+        sortable: true,
+      },
+      {
         name: 'Email',
         selector: 'email',
         sortable: true,
