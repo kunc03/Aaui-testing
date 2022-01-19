@@ -402,6 +402,16 @@ class Report extends Component {
         name: 'License Number',
         selector: 'license_number',
         sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => moment(row.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(row.expired).local().format("DD-MM-YYYY"),
+        name: 'Expired Date',
+        selector: 'expired',
+        sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
