@@ -12,6 +12,7 @@ import moment from 'moment-timezone';
 import { MultiSelect } from 'react-sm-select';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
+import * as XLSX from 'xlsx';
 
 class User extends Component {
   constructor(props) {
@@ -46,7 +47,8 @@ class User extends Component {
         valueExam: [],
         optionsCompany: [],
         valueCompany: [],
-        isSaving: false
+        isSaving: false,
+        listDataExport: []
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -257,9 +259,28 @@ class User extends Component {
             this.setState({isLoading: false});
         }
         else{
-          this.setState({data: res.data.result, isLoading: false})
+          this.setState({data: res.data.result, listDataExport: this.state.listDataExport.concat(res.data.result), isLoading: false})
+          if( this.props.level === 'admin'){
+            this.getUserTrainingCompanyLevelUser(this.props.trainingCompany, {level: 'user'});
+          }
         }
     })
+  }
+
+  getUserTrainingCompanyLevelUser(id) {
+    API.get(`${API_SERVER}v2/training/user/training-company/user/${id}`).then(res => {
+      if (res.data.error){
+          this.setState({isLoading: false});
+      }
+      else{
+        let dataExport = this.state.listDataExport.concat(res.data.result);
+        const level = Storage.get('user').data.level, grup = Storage.get('user').data.grup_name;
+        if(level === 'client' && grup === 'Admin Training'){
+          dataExport = dataExport.filter(data => data.level === 'user');
+        }
+        this.setState({listDataExport: dataExport})
+      }
+  })
   }
   
   handleChangeFile = e => {
@@ -339,6 +360,53 @@ class User extends Component {
   }
 
   render() {
+    console.log(this.props, '???')
+    const ExportCSV = ({ csvData, fileName }) => {
+
+      // const role = this.state.role
+        const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  
+        let arr = []
+        if (csvData.length > 0) {
+          csvData.forEach((str, index) => {
+            let obj = {
+              No: index +1,
+              Name: str.name,
+              Address: str.address,
+              City: str.city,
+              DateOfBirth: str.born_date,
+              PlaceOfBirth: str.born_place,
+              Company: str.company,
+              Email: str.email,
+              Gender: str.gender,
+              Identity: str.identity,
+              Phone: str.phone,              
+            }
+            arr.push(obj)
+          })
+          csvData = arr;
+        }
+        const exportToCSV = (csvData, fileName) => {
+          const ws = XLSX.utils.json_to_sheet(csvData);
+          const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+          const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+          const data = new Blob([excelBuffer], { type: fileType });
+          let url = window.URL.createObjectURL(data);
+          let a = document.createElement("a");
+          document.body.appendChild(a);
+          a.href = url;
+          a.download = fileName;
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        }
+  
+        return (
+          <button className="button-gradient-blue" style={{ marginLeft: 20 }} onClick={(e) => exportToCSV(csvData, fileName)}>Export Data User</button>
+        )
+      }
+  
+
     const columns = [
       {
         name: 'Image',
@@ -555,6 +623,18 @@ class User extends Component {
     }
     return(
       <div>
+        {this.props.level === 'admin' ?
+          <div className="card p-20 main-tab-container">
+            <div className="row">
+                <div className="col-sm-12 m-b-20">
+                    <strong className="f-w-bold f-18" style={{color:'#000'}}>Export Users</strong>
+                </div>
+                <div className="col-sm-12 m-b-20">
+                  <ExportCSV csvData={this.state.listDataExport} fileName={`Data-Training-User-${Storage.get('user').data.company_name || ''}`} />
+                </div>
+              </div>
+            </div>
+        : null}
         {
           this.state.import &&
                                             <div className="card p-20 main-tab-container">
