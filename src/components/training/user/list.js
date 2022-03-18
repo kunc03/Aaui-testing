@@ -397,7 +397,8 @@ class User extends Component {
               Email: str.email,
               Gender: str.gender,
               Identity: str.identity,
-              Phone: str.phone,     
+              Phone: str.phone,
+              LicenseNumber: str.license_number,     
               Level: str.level         
             }
             arr.push(obj)
