@@ -203,14 +203,26 @@ class User extends Component {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
           this.getCompany(this.state.companyId);
           let level = Storage.get('user').data.level;
+          this.getDataExportUser(this.props.trainingCompany, res.data.result.company_id); //Export CSV
           if (this.props.trainingCompany){
-              this.getUserTrainingCompany(this.props.trainingCompany, state)
+              this.getUserTrainingCompany(this.props.trainingCompany, state);
           }
           else {
             this.getUser(this.state.companyId, state)
           }
         }
     })
+  }
+
+  getDataExportUser (idTraining, idCompany) {
+    const level = Storage.get('user').data.level, grup = Storage.get('user').data.grup_name;
+    if(level === 'client' && grup === 'Admin Training'){
+      this.getUserTrainingCompanyLevelUser('user', idTraining);
+      this.getUserTrainingCompanyLevelUser('admin', idTraining);
+    }else if(level === 'admin' || level === 'superadmin'){
+      this.getAdminTrainingCompanyByIdCompany('user', idCompany);
+      this.getAdminTrainingCompanyByIdCompany('admin', idCompany);
+    }
   }
 
   getExam(companyId){
@@ -246,26 +258,21 @@ class User extends Component {
             this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result, listDataExport: this.state.listDataExport.concat(res.data.result), isLoading: false})
-            this.getAdminTrainingCompanyByIdCompany(id);
+            this.setState({data: res.data.result, isLoading: false})
           }
     })
   }
 
-  getAdminTrainingCompanyByIdCompany(id) {
-    API.get(`${API_SERVER}v2/training/user/admin/${id}`).then(res => {
+  getAdminTrainingCompanyByIdCompany(level, id) {
+    API.get(`${API_SERVER}v2/training/user/${level}/${id}`).then(res => {
       if (res.data.error){
           toast.error(`Error read ${this.state.level}`)
       }
       else{
         let dataExport = this.state.listDataExport.concat(res.data.result);
-        const level = Storage.get('user').data.level, grup = Storage.get('user').data.grup_name;
-        if(level === 'client' && grup === 'Admin Training'){
-          dataExport = dataExport.filter(data => data.level === 'user');
-        }
         this.setState({listDataExport: dataExport})
       }
-  })
+    })
   }
 
   getUserTrainingCompany(id, state){
@@ -276,25 +283,18 @@ class User extends Component {
             this.setState({isLoading: false});
         }
         else{
-          this.setState({data: res.data.result, listDataExport: this.state.listDataExport.concat(res.data.result), isLoading: false})
-          if( this.props.level === 'admin'){
-            this.getUserTrainingCompanyLevelUser(this.props.trainingCompany, {level: 'user'});
-          }
+          this.setState({data: res.data.result, isLoading: false})
         }
     })
   }
 
-  getUserTrainingCompanyLevelUser(id) {
-    API.get(`${API_SERVER}v2/training/user/training-company/user/${id}`).then(res => {
+  getUserTrainingCompanyLevelUser(level, id) {
+    API.get(`${API_SERVER}v2/training/user/training-company/${level}/${id}`).then(res => {
       if (res.data.error){
           this.setState({isLoading: false});
       }
       else{
         let dataExport = this.state.listDataExport.concat(res.data.result);
-        const level = Storage.get('user').data.level, grup = Storage.get('user').data.grup_name;
-        if(level === 'client' && grup === 'Admin Training'){
-          dataExport = dataExport.filter(data => data.level === 'user');
-        }
         this.setState({listDataExport: dataExport})
       }
   })
@@ -397,7 +397,8 @@ class User extends Component {
               Email: str.email,
               Gender: str.gender,
               Identity: str.identity,
-              Phone: str.phone,              
+              Phone: str.phone,     
+              Level: str.level         
             }
             arr.push(obj)
           })
