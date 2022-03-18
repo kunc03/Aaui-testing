@@ -62,7 +62,7 @@ class User extends Component {
                                         <div>
                                           {
                                             !this.state.isLoading ?
-                                            <ListData goTo={this.goTo.bind(this)} import={true} trainingCompany={this.state.training_company_id !== '' ? this.state.training_company_id : false}/>
+                                            <ListData goTo={this.goTo.bind(this)} import={true} trainingCompany={this.state.training_company_id !== '' ? this.state.training_company_id : false} level="user"/>
                                             : null
                                           }
                                         </div>

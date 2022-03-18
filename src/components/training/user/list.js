@@ -246,9 +246,26 @@ class User extends Component {
             this.setState({isLoading: false});
         }
         else{
-            this.setState({data: res.data.result, isLoading: false})
-        }
+            this.setState({data: res.data.result, listDataExport: this.state.listDataExport.concat(res.data.result), isLoading: false})
+            this.getAdminTrainingCompanyByIdCompany(id);
+          }
     })
+  }
+
+  getAdminTrainingCompanyByIdCompany(id) {
+    API.get(`${API_SERVER}v2/training/user/admin/${id}`).then(res => {
+      if (res.data.error){
+          toast.error(`Error read ${this.state.level}`)
+      }
+      else{
+        let dataExport = this.state.listDataExport.concat(res.data.result);
+        const level = Storage.get('user').data.level, grup = Storage.get('user').data.grup_name;
+        if(level === 'client' && grup === 'Admin Training'){
+          dataExport = dataExport.filter(data => data.level === 'user');
+        }
+        this.setState({listDataExport: dataExport})
+      }
+  })
   }
 
   getUserTrainingCompany(id, state){
@@ -360,7 +377,7 @@ class User extends Component {
   }
 
   render() {
-    console.log(this.props, '???')
+    console.log(this.state.listDataExport, '???')
     const ExportCSV = ({ csvData, fileName }) => {
 
       // const role = this.state.role
@@ -623,7 +640,7 @@ class User extends Component {
     }
     return(
       <div>
-        {this.props.level === 'admin' ?
+        {this.props.level === 'user' ?
           <div className="card p-20 main-tab-container">
             <div className="row">
                 <div className="col-sm-12 m-b-20">
