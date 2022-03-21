@@ -649,7 +649,7 @@ class User extends Component {
                     <strong className="f-w-bold f-18" style={{color:'#000'}}>Export Users</strong>
                 </div>
                 <div className="col-sm-12 m-b-20">
-                  <ExportCSV csvData={this.state.listDataExport} fileName={`Data-Training-User-${Storage.get('user').data.company_name || ''}`} />
+                  <ExportCSV csvData={this.state.listDataExport} fileName={`Data-Training-User-${localStorage.getItem('companyName') ? localStorage.getItem('companyName') : Storage.get('user').data.company_name}`} />
                 </div>
               </div>
             </div>
