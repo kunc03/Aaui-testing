@@ -395,9 +395,9 @@ class SidebarClass extends Component {
           <div className="navbar-brand header-logo">
             <Link to="/" className="b-brand" style={{ width: '100%' }}>
               <img
-                src={`assets/images/component/${this.state.sideMenu ? 'logo-mobile.png' : 'Logo Ideku.png'}`}
+                src={`assets/images/component/${this.state.sideMenu ? 'logo-mobile-2.png' : 'Logo Ideku.png'}`}
                 alt=""
-                style={{ width: '90%', height: 'auto', paddingLeft: '5%' }}
+                style={{ width: '100%', height: 'auto', paddingLeft: '5%' }}
               />
               {/* <span className="b-title">IDEKU</span> */}
             </Link>

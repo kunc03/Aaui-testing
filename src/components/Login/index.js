@@ -344,9 +344,11 @@ class Login extends Component {
           <center>
             <div className="mb-4">
               <img
-                src="newasset/logo-horizontal.svg"
-                style={{ paddingTop: 18 }}
-                alt=""
+                src="assets/images/component/Logo LSPAAUI-01.png"
+                style={{ paddingTop: 0 }}
+                width='120'
+                height={90}
+                alt="brand-logo"
               />
             </div>
           </center>
