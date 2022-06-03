@@ -19,11 +19,16 @@ class SettingsTraining extends Component {
         companyId: '',
         image:'',
         imagePreview: API_SERVER+'training/membership/card.svg',
+        logoOrganizerPreview: API_SERVER+'training/membership/card.svg',
+        logoOrganizer: '',
+        nameOrganizer: '',
         data: [],
         modalCreate: false,
         modalDelete: false,
         modalOther: false,
+        showOrganizer: true,
         typeName: '',
+        duration: 2,
         typeId:'',
         dataOthers :
         [
@@ -60,6 +65,24 @@ class SettingsTraining extends Component {
     }
   }
 
+  handleChangeLogoOrganizer = e => {
+    let {name, value} = e.target;
+    if (name==='image'){
+      if (e.target.files.length){
+          if (e.target.files[0].size <= 5000000) {
+              let logoOrganizer = {
+                  logoOrganizer: e.target.files[0],
+                  logoOrganizerPreview: URL.createObjectURL(e.target.files[0])
+              }
+              this.setState(logoOrganizer)
+          } else {
+            value = null;
+            toast.warning('Image size cannot larger than 5MB and must be an image file')
+          }
+      }
+    }
+  }
+
   handleChange = e => {
     let {name, value} = e.target;
     if (name==='image'){
@@ -90,47 +113,84 @@ class SettingsTraining extends Component {
           if (this.state.typeId === ''){
             let form = {
                 company_id: this.state.companyId,
-                name : this.state.typeName
+                name : this.state.typeName,
+                name_organizer: this.state.nameOrganizer,
+                duration: this.state.duration
             }
             API.post(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
                 if (res.data.error){
+                  this.setState({isSaving: false})
                     toast.error(`Error create licenses type`)
                 }
                 else{
-                    if (this.state.image){
-                        let formData = new FormData();
-                        formData.append("image", this.state.image)
-                        API.put(`${API_SERVER}v2/training/settings/licenses-type/image/${res.data.result.insertId}`, formData).then(res2 => {
-                            if (res2.data.error){
-                                toast.warning(`Licenses type edited but fail to upload image`)
-                            }
-                            else{
-                              this.setState({isSaving: false});
-                              toast.success(`New licenses type created`)
-                              this.closeModalCreate();
-                              this.getLicensesType(this.state.companyId)
-                            }
-                        })
-                    }
-                    else{
-                      this.setState({isSaving: false});
-                      toast.success(`New licenses type created`)
-                      this.closeModalCreate();
-                      this.getLicensesType(this.state.companyId)
-                    }
+                  if( this.state.logoOrganizer){
+                    let formData = new FormData();
+                    formData.append("image", this.state.logoOrganizer);
+                    API.put(`${API_SERVER}v2/training/settings/licenses-type/logo-organizer/${res.data.result.insertId}`, formData).then(res2 => {
+                        if (res2.data.error){
+                            toast.warning(`Licenses type edited but fail to upload image`)
+                        }
+                        else{
+                          this.setState({isSaving: false});
+                          this.closeModalCreate();
+                          this.getLicensesType(this.state.companyId)
+                        }
+                    })
+                  }
+
+                  if (this.state.image){
+                      let formData = new FormData();
+                      formData.append("image", this.state.image)
+                      API.put(`${API_SERVER}v2/training/settings/licenses-type/image/${res.data.result.insertId}`, formData).then(res2 => {
+                          if (res2.data.error){
+                              toast.warning(`Licenses type edited but fail to upload image`)
+                          }
+                          else{
+                            this.setState({isSaving: false});
+                            toast.success(`New licenses type created`)
+                            this.closeModalCreate();
+                            this.getLicensesType(this.state.companyId)
+                          }
+                      })
+                  }
+                  else{
+                    this.setState({isSaving: false});
+                    toast.success(`New licenses type created`)
+                    this.closeModalCreate();
+                    this.getLicensesType(this.state.companyId)
+                  }
                 }
             })
           }
           else{
             let form = {
                 id: this.state.typeId,
-                name : this.state.typeName
+                name : this.state.typeName,
+                name_organizer: this.state.nameOrganizer,
+                duration: this.state.duration
             }
             API.put(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
                 if (res.data.error){
-                    toast.error(`Error edit licenses type`)
+                  this.setState({isSaving: false})
+                  toast.error(`Error edit licenses type`)
                 }
                 else{
+
+                  if( this.state.logoOrganizer){
+                    let formData = new FormData();
+                    formData.append("image", this.state.logoOrganizer);
+                    API.put(`${API_SERVER}v2/training/settings/licenses-type/logo-organizer/${form.id}`, formData).then(res2 => {
+                        if (res2.data.error){
+                            toast.warning(`Licenses type edited but fail to upload image`)
+                        }
+                        else{
+                          this.setState({isSaving: false});
+                          this.closeModalCreate();
+                          this.getLicensesType(this.state.companyId)
+                        }
+                    })
+                  }
+
                   if (this.state.image){
                       let formData = new FormData();
                       formData.append("image", this.state.image)
@@ -233,6 +293,7 @@ class SettingsTraining extends Component {
   }
 
   render() {
+    console.log(this.state, 'waduh')
     const columns = [
       {
         name: 'Name',
@@ -244,8 +305,10 @@ class SettingsTraining extends Component {
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
+              // false => show, true => button
+              const isOrganizerAvailable = !row.logo_organizer && !row.name_organizer;
               switch (eventKey){
-                case 1 : this.setState({modalCreate: true, typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview});break;
+                case 1 : this.setState({modalCreate: true, showOrganizer: isOrganizerAvailable, logoOrganizerPreview: !row.logo_organizer ? this.state.logoOrganizerPreview : row.logo_organizer, nameOrganizer: row.name_organizer , typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview});break;
                 default : this.setState({modalDelete: true, typeId: row.id});break;
               }
             }}
@@ -491,6 +554,44 @@ class SettingsTraining extends Component {
                     <label for="typeName">Licenses Type Name<required>*</required></label>
                     <input type="text" name="typeName" size="50" id="typeName" placeholder="Example : Main Exam" value={this.state.typeName} onChange={this.handleChange}/>
                 </div>
+
+                <div className="form-field-top-label">
+                    <label for="typeName">Duration of Licenses (In a Years)<required>*</required></label>
+                    <input type="text" name="duration" size="50" id="duration" placeholder="Example : Main Exam" value={this.state.duration} onChange={this.handleChange}/>
+                </div>
+                {
+                  this.state.showOrganizer ? 
+                  <div className="form-field-top-label">
+                    <button
+                      onClick={()=> this.setState({showOrganizer: false})}
+                      className="btn btn-icademy-primary"
+                      style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                          <i className="fa fa-plus"></i>
+                          {this.state.typeId !== '' ? 'Edit Organizer' : 'Add Organizer'}
+                    </button>
+                  </div>
+                  
+                  : 
+                  <div className="form-field-top-label">
+                    <button className="btn" style={{cursor:'pointer', height: 'auto', backgroundColor:'#efefef', padding: '0px 25px', borderRadius: 19}} onClick={() => { this.setState({showOrganizer: true, logoOrganizer: null, nameOrganizer: '', logoOrganizerPreview: API_SERVER+'training/membership/card.svg', })}}>
+                      Cancel
+                    </button>
+                    <label for="nameOrganizer">Name Organizer<required>*</required></label>
+                    <input type="text" name="nameOrganizer" size="50" id="nameOrganizer" placeholder="Example : Main Exam" value={this.state.nameOrganizer} onChange={this.handleChange}/>
+
+                    <label for="image">Logo Organizer Background</label>
+                    <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
+                      <img src={this.state.logoOrganizerPreview} height="140px" alt="logo-organizer" />
+                    </label>
+                                                          <label for="logo-preview" style={{cursor:'pointer', overflow:'hidden'}}>
+                                                            <div className="button-bordered-grey">
+                                                                {this.state.logoOrganizer ? this.state.logoOrganizer.name : 'Choose'}
+                                                            </div>
+                                                          </label>
+                    <input type="file" accept="image/*" name="image" id="logo-preview" onChange={this.handleChangeLogoOrganizer} disabled={this.state.disabledForm}/>
+                  </div>
+                }
+                
                 <div className="form-field-top-label">
                   <label for="image">Member Card Background</label>
                   <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
