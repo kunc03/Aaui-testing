@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Editor } from '@tinymce/tinymce-react';
-import { Modal } from 'react-bootstrap';
+import { Modal, Row } from 'react-bootstrap';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import ToggleSwitch from "react-switch";
 import DatePicker from "react-datepicker";
@@ -17,6 +17,7 @@ class FormCourse extends Component {
     this.state = {
         edited: false,
         initialSession: false,
+        selectedLicense:[],
         id: this.props.match.params.id ? this.props.match.params.id : '',
         companyId:'',
         image:'',
@@ -47,6 +48,7 @@ class FormCourse extends Component {
         disabledForm: this.props.disabledForm && this.props.id,
         session: [],
         optionsCourse: [],
+        optionsLicense: [],
         valueCourse: []
     };
     this.goBack = this.goBack.bind(this);
@@ -87,8 +89,10 @@ autoSave = (isDrag) =>{
                 start_time: moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
-                created_by: Storage.get('user').data.user_id
+                created_by: Storage.get('user').data.user_id,
+                license_type_id: this.state.selectedLicense.length ? this.state.selectedLicense[0] : null
             }
+
             API.put(`${API_SERVER}v2/training/course/${this.state.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit course')
@@ -136,8 +140,10 @@ autoSave = (isDrag) =>{
                 start_time: moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
-                created_by: Storage.get('user').data.user_id
+                created_by: Storage.get('user').data.user_id,
+                license_type_id: this.state.selectedLicense.length ? this.state.selectedLicense[0] : null
             }
+
             API.put(`${API_SERVER}v2/training/course/${this.state.id}`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error edit course')
@@ -188,8 +194,10 @@ autoSave = (isDrag) =>{
                 start_time: moment.tz(this.state.start_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 end_time: moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
-                created_by: Storage.get('user').data.user_id
+                created_by: Storage.get('user').data.user_id,
+                license_type_id: this.state.selectedLicense.length ? this.state.selectedLicense[0] : null,
             }
+
             API.post(`${API_SERVER}v2/training/course`, form).then(res => {
                 if (res.data.error){
                     toast.error('Error create course')
@@ -384,17 +392,49 @@ handleOverview = (e) => {
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 session: res.data.result.session,
                 selectedSession : res.data.result.session.length ? res.data.result.session[0].id : '',
+                selectedLicense : res.data.result.license_type_id ? [res.data.result.license_type_id] : [],
             })
             if (this.state.session.length){
                 this.selectSession(this.state.selectedSession);
             }
+            this.getLicense(res.data.result.license_type_id)
         }
     })
+  }
+  getLicense(idLicense){
+    API.get(`${API_SERVER}v2/training/settings/licenses-type/${this.state.companyId}`).then(res => {
+        if (res.data.error){
+            toast.error(`Error read course list`)
+        }else{
+            try{
+                let optionsLicense = this.state.optionsLicense;
+                if(optionsLicense.length){
+                    optionsLicense = [];
+                }
+                let selectedLicense = [];
+                res.data.result.map((item)=>{
+                    let name = 'AAUI - ';
+                    if(item.name_organizer){
+                        name = item.name_organizer+' - '+item.name;
+                    }else{
+                        name += item.name;
+                    }
+                    optionsLicense.push({label: name, value: item.id});
+                    if(idLicense === item.id){
+                        selectedLicense = [item.id];
+                    }
+                });
+                this.setState({ selectedLicense,optionsLicense });
+            }catch(e){
+            }
+        }
+    });
   }
   getUserData(){
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
           this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id },()=>{
+            this.getLicense(null);
             API.get(`${API_SERVER}v2/training/course-list/${this.state.companyId}`).then(res => {
                 if (res.data.error){
                     toast.error(`Error read course list`)
@@ -669,6 +709,12 @@ handleOverview = (e) => {
                                                             <strong className="f-w-bold" style={{color:'#000', fontSize:'15px'}}>Course Configuration</strong>
                                                         </div>
                                                     </div>
+                                                    <Row>
+                                                        <div className="form-field-top-label" style={{width:400}}>
+                                                            <label for="valueCourse">License Type</label>
+                                                            <MultiSelect id="valueCourse" options={this.state.optionsLicense} value={this.state.selectedLicense} onChange={(selectedLicense) =>{ console.log(selectedLicense); this.setState({ selectedLicense }) }} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select License" />
+                                                        </div>
+                                                    </Row>
                                                     <div className="row">
                                                         <div className="form-field-top-label" style={{width:400}}>
                                                             <label for="valueCourse">Required Course</label>
