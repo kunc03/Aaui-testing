@@ -9,7 +9,8 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { toast } from "react-toastify";
 import { Modal } from 'react-bootstrap';
-import Quota from '../quota/detail'
+import Quota from '../quota/detail';
+import { MultiSelect } from 'react-sm-select';
 
 class SettingsTraining extends Component {
   constructor(props) {
@@ -22,7 +23,12 @@ class SettingsTraining extends Component {
         logoOrganizerPreview: API_SERVER+'training/membership/card.svg',
         logoOrganizer: '',
         nameOrganizer: '',
+        idOrganizer:'',
+        opOrganizer:[],
         data: [],
+        dataOrganizer: [],
+        modalCreateOrganizer:false,
+        modalDeleteOrginazer:false,
         modalCreate: false,
         modalDelete: false,
         modalOther: false,
@@ -47,7 +53,10 @@ class SettingsTraining extends Component {
   }
 
   closeModalCreate = e => {
-    this.setState({ modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '' })
+    this.setState({ idOrganizer:'',nameOrganizer:'',modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '' })
+  }
+  closeModalCreateOrganizer = e =>{
+    this.setState({ modalCreateOrganizer: false,logoOrganizer:'', nameOrganizer: '', idOrganizer: '', imagePreview : API_SERVER+'training/membership/card.svg', imageOrganizer: '' })
   }
   closeModalDelete = e => {
     this.setState({ modalDelete: false, typeId: '' })
@@ -67,7 +76,7 @@ class SettingsTraining extends Component {
 
   handleChangeLogoOrganizer = e => {
     let {name, value} = e.target;
-    if (name==='image'){
+    if (name==='image' || name === 'imageOrganizer'){
       if (e.target.files.length){
           if (e.target.files[0].size <= 5000000) {
               let logoOrganizer = {
@@ -114,7 +123,7 @@ class SettingsTraining extends Component {
             let form = {
                 company_id: this.state.companyId,
                 name : this.state.typeName,
-                name_organizer: this.state.nameOrganizer,
+                organizer_id: this.state.idOrganizer,
                 duration: this.state.duration
             }
             API.post(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
@@ -123,20 +132,6 @@ class SettingsTraining extends Component {
                     toast.error(`Error create licenses type`)
                 }
                 else{
-                  if( this.state.logoOrganizer){
-                    let formData = new FormData();
-                    formData.append("image", this.state.logoOrganizer);
-                    API.put(`${API_SERVER}v2/training/settings/licenses-type/logo-organizer/${res.data.result.insertId}`, formData).then(res2 => {
-                        if (res2.data.error){
-                            toast.warning(`Licenses type edited but fail to upload image`)
-                        }
-                        else{
-                          this.setState({isSaving: false});
-                          this.closeModalCreate();
-                          this.getLicensesType(this.state.companyId)
-                        }
-                    })
-                  }
 
                   if (this.state.image){
                       let formData = new FormData();
@@ -166,7 +161,7 @@ class SettingsTraining extends Component {
             let form = {
                 id: this.state.typeId,
                 name : this.state.typeName,
-                name_organizer: this.state.nameOrganizer,
+                organizer_id: this.state.idOrganizer,
                 duration: this.state.duration
             }
             API.put(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
@@ -175,21 +170,6 @@ class SettingsTraining extends Component {
                   toast.error(`Error edit licenses type`)
                 }
                 else{
-
-                  if( this.state.logoOrganizer){
-                    let formData = new FormData();
-                    formData.append("image", this.state.logoOrganizer);
-                    API.put(`${API_SERVER}v2/training/settings/licenses-type/logo-organizer/${form.id}`, formData).then(res2 => {
-                        if (res2.data.error){
-                            toast.warning(`Licenses type edited but fail to upload image`)
-                        }
-                        else{
-                          this.setState({isSaving: false});
-                          this.closeModalCreate();
-                          this.getLicensesType(this.state.companyId)
-                        }
-                    })
-                  }
 
                   if (this.state.image){
                       let formData = new FormData();
@@ -217,6 +197,47 @@ class SettingsTraining extends Component {
           }
       }
   }
+
+  saveOrganizer(){
+    if (this.state.nameOrganizer === ''){
+        toast.warning('Please fill organizer name')
+    }
+    else{
+      this.setState({isSaving: true});
+      let msg = '';
+      let sqlQuery = `${API_SERVER}v2/training/settings/organizer/`;
+      let action = null;
+      let formData = new FormData();
+
+      formData.append("company_id", this.state.companyId);
+      formData.append("name", this.state.nameOrganizer);
+      formData.append("image", this.state.logoOrganizer);
+
+      if (this.state.idOrganizer === ''){
+        msg = 'create';
+        action = API.post;
+        sqlQuery += this.state.companyId;
+      }
+      else{
+        msg = 'edit'
+        action = API.put;
+        sqlQuery += this.state.idOrganizer;
+      }
+
+      action(sqlQuery, formData).then(res => {
+        if (res.data.error){
+          this.setState({isSaving: false})
+            toast.error(`Error ${msg} organizer`)
+        }
+        else{
+          this.setState({isSaving: false, logoOrganizer:false, nameOrganizer:'', idOrganizer:''});
+          this.closeModalCreateOrganizer();
+          this.getOrganizer(this.state.companyId);
+          toast.success(`Success ${msg} organizer`);
+        }
+      })
+    }
+}
 
   saveOther(){
     if (this.state.otherSettingActive === 0){
@@ -253,8 +274,26 @@ class SettingsTraining extends Component {
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
         if (res.status === 200) {
             this.setState({ companyId: localStorage.getItem('companyID') ? localStorage.getItem('companyID') : res.data.result.company_id, userId: res.data.result.user_id });
-            this.getLicensesType(this.state.companyId)
+            this.getOrganizer(this.state.companyId)
             this.getLicensesFormat(this.state.companyId)
+        }
+    })
+  }
+
+  getOrganizer(company_id){
+    API.get(`${API_SERVER}v2/training/settings/organizer/${company_id}`).then(res => {
+        if (res.data.error){
+            toast.error(`Error read licenses type`)
+        }
+        else{
+          let opOrganizer = [];
+          if(res.data.result.length){
+            res.data.result.forEach((str)=>{
+              opOrganizer.push({ label:str.name, value:str.id });
+            });
+          }
+          this.setState({dataOrganizer: res.data.result, opOrganizer});
+          this.getLicensesType(this.state.companyId);
         }
     })
   }
@@ -265,7 +304,23 @@ class SettingsTraining extends Component {
             toast.error(`Error read licenses type`)
         }
         else{
-            this.setState({data: res.data.result})
+            let tmp = [];
+            if(res.data.result.length){
+              let data = res.data.result;
+              let organizer = this.state.dataOrganizer;
+              data.forEach((item)=>{
+                if(item.organizer_id){
+                  let idx = organizer.findIndex((org)=>{ return org.id == item.organizer_id });
+                  if(idx > -1){
+                    item.nameOrganizer = organizer[idx].name;
+                  }
+                }else{
+                  item.nameOrganizer = '';
+                }
+                tmp.push(item);
+              });
+            }
+            this.setState({data: tmp})
         }
     })
   }
@@ -293,8 +348,8 @@ class SettingsTraining extends Component {
   }
 
   render() {
-    console.log(this.state, 'waduh')
-    const columns = [
+    
+    const columnsOrganizer = [
       {
         name: 'Name',
         selector: 'name',
@@ -305,10 +360,46 @@ class SettingsTraining extends Component {
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
-              // false => show, true => button
-              const isOrganizerAvailable = !row.logo_organizer && !row.name_organizer;
               switch (eventKey){
-                case 1 : this.setState({modalCreate: true, showOrganizer: isOrganizerAvailable, logoOrganizerPreview: !row.logo_organizer ? this.state.logoOrganizerPreview : row.logo_organizer, nameOrganizer: row.name_organizer , typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview});break;
+                case 1 : this.setState({modalCreateOrganizer: true,logoOrganizer:row.logo, logoOrganizerPreview: !row.logo ? this.state.logoOrganizerPreview : row.logo , idOrganizer: row.id, nameOrganizer: row.name});break;
+                default : this.setState({modalDeleteOrginazer: true, idOrganizer: row.id});break;
+              }
+            }}
+          >
+            <Dropdown.Toggle
+              btnStyle="flat"
+              noCaret
+              iconOnly
+            >
+              <i className="fa fa-ellipsis-h"></i>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <MenuItem eventKey={1} data-id={row.id}><i className="fa fa-edit" /> Edit</MenuItem>
+              <MenuItem eventKey={2} data-id={row.id}><i className="fa fa-trash" /> Delete</MenuItem>
+            </Dropdown.Menu>
+          </Dropdown>,
+        allowOverflow: true,
+        button: true,
+        width: '56px',
+      }
+    ];
+    const columns = [
+      {
+        name: 'Name',
+        selector: 'name',
+        sortable: true
+      },
+      {
+        name: 'Organizer',
+        selector: 'nameOrganizer'
+      },
+      {
+        cell: row =>
+          <Dropdown
+            pullRight
+            onSelect={(eventKey) => {
+              switch (eventKey){
+                case 1 : this.setState({modalCreate: true, logoOrganizerPreview: !row.logo_organizer ? this.state.logoOrganizerPreview : row.logo_organizer , typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.nameOrganizer});break;
                 default : this.setState({modalDelete: true, typeId: row.id});break;
               }
             }}
@@ -374,7 +465,7 @@ class SettingsTraining extends Component {
         width: '56px',
       }
     ];
-    let {data, dataOthers} = this.state;
+    let {data, dataOthers, dataOrganizer} = this.state;
     return(
         <div className="pcoded-main-container">
             <div className="pcoded-wrapper">
@@ -393,6 +484,34 @@ class SettingsTraining extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Settings'/>
+                                        <div className="card p-20 main-tab-container">
+                                            <div className="row">
+                                                <div className="col-sm-12 m-b-20">
+                                                    <strong className="f-w-bold f-18" style={{color:'#000'}}>Organizer</strong>
+                                                        <button
+                                                        onClick={()=> this.setState({modalCreateOrganizer: true})}
+                                                        className="btn btn-icademy-primary float-right"
+                                                        style={{ padding: "7px 8px !important", marginLeft: 14 }}>
+                                                            <i className="fa fa-plus"></i>
+                                                            Create New
+                                                        </button>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search"
+                                                        onChange={this.filter}
+                                                        className="form-control float-right col-sm-3"/>
+                                                        <DataTable
+                                                            columns={columnsOrganizer}
+                                                            data={dataOrganizer}
+                                                            highlightOnHover
+                                                            defaultSortField="name"
+                                                            pagination
+                                                            fixedHeader
+                                                            noDataComponent="There are no list organizer."
+                                                        />
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div className="card p-20 main-tab-container">
                                             <div className="row">
                                                 <div className="col-sm-12 m-b-20">
@@ -559,49 +678,20 @@ class SettingsTraining extends Component {
                     <label for="typeName">Duration of Licenses (In a Years)<required>*</required></label>
                     <input type="text" name="duration" size="50" id="duration" placeholder="Example : Main Exam" value={this.state.duration} onChange={this.handleChange}/>
                 </div>
-                {
-                  this.state.showOrganizer ? 
-                  <div className="form-field-top-label">
-                    <button
-                      onClick={()=> this.setState({showOrganizer: false})}
-                      className="btn btn-icademy-primary"
-                      style={{ padding: "7px 8px !important", marginLeft: 14 }}>
-                          <i className="fa fa-plus"></i>
-                          {this.state.typeId !== '' ? 'Edit Organizer' : 'Add Organizer'}
-                    </button>
-                  </div>
-                  
-                  : 
-                  <div className="form-field-top-label">
-                    <button className="btn" style={{cursor:'pointer', height: 'auto', backgroundColor:'#efefef', padding: '0px 25px', borderRadius: 19}} onClick={() => { this.setState({showOrganizer: true, logoOrganizer: null, nameOrganizer: '', logoOrganizerPreview: API_SERVER+'training/membership/card.svg', })}}>
-                      Cancel
-                    </button>
-                    <label for="nameOrganizer">Name Organizer<required>*</required></label>
-                    <input type="text" name="nameOrganizer" size="50" id="nameOrganizer" placeholder="Example : Main Exam" value={this.state.nameOrganizer} onChange={this.handleChange}/>
-
-                    <label for="image">Logo Organizer Background</label>
-                    <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
-                      <img src={this.state.logoOrganizerPreview} height="140px" alt="logo-organizer" />
-                    </label>
-                                                          <label for="logo-preview" style={{cursor:'pointer', overflow:'hidden'}}>
-                                                            <div className="button-bordered-grey">
-                                                                {this.state.logoOrganizer ? this.state.logoOrganizer.name : 'Choose'}
-                                                            </div>
-                                                          </label>
-                    <input type="file" accept="image/*" name="image" id="logo-preview" onChange={this.handleChangeLogoOrganizer} disabled={this.state.disabledForm}/>
-                  </div>
-                }
-                
+                <div className="form-field-top-label">
+                    <label for="typeName">Organizer (Additional)<required>*</required></label>
+                    <MultiSelect id="opOrganizer" options={this.state.opOrganizer} value={[this.state.idOrganizer]} onChange={options => this.setState({ idOrganizer:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Organizer"/>
+                </div>
                 <div className="form-field-top-label">
                   <label for="image">Member Card Background</label>
                   <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
                     <img src={this.state.imagePreview} height="140px" />
                   </label>
-                                                        <label for='image' style={{cursor:'pointer', overflow:'hidden'}}>
-                                                          <div className="button-bordered-grey">
-                                                              {this.state.image ? this.state.image.name : 'Choose'}
-                                                          </div>
-                                                        </label>
+                  <label for='image' style={{cursor:'pointer', overflow:'hidden'}}>
+                    <div className="button-bordered-grey">
+                        {this.state.image ? this.state.image.name : 'Choose'}
+                    </div>
+                  </label>
                   <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
                 </div>
             </Modal.Body>
@@ -629,6 +719,47 @@ class SettingsTraining extends Component {
               </button>
               <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.typeId)}>
                 <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
+
+          <Modal show={this.state.modalCreateOrganizer} onHide={this.closeModalCreateOrganizer} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                {this.state.typeId !== '' ? 'Edit' : 'Create New'} Organizer
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="form-field-top-label">
+                    <label for="nameOrganizer">Name<required>*</required></label>
+                    <input type="text" name="nameOrganizer" size="50" id="nameOrganizer" placeholder="Example : Organizer Title" value={this.state.nameOrganizer} onChange={this.handleChange}/>
+                </div>
+                <div className="form-field-top-label">
+                  <label for="imageOrganizer">Logo</label>
+                  {
+                    this.state.logoOrganizer &&
+                    (
+                      <label for="imageOrganizer" style={{cursor:'pointer', overflow:'hidden'}}>
+                        <img src={this.state.logoOrganizerPreview} height="140px" alt="logo-organizer" />
+                      </label>
+                    )
+                  }
+                </div>
+                <div className="form-field-top-label">
+                    <label for="logo-previewOrganizer" style={{cursor:'pointer', overflow:'hidden'}}>
+                      <div className="button-bordered-grey">
+                          Choose
+                      </div>
+                    </label>
+                    <input type="file" accept="image/*" name="imageOrganizer" id="logo-previewOrganizer" onChange={this.handleChangeLogoOrganizer} disabled={this.state.disabledForm}/>
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalCreateOrganizer.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary" onClick={this.saveOrganizer.bind(this)} disabled={this.state.isSaving}>
+                <i className="fa fa-save"></i> {this.state.isSaving ? 'Saving...' : 'Save'}
               </button>
             </Modal.Footer>
           </Modal>
