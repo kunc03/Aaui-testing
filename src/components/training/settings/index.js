@@ -35,6 +35,7 @@ class SettingsTraining extends Component {
         showOrganizer: true,
         typeName: '',
         duration: 2,
+        req_license_type: '',
         typeId:'',
         dataOthers :
         [
@@ -124,7 +125,8 @@ class SettingsTraining extends Component {
                 company_id: this.state.companyId,
                 name : this.state.typeName,
                 organizer_id: this.state.idOrganizer,
-                duration: this.state.duration
+                duration: this.state.duration,
+                req_license_type: this.state.req_license_type
             }
             API.post(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
                 if (res.data.error){
@@ -678,6 +680,12 @@ class SettingsTraining extends Component {
                     <label for="typeName">Duration of Licenses (In a Years)<required>*</required></label>
                     <input type="text" name="duration" size="50" id="duration" placeholder="Example : Main Exam" value={this.state.duration} onChange={this.handleChange}/>
                 </div>
+
+                <div className="form-field-top-label">
+                    <label for="typeName">Required License Type<required>*</required></label>
+                    <input type="text" name="req_license_type" size="50" id="req_license_type" placeholder="Example : Main Exam" value={this.state.req_license_type} onChange={this.handleChange}/>
+                </div>
+
                 <div className="form-field-top-label">
                     <label for="typeName">Organizer (Additional)<required>*</required></label>
                     <MultiSelect id="opOrganizer" options={this.state.opOrganizer} value={[this.state.idOrganizer]} onChange={options => this.setState({ idOrganizer:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Organizer"/>
