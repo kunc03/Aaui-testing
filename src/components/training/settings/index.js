@@ -24,6 +24,7 @@ class SettingsTraining extends Component {
         logoOrganizer: '',
         nameOrganizer: '',
         idOrganizer:'',
+        optionLicenseType: [],
         opOrganizer:[],
         data: [],
         dataOrganizer: [],
@@ -307,6 +308,7 @@ class SettingsTraining extends Component {
         }
         else{
             let tmp = [];
+            let optionLicenseType = [];
             if(res.data.result.length){
               let data = res.data.result;
               let organizer = this.state.dataOrganizer;
@@ -319,10 +321,11 @@ class SettingsTraining extends Component {
                 }else{
                   item.nameOrganizer = '';
                 }
+                optionLicenseType.push({label: item.name, value: item.id});
                 tmp.push(item);
               });
             }
-            this.setState({data: tmp})
+            this.setState({data: tmp, optionLicenseType: optionLicenseType})
         }
     })
   }
@@ -350,7 +353,6 @@ class SettingsTraining extends Component {
   }
 
   render() {
-    
     const columnsOrganizer = [
       {
         name: 'Name',
@@ -683,7 +685,8 @@ class SettingsTraining extends Component {
 
                 <div className="form-field-top-label">
                     <label for="typeName">Required License Type<required>*</required></label>
-                    <input type="text" name="req_license_type" size="50" id="req_license_type" placeholder="Example : Main Exam" value={this.state.req_license_type} onChange={this.handleChange}/>
+                    <MultiSelect id="optionLicenseType" options={this.state.optionLicenseType} value={[this.state.req_license_type]} onChange={options => this.setState({ req_license_type:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Required License Type"/>
+
                 </div>
 
                 <div className="form-field-top-label">
