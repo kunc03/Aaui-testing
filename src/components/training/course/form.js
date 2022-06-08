@@ -413,12 +413,8 @@ handleOverview = (e) => {
                 }
                 let selectedLicense = [];
                 res.data.result.map((item)=>{
-                    let name = 'AAUI - ';
-                    if(item.name_organizer){
-                        name = item.name_organizer+' - '+item.name;
-                    }else{
-                        name += item.name;
-                    }
+                    let name = item.organizer_name+' - '+item.name;
+                    
                     optionsLicense.push({label: name, value: item.id});
                     if(idLicense === item.id){
                         selectedLicense = [item.id];

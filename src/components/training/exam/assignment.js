@@ -54,6 +54,7 @@ class Assignment extends Component {
         subCategory: '',
         optionsLicensesType: [],
         valueLicensesType: [],
+        valueRequiredLicensesType : null,
         optionsCourse: [],
         valueCourse: [],
         valueCourse2: [],
@@ -116,6 +117,7 @@ class Assignment extends Component {
                 end_date: res.data.result.end_time ? new Date(res.data.result.end_time) : new Date(),
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 valueLicensesType: [Number(res.data.result.licenses_type_id)],
+                valueRequiredLicensesType:res.data.result.required_license_type || null,
                 valueCourse2: [Number(res.data.result.course_id)],
                 selectedQuestion: res.data.result.question.length ? res.data.result.question[0].id : '',
                 question: res.data.result.question,
@@ -179,6 +181,20 @@ class Assignment extends Component {
               this.setState({isLoading: false});
           }
           else{
+              if(res.data.result.length){
+                let filterByLicenseAccess = this.state.valueRequiredLicensesType;
+                if(filterByLicenseAccess){
+                  let tmp = [];
+                  res.data.result.forEach(str => {
+                    try{
+                      let idx = str.list_license.findIndex((check)=>{ return check.licenses_type_id === filterByLicenseAccess });
+                      if(idx > -1) tmp.push(str);
+                    }catch(e){}
+                  });
+                  res.data.result = tmp;
+                  console.log(tmp.length,"???")
+                }
+              }
               this.setState({data: res.data.result, isLoading: false, toggledClearRows: false})
           }
       })
@@ -545,6 +561,11 @@ class Assignment extends Component {
                                                                 <td>License Type</td>
                                                                 <td>:</td>
                                                                 <td>{this.state.valueLicensesType.length && this.state.optionsLicensesType.length ? this.state.optionsLicensesType.filter(x => x.value === this.state.valueLicensesType[0])[0].label : '-'}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Required License Type</td>
+                                                                <td>:</td>
+                                                                <td>{this.state.valueRequiredLicensesType && this.state.optionsLicensesType.length ? this.state.optionsLicensesType.filter(x => x.value === this.state.valueRequiredLicensesType)[0].label : '-'}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Assign to Course</td>
