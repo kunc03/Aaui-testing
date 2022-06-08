@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 import { MultiSelect } from 'react-sm-select';
 import moment from 'moment-timezone';
 import { Modal, Button, Form, Badge } from 'react-bootstrap';
+import TabMenuPlan from '../../tab_menu/route_plan';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
 import DataTable from 'react-data-table-component';
@@ -538,6 +539,8 @@ class Report extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='Report'/>
+                                        <TabMenuPlan title='' selected='History' report={true}/>
+
                                         <div>
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
