@@ -173,7 +173,7 @@ class Assignment extends Component {
     this.setState({toggledClearRows: true})
     if (id.length){
       this.setState({isLoading: true, valueCompany: id});
-      API.get(`${API_SERVER}v2/training/user/training-company/user/${id}`).then(res => {
+      API.post(`${API_SERVER}v2/training/users/training-company/user`, { training_users: id}).then(res => {
           if (res.data.error){
               toast.error(`Error read users`)
               this.setState({isLoading: false});
@@ -207,13 +207,25 @@ class Assignment extends Component {
     e.preventDefault();
     this.setState({isSaving: true});
     let items = this.state.usersSelected;
+    let dataUserAssigned = [];
     let training_user_id = items.map(x => {
-      return x.id;
+      const indexTrainingCompanyAvailable = dataUserAssigned.findIndex(user => user.idTrainingCompany === x.training_company_id);
+      if(indexTrainingCompanyAvailable > -1){
+        dataUserAssigned[indexTrainingCompanyAvailable].idTrainingUser.push(x.id)
+      }else{
+        const arrID = [x.id]
+        dataUserAssigned.push({idTrainingCompany: x.training_company_id, idTrainingUser: arrID})
+      }
+      return {
+        idTrainingCompany: x.training_company_id,
+        idTrainingUser: x.id
+      }
     });
     let form = {
-        training_company_id: this.state.valueCompany[0],
+        // training_company_id: this.state.valueCompany[0],
         exam_id: this.props.match.params.id,
-        training_user_id: training_user_id,
+        // training_user_id: training_user_id,
+        dataUserAssigned: dataUserAssigned,
         created_by: this.state.userId
     }
     API.post(`${API_SERVER}v2/training/bulk-assign`, form).then(res => {
@@ -292,6 +304,12 @@ class Assignment extends Component {
         grow: 2,
       },
       {
+        name: 'Company',
+        selector: 'company',
+        sortable: true,
+        grow: 2,
+      },
+      {
         name: 'Email',
         selector: 'email',
         sortable: true,
@@ -310,6 +328,12 @@ class Assignment extends Component {
       {
         name: 'Name',
         selector: 'name',
+        sortable: true,
+        grow: 2,
+      },
+      {
+        name: 'Company',
+        selector: 'company',
         sortable: true,
         grow: 2,
       },
@@ -346,9 +370,12 @@ class Assignment extends Component {
       )
     }
     if (valueCompany2 != "") {
-      data2 = data2.filter(x =>
-        x.training_company_id === valueCompany2[0]
-      )
+      let tmpdata = [];
+      for(let i=0;i<valueCompany2.length;i++){
+        const tempdata = data2.filter(x => x.training_company_id === valueCompany2[i]);
+        tmpdata = tmpdata.concat(tempdata)
+      }
+      data2 = tmpdata;
     }
     const HeaderUser = e => {
         return (
@@ -570,7 +597,7 @@ class Assignment extends Component {
                                                             spinner={<BeatLoader size='30' color='#008ae6' />}
                                                             >
                                                                 <div className="float-left col-sm-6 lite-filter m-t-10" style={{paddingLeft:0}}>
-                                                                    <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.getUserTrainingCompany(valueCompany)} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Choose Company" />
+                                                                    <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany} onChange={valueCompany => this.getUserTrainingCompany(valueCompany)} mode="list" enableSearch={true} resetable={true} valuePlaceholder="Choose Company" />
                                                                 </div>
                                                                 <input
                                                                     type="text"
@@ -601,7 +628,7 @@ class Assignment extends Component {
                                                             spinner={<BeatLoader size='30' color='#008ae6' />}
                                                             >
                                                                 <div className="float-left col-sm-6 lite-filter m-t-10" style={{paddingLeft:0}}>
-                                                                    <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany2} onChange={valueCompany2 => this.setState({ valueCompany2 })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
+                                                                    <MultiSelect id="company" options={this.state.optionsCompany} value={this.state.valueCompany2} onChange={valueCompany2 => this.setState({ valueCompany2 })} mode="list" enableSearch={true} resetable={true} valuePlaceholder="Filter Company" />
                                                                 </div>
                                                                 <input
                                                                     type="text"

@@ -63,6 +63,9 @@ class SettingsTraining extends Component {
   closeModalDelete = e => {
     this.setState({ modalDelete: false, typeId: '' })
   }
+  closeModalDeleteOrganizer = e => {
+    this.setState({ modalDeleteOrginazer: false, idOrganizer: '' })
+  }
   closeModalOther = e => {
     this.setState({ modalOther: false })
   }
@@ -260,17 +263,30 @@ class SettingsTraining extends Component {
     }
   }
   
-  delete(id){
-          API.delete(`${API_SERVER}v2/training/settings/licenses-type/${id}`).then(res => {
-              if (res.data.error){
-                  toast.error(`Error delete licenses type`)
-              }
-              else{
-                  toast.success(`Licenses type deleted`)
-                  this.closeModalDelete();
-                  this.getLicensesType(this.state.companyId)
-              }
-          })
+  delete(id, type){
+    if(type === 'organizer') {
+      API.delete(`${API_SERVER}v2/training/settings/organizer/${id}`).then(res => {
+        if (res.data.error){
+            toast.error(`Error delete licenses type`)
+        }
+        else{
+            toast.success(`Licenses type deleted`)
+            this.closeModalDeleteOrganizer();
+            this.getOrganizer(this.state.companyId)
+        }
+      })
+    }else{
+      API.delete(`${API_SERVER}v2/training/settings/licenses-type/${id}`).then(res => {
+        if (res.data.error){
+            toast.error(`Error delete licenses type`)
+        }
+        else{
+            toast.success(`Licenses type deleted`)
+            this.closeModalDelete();
+            this.getLicensesType(this.state.companyId)
+        }
+      })
+    }
 }
 
   getUserData(){
@@ -575,6 +591,25 @@ class SettingsTraining extends Component {
                     </div>
                 </div>
             </div>
+
+          <Modal show={this.state.modalDeleteOrginazer} onHide={this.closeModalDeleteOrganizer} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Confirmation
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div>Are you sure want to delete this organizer ?</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalDeleteOrganizer.bind(this)}>
+                Cancel
+              </button>
+              <button className="btn btn-icademy-primary btn-icademy-red" onClick={this.delete.bind(this, this.state.idOrganizer, 'organizer')}>
+                <i className="fa fa-trash"></i> Delete
+              </button>
+            </Modal.Footer>
+          </Modal>
           <Modal show={this.state.modalOther} onHide={this.closeModalOther} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
