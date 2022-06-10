@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Storage from '../../repository/storage';
 import { Menu } from './data/training_plan';
 import { Link } from "react-router-dom";
+import { MenuReport } from './data/training-report';
 
 class TabMenuRoute extends Component {
     constructor(props) {
@@ -17,8 +18,14 @@ class TabMenuRoute extends Component {
     render() {
         let levelUser = Storage.get('user').data.level;
         let title = this.props.title;
-        let menu = Menu;
+        let menu = [];
+        if(this.props.report){
+            menu = MenuReport;
+        }else{
+            menu = Menu;
+        }
         let selected = this.props.selected;
+
         return (
             <div className="card main-tab-container" style={{ padding: '0px 20px' }}>
                 <div className="row" style={{ height: '100%' }}>

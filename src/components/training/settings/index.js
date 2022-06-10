@@ -168,7 +168,8 @@ class SettingsTraining extends Component {
                 id: this.state.typeId,
                 name : this.state.typeName,
                 organizer_id: this.state.idOrganizer,
-                duration: this.state.duration
+                duration: this.state.duration,
+                req_license_type: this.state.req_license_type
             }
             API.put(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
                 if (res.data.error){
@@ -337,7 +338,7 @@ class SettingsTraining extends Component {
                 }else{
                   item.nameOrganizer = '';
                 }
-                optionLicenseType.push({label: item.name, value: item.id});
+                optionLicenseType.push({label: item.organizer_name+' - '+item.name, value: item.id});
                 tmp.push(item);
               });
             }
@@ -419,7 +420,7 @@ class SettingsTraining extends Component {
             pullRight
             onSelect={(eventKey) => {
               switch (eventKey){
-                case 1 : this.setState({modalCreate: true, logoOrganizerPreview: !row.logo_organizer ? this.state.logoOrganizerPreview : row.logo_organizer , typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.nameOrganizer});break;
+                case 1 : this.setState({modalCreate: true ,req_license_type: row.required_license_type, typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.organizer_name});break;
                 default : this.setState({modalDelete: true, typeId: row.id});break;
               }
             }}
@@ -701,7 +702,7 @@ class SettingsTraining extends Component {
               </button>
             </Modal.Footer>
           </Modal>
-          <Modal show={this.state.modalCreate} onHide={this.closeModalCreate} centered>
+          <Modal show={this.state.modalCreate} size={"lg"} onHide={this.closeModalCreate} centered>
             <Modal.Header closeButton>
               <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
                 {this.state.typeId !== '' ? 'Edit' : 'Create New'} Licenses Type
@@ -718,13 +719,13 @@ class SettingsTraining extends Component {
                     <input type="text" name="duration" size="50" id="duration" placeholder="Example : Main Exam" value={this.state.duration} onChange={this.handleChange}/>
                 </div>
 
-                <div className="form-field-top-label">
+                <div className="form-field-top-label" style={{ width:"380px" }}>
                     <label for="typeName">Required License Type<required>*</required></label>
-                    <MultiSelect id="optionLicenseType" options={this.state.optionLicenseType} value={[this.state.req_license_type]} onChange={options => this.setState({ req_license_type:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Required License Type"/>
+                    <MultiSelect id="optionLicenseType"  options={this.state.optionLicenseType} value={[this.state.req_license_type]} onChange={options => this.setState({ req_license_type:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Required License Type"/>
 
                 </div>
 
-                <div className="form-field-top-label">
+                <div className="form-field-top-label" style={{ width:"380px" }}>
                     <label for="typeName">Organizer (Additional)<required>*</required></label>
                     <MultiSelect id="opOrganizer" options={this.state.opOrganizer} value={[this.state.idOrganizer]} onChange={options => this.setState({ idOrganizer:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Organizer"/>
                 </div>
