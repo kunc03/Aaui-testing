@@ -141,7 +141,7 @@ autoSave = (isDrag) =>{
                 end_time: moment.tz(this.state.end_time, 'Asia/Jakarta').format("YYYY-MM-DD HH:mm:ss"),
                 session: this.state.session,
                 created_by: Storage.get('user').data.user_id,
-                license_type_id: this.state.selectedLicense.length ? this.state.selectedLicense[0] : null
+                id_organizer: this.state.selectedLicense.length ? this.state.selectedLicense[0] : null
             }
 
             API.put(`${API_SERVER}v2/training/course/${this.state.id}`, form).then(res => {
@@ -392,17 +392,17 @@ handleOverview = (e) => {
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview,
                 session: res.data.result.session,
                 selectedSession : res.data.result.session.length ? res.data.result.session[0].id : '',
-                selectedLicense : res.data.result.license_type_id ? [res.data.result.license_type_id] : [],
+                selectedLicense : res.data.result.id_organizer ? [res.data.result.id_organizer] : [],
             })
             if (this.state.session.length){
                 this.selectSession(this.state.selectedSession);
             }
-            this.getLicense(res.data.result.license_type_id)
+            this.getLicense(res.data.result.id_organizer)
         }
     })
   }
   getLicense(idLicense){
-    API.get(`${API_SERVER}v2/training/settings/licenses-type/${this.state.companyId}`).then(res => {
+    API.get(`${API_SERVER}v2/training/settings/organizer/${this.state.companyId}`).then(res => {
         if (res.data.error){
             toast.error(`Error read course list`)
         }else{
@@ -413,7 +413,7 @@ handleOverview = (e) => {
                 }
                 let selectedLicense = [];
                 res.data.result.map((item)=>{
-                    let name = item.organizer_name+' - '+item.name;
+                    let name = item.name;
                     
                     optionsLicense.push({label: name, value: item.id});
                     if(idLicense === item.id){
@@ -707,8 +707,8 @@ handleOverview = (e) => {
                                                     </div>
                                                     <Row>
                                                         <div className="form-field-top-label" style={{width:400}}>
-                                                            <label for="valueCourse">License Type</label>
-                                                            <MultiSelect id="valueCourse" options={this.state.optionsLicense} value={this.state.selectedLicense} onChange={(selectedLicense) =>{ console.log(selectedLicense); this.setState({ selectedLicense }) }} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select License" />
+                                                            <label for="valueCourse">Organizer</label>
+                                                            <MultiSelect id="valueCourse" options={this.state.optionsLicense} value={this.state.selectedLicense} onChange={(selectedLicense) =>{ console.log(selectedLicense); this.setState({ selectedLicense }) }} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Organizer" />
                                                         </div>
                                                     </Row>
                                                     <div className="row">
