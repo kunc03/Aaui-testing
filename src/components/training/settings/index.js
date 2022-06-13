@@ -268,7 +268,7 @@ class SettingsTraining extends Component {
     if(type === 'organizer') {
       API.delete(`${API_SERVER}v2/training/settings/organizer/${id}`).then(res => {
         if (res.data.error){
-            toast.error(`Error delete licenses type`)
+            toast.error(res.data.result);
         }
         else{
             toast.success(`Licenses type deleted`)
@@ -279,7 +279,7 @@ class SettingsTraining extends Component {
     }else{
       API.delete(`${API_SERVER}v2/training/settings/licenses-type/${id}`).then(res => {
         if (res.data.error){
-            toast.error(`Error delete licenses type`)
+          toast.error(res.data.result);
         }
         else{
             toast.success(`Licenses type deleted`)
