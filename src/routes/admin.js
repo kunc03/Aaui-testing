@@ -51,6 +51,7 @@ const Meeting = lazy(() => import("../components/meeting"));
 const TrainingSettings = lazy(() => import("../components/training/settings"));
 const Training = lazy(() => import("../components/training/company"));
 const TrainingReport = lazy(() => import("../components/training/report"));
+const TrainingReportMembership = lazy(() => import("../components/training/report/ReportMembership"));
 const TrainingUser = lazy(() => import("../components/training/user"));
 const TrainingCourse = lazy(() => import("../components/training/course"));
 const TrainingCourseForm = lazy(() => import("../components/training/course/form"));
@@ -130,6 +131,7 @@ export default class AdminSwitch extends React.Component {
         <Route path="/training/settings" exact component={TrainingSettings} />
         <Route path="/training" exact component={Training} />
         <Route path="/training/report" exact component={TrainingReport} />
+        <Route path="/training/report/membership" exact component={TrainingReportMembership} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
         <Route path="/training/course/create" exact component={TrainingCourseForm} />
