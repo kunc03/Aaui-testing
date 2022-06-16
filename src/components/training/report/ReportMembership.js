@@ -316,8 +316,8 @@ class ReportMembership extends Component {
                                 </div>
                                 <div className="row">
                                     <div className="col-xl-12">
-                                        <TabMenu title='Training' selected='Report' report={true}/>
-                                        <TabMenuPlan title='' selected='History'/>
+                                        <TabMenu title='Training' selected='Report'/>
+                                        <TabMenuPlan title='' selected='Report' report={true}/>
 
                                         <div>
                                             <div className="card p-20 main-tab-container">
