@@ -37,6 +37,7 @@ class SettingsTraining extends Component {
         typeName: '',
         duration: 2,
         req_license_type: '',
+        license_format: '[YYYY][MM][DD].A0[GENDER]-[NUMBER]',
         typeId:'',
         dataOthers :
         [
@@ -130,7 +131,8 @@ class SettingsTraining extends Component {
                 name : this.state.typeName,
                 organizer_id: this.state.idOrganizer,
                 duration: this.state.duration,
-                req_license_type: this.state.req_license_type
+                req_license_type: this.state.req_license_type,
+                license_format: this.state.license_format
             }
             API.post(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
                 if (res.data.error){
@@ -169,7 +171,8 @@ class SettingsTraining extends Component {
                 name : this.state.typeName,
                 organizer_id: this.state.idOrganizer,
                 duration: this.state.duration,
-                req_license_type: this.state.req_license_type
+                req_license_type: this.state.req_license_type,
+                license_format: this.state.license_format
             }
             API.put(`${API_SERVER}v2/training/settings/licenses-type`, form).then(res => {
                 if (res.data.error){
@@ -268,7 +271,7 @@ class SettingsTraining extends Component {
     if(type === 'organizer') {
       API.delete(`${API_SERVER}v2/training/settings/organizer/${id}`).then(res => {
         if (res.data.error){
-            toast.error(`Error delete licenses type`)
+            toast.error(res.data.result);
         }
         else{
             toast.success(`Licenses type deleted`)
@@ -279,7 +282,7 @@ class SettingsTraining extends Component {
     }else{
       API.delete(`${API_SERVER}v2/training/settings/licenses-type/${id}`).then(res => {
         if (res.data.error){
-            toast.error(`Error delete licenses type`)
+          toast.error(res.data.result);
         }
         else{
             toast.success(`Licenses type deleted`)
@@ -717,6 +720,12 @@ class SettingsTraining extends Component {
                 <div className="form-field-top-label">
                     <label for="typeName">Duration of Licenses (In a Years)<required>*</required></label>
                     <input type="text" name="duration" size="50" id="duration" placeholder="Example : Main Exam" value={this.state.duration} onChange={this.handleChange}/>
+                </div>
+
+                <div className="form-field-top-label">
+                    <label for="typeName">Licenses Format</label>
+                    <input type="text" name="license_format" size="50" id="license_format" placeholder="Example : [YYYY][MM][DD].A0[GENDER]-[NUMBER]" value={this.state.license_format} onChange={this.handleChange}/>
+                    <required>Must Have YYYY MM DD GENDER NUMBER</required>
                 </div>
 
                 <div className="form-field-top-label" style={{ width:"380px" }}>
