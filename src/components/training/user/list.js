@@ -225,8 +225,8 @@ class User extends Component {
     }
   }
 
-  getExam(companyId){
-    API.get(`${API_SERVER}v2/training/exam/${companyId}/1`).then(res => {
+  getExam(companyId,user){
+    API.get(`${API_SERVER}v2/training/exam/${companyId}/1?assignto=${user}`).then(res => {
       if (res.data.error){
           toast.error('Error read exam list')
       }
@@ -346,7 +346,7 @@ class User extends Component {
     },()=>{
       this.setState({optionsExam:[]})
     });
-    this.getExam(this.state.companyId);
+    this.getExam(this.state.companyId,id);
     
     API.get(`${API_SERVER}v2/training/assignee/${id}`).then((res) => {
       if (res.status === 200) {
