@@ -4,7 +4,7 @@ export const MenuReport =
         label: 'Report',
         icon: 'learning-plan.svg',
         iconActive: 'learning-plan-active.svg',
-        route: '/training/report-debugg'
+        route: '/training/report/membership'
     },
     {
         label: `History`,

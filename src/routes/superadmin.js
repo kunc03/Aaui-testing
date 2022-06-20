@@ -47,6 +47,7 @@ const Meeting = lazy(() => import("../components/meeting"));
 const TrainingSettings = lazy(() => import("../components/training/settings"));
 const Training = lazy(() => import("../components/training/company"));
 const TrainingReport = lazy(() => import("../components/training/report"));
+const TrainingReportMembership = lazy(() => import("../components/training/report/ReportMembership"));
 const TrainingQuota = lazy(() => import("../components/training/quota"));
 const TrainingQuotaDetail = lazy(() => import("../components/training/quota/detail"));
 const TrainingUser = lazy(() => import("../components/training/user"));
@@ -99,6 +100,7 @@ export default class SuperAdminSwitch extends React.Component {
         <Route path="/training/company" exact component={Training} />
         <Route path="/training" exact component={TrainingQuota} />
         <Route path="/training/report" exact component={TrainingReport} />
+        <Route path="/training/report/membership" exact component={TrainingReportMembership} />
         <Route path="/training/quota/detail/:id" exact component={TrainingQuotaDetail} />
         <Route path="/training/user" exact component={TrainingUser} />
         <Route path="/training/course" exact component={TrainingCourse} />
