@@ -237,7 +237,7 @@ class SettingsTraining extends Component {
       action(sqlQuery, formData).then(res => {
         if (res.data.error){
           this.setState({isSaving: false})
-            toast.error(`Error ${msg} organizer`)
+            toast.error(res.data.result || `Error ${msg} organizer`)
         }
         else{
           this.setState({isSaving: false, logoOrganizer:false, nameOrganizer:'', idOrganizer:''});
@@ -742,7 +742,7 @@ class SettingsTraining extends Component {
                 <div className="form-field-top-label">
                   <label for="image">Member Card Background</label>
                   <label for="image" style={{cursor:'pointer', overflow:'hidden'}}>
-                    <img src={this.state.imagePreview} height="140px" />
+                    <img src={this.state.imagePreview} height="140px" style={{maxHeight: 140, maxWidth: 475, objectFit:'contain'}} />
                   </label>
                   <label for='image' style={{cursor:'pointer', overflow:'hidden'}}>
                     <div className="button-bordered-grey">
@@ -797,7 +797,7 @@ class SettingsTraining extends Component {
                     this.state.logoOrganizer &&
                     (
                       <label for="imageOrganizer" style={{cursor:'pointer', overflow:'hidden'}}>
-                        <img src={this.state.logoOrganizerPreview} height="140px" alt="logo-organizer" />
+                        <img src={this.state.logoOrganizerPreview} height="140px" alt="logo-organizer" style={{maxHeight: 140, maxWidth: 475, objectFit:'contain'}} />
                       </label>
                     )
                   }
