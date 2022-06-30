@@ -250,6 +250,26 @@ class ReportMembership extends Component {
         }
       },
       {
+        name: 'License Type',
+        selector: 'license_name',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+        cell: row => row.license_name ? row.license_name : '-'
+      },
+      {
+        name: 'Organizer',
+        selector: 'organizer_name',
+        sortable: true,
+        grow: 2,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+        cell: row => row.organizer_name ? row.organizer_name : '-'
+      },
+      {
         name: 'License Number',
         selector: 'license_number',
         sortable: true,
@@ -258,16 +278,6 @@ class ReportMembership extends Component {
           color: 'rgba(0,0,0,.54)',
         },
       },
-      // {
-      //   name: 'Organizer',
-      //   selector: 'organizer_name',
-      //   sortable: true,
-      //   grow: 2,
-      //   style: {
-      //     color: 'rgba(0,0,0,.54)',
-      //   },
-      //   cell: row => row.organizer_name ? row.organizer_name : '-'
-      // },
       {
         name: 'Gender',
         selector: 'training_user_gender',
