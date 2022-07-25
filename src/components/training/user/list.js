@@ -377,7 +377,7 @@ class User extends Component {
   }
 
   render() {
-    console.log(this.state.listDataExport, '???')
+
     const ExportCSV = ({ csvData, fileName }) => {
 
       // const role = this.state.role
@@ -385,6 +385,8 @@ class User extends Component {
   
         let arr = []
         if (csvData.length > 0) {
+          csvData = csvData.filter(str=> str.training_company_id == parseInt(this.props.trainingCompany));
+          
           csvData.forEach((str, index) => {
             let obj = {
               No: index +1,
