@@ -644,7 +644,7 @@ class User extends Component {
     }
     return(
       <div>
-        {this.props.level === 'user' ?
+        {/* {this.props.level === 'user' ?
           <div className="card p-20 main-tab-container">
             <div className="row">
                 <div className="col-sm-12 m-b-20">
@@ -655,43 +655,95 @@ class User extends Component {
                 </div>
               </div>
             </div>
-        : null}
+        : null} */}
         {
-          this.state.import &&
+          this.state.import &&(
                                             <div className="card p-20 main-tab-container">
                                                 <div className="row">
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <strong className="f-w-bold f-18" style={{color:'#000'}}>Import {this.state.level === 'admin' ? 'Admins' : 'Users'}</strong>
-                                                    </div>
-                                                    <div className="col-sm-12 m-b-20">
-                                                        <a href={`${API_SERVER}template-excel/template-import-training-user.xlsx`}>
-                                                          <button className="button-bordered">
-                                                              <i
-                                                                  className="fa fa-download"
-                                                                  style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
-                                                              />
-                                                              Download Template
-                                                          </button>
-                                                        </a>
-                                                    </div>
-                                                    <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
-                                                        <label for={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} style={{cursor:'pointer', overflow:'hidden'}}>
-                                                          <div className="button-bordered-grey">
-                                                              {this.state.file ? this.state.file.name : 'Choose'}
+                                                    {
+                                                      this.props.level === 'user' ? (
+                                                        <div className="col-md" style={{borderRight:"1px solid #d7d7d7"}}>
+                                                          <div className="col-sm-12 m-b-20">
+                                                              <strong className="f-w-bold f-18" style={{color:'#000'}}>Import {this.state.level === 'admin' ? 'Admins' : 'Users'}</strong>
                                                           </div>
-                                                        </label>
-                                                        <input type="file" id={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} name={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
-                                                        <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
-                                                            <i
-                                                                className="fa fa-upload"
-                                                                style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
-                                                            />
-                                                            {this.state.isUploading ? 'Uploading...' : 'Upload File'}
-                                                        </button>
-                                                    </form>
+                                                          <div className="col-sm-12 m-b-20">
+                                                              <a href={`${API_SERVER}template-excel/template-import-training-user.xlsx`}>
+                                                                <button className="button-bordered">
+                                                                    <i
+                                                                        className="fa fa-download"
+                                                                        style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                                    />
+                                                                    Download Template
+                                                                </button>
+                                                              </a>
+                                                          </div>
+                                                          <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
+                                                              <label for={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} style={{cursor:'pointer', overflow:'hidden'}}>
+                                                                <div className="button-bordered-grey">
+                                                                    {this.state.file ? this.state.file.name : 'Choose'}
+                                                                </div>
+                                                              </label>
+                                                              <input type="file" id={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} name={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
+                                                              <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                                  <i
+                                                                      className="fa fa-upload"
+                                                                      style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                                  />
+                                                                  {this.state.isUploading ? 'Uploading...' : 'Upload File'}
+                                                              </button>
+                                                          </form>
+                                                        </div>
+                                                      ):
+                                                      (
+                                                        <>
+                                                          <div className="col-sm-12 m-b-20">
+                                                              <strong className="f-w-bold f-18" style={{color:'#000'}}>Import {this.state.level === 'admin' ? 'Admins' : 'Users'}</strong>
+                                                          </div>
+                                                          <div className="col-sm-12 m-b-20">
+                                                              <a href={`${API_SERVER}template-excel/template-import-training-user.xlsx`}>
+                                                                <button className="button-bordered">
+                                                                    <i
+                                                                        className="fa fa-download"
+                                                                        style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }}
+                                                                    />
+                                                                    Download Template
+                                                                </button>
+                                                              </a>
+                                                          </div>
+                                                          <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
+                                                              <label for={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} style={{cursor:'pointer', overflow:'hidden'}}>
+                                                                <div className="button-bordered-grey">
+                                                                    {this.state.file ? this.state.file.name : 'Choose'}
+                                                                </div>
+                                                              </label>
+                                                              <input type="file" id={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} name={this.state.level === 'admin' ? 'file-import-admin' : 'file-import'} onChange={this.handleChangeFile} onClick={e=> e.target.value = null} />
+                                                              <button type="submit" className="button-gradient-blue" style={{marginLeft:20}}>
+                                                                  <i
+                                                                      className="fa fa-upload"
+                                                                      style={{ fontSize: 12, marginRight: 10, color: '#FFFFFF' }}
+                                                                  />
+                                                                  {this.state.isUploading ? 'Uploading...' : 'Upload File'}
+                                                              </button>
+                                                          </form>
+                                                        </>
+                                                      )
+
+                                                    }
+                                                    {
+                                                      this.props.level === 'user' &&(
+                                                        <div className="col-md">
+                                                          <div className="col-sm-12 m-b-20">
+                                                              <strong className="f-w-bold f-18" style={{color:'#000'}}>Export Users</strong>
+                                                          </div>
+                                                          <div className="col-sm-12 m-b-20">
+                                                              <ExportCSV csvData={this.state.listDataExport} fileName={`Data-Training-User-${localStorage.getItem('companyName') ? localStorage.getItem('companyName') : Storage.get('user').data.company_name}`} />
+                                                          </div>
+                                                        </div>
+                                                      )
+                                                    }
                                                 </div>
                                             </div>
-        }
+        )}
                                             <LoadingOverlay
                                               active={this.state.isLoading}
                                               spinner={<BeatLoader size='30' color='#008ae6' />}
