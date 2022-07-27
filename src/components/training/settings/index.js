@@ -56,7 +56,7 @@ class SettingsTraining extends Component {
   }
 
   closeModalCreate = e => {
-    this.setState({ idOrganizer:'',nameOrganizer:'',modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '' })
+    this.setState({ idOrganizer:'',nameOrganizer:'',modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '', license_format : '[YYYY][MM][DD].A0[GENDER]-[NUMBER]' })
   }
   closeModalCreateOrganizer = e =>{
     this.setState({ modalCreateOrganizer: false,logoOrganizer:'', nameOrganizer: '', idOrganizer: '', imagePreview : API_SERVER+'training/membership/card.svg', imageOrganizer: '' })
@@ -422,8 +422,9 @@ class SettingsTraining extends Component {
           <Dropdown
             pullRight
             onSelect={(eventKey) => {
+              console.log(row,'?')
               switch (eventKey){
-                case 1 : this.setState({modalCreate: true ,req_license_type: row.required_license_type, typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.organizer_name});break;
+                case 1 : this.setState({modalCreate: true ,req_license_type: row.required_license_type, typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.organizer_name, duration: row.duration, license_format: row.format || '[YYYY][MM][DD].A0[GENDER]-[NUMBER]'});break;
                 default : this.setState({modalDelete: true, typeId: row.id});break;
               }
             }}

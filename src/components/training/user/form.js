@@ -69,45 +69,52 @@ class FormUser extends Component {
             }
         })
     }
-  }
-
-  save = (e) => {
-    this.setState({isSaving: true})
-    e.preventDefault();
-    if ((!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.identity || this.state.imageIdentityPreview === 'assets/images/no-image.png' || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id){
-        toast.warning('Some field is required, please check your data.')
-        this.setState({isSaving: false})
     }
-    else{
-        if (this.props.match.params.id){
-          let form = {
-            image: this.state.image,
-              training_company_id: this.state.training_company_id,
-              name: this.state.name,
-              born_place: this.state.born_place,
-              born_date: this.state.born_date,
-              gender: this.state.gender,
-              identity: this.state.identity,
-              tin: this.state.tin,
-              license_number: this.state.license_number,
-              address: this.state.address,
-              city: this.state.city,
-              phone: this.state.phone,
-              email: this.state.email,
-              created_by: Storage.get('user').data.user_id
-          }
-          API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then(res => {
-              if (res.data.error){
-                  toast.error(`Error edit ${this.state.level} : ${res.data.result}`)
-              }
-              else{
-                if (this.state.image){
-                    this.setState({isSaving: true})
-                    let formData = new FormData();
-                    formData.append("image", this.state.image)
-                    API.put(`${API_SERVER}v2/training/user/image/${this.props.match.params.id}`, formData).then(res2 => {
-                        if (res2.data.error){
-                            toast.warning(`${this.state.level} edited but fail to upload image`)
+    validateEmail = (email) => {
+        return String(email)
+          .toLowerCase()
+          .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          );
+    };
+    save = (e) => {
+        this.setState({ isSaving: true })
+        e.preventDefault();
+        if (!this.validateEmail(this.state.email) || (!this.props.match.params.id && !this.state.expired && this.state.license_number) || !this.state.name || !this.state.born_date || !this.state.gender || !this.state.address || !this.state.city || !this.state.phone || !this.state.email || !this.state.training_company_id) {
+            toast.warning('Some field is required or not in their format, please check your data.')
+            this.setState({ isSaving: false })
+        }
+        else {
+            if (this.props.match.params.id) {
+                let form = {
+                    image: this.state.image,
+                    training_company_id: this.state.training_company_id,
+                    name: this.state.name,
+                    born_place: this.state.born_place,
+                    born_date: this.state.born_date,
+                    gender: this.state.gender,
+                    identity: this.state.identity,
+                    tin: this.state.tin,
+                    license_number: this.state.license_number,
+                    address: this.state.address,
+                    city: this.state.city,
+                    phone: this.state.phone,
+                    email: this.state.email,
+                    created_by: Storage.get('user').data.user_id,
+                    tag: this.state.tag
+                }
+                API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then(res => {
+                    if (res.data.error) {
+                        toast.error(`Error edit ${this.state.level} : ${res.data.result}`)
+                    }
+                    else {
+                        if (this.state.image) {
+                            this.setState({ isSaving: true })
+                            let formData = new FormData();
+                            formData.append("image", this.state.image)
+                            API.put(`${API_SERVER}v2/training/user/image/${this.props.match.params.id}`, formData).then(res2 => {
+                                if (res2.data.error) {
+                                    toast.warning(`${this.state.level} edited but fail to upload image`)
                         }
                         else{
                             if (this.state.imageIdentity){
