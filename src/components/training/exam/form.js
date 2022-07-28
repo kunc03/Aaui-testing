@@ -43,6 +43,8 @@ class FormExam extends Component {
             subCategory: '',
             optionsLicensesType: [],
             valueLicensesType: [],
+            nameLicensesType:null,
+            indexLicensesType:-1,
             optionsCourse: [],
             valueCourse: [],
             valueCourse2: [],
@@ -462,8 +464,21 @@ class FormExam extends Component {
                 if (this.state.question.length) {
                     this.selectQuestion(this.state.selectedQuestion);
                 }
+
+                this.colorSelected();
             }
         })
+    }
+    colorSelected(){
+        let op = this.state.optionsLicensesType;
+        let nameLicensesType = null;
+        let valueLicensesType = this.state.valueLicensesType;
+        let idx = op.findIndex(str=>str.value==valueLicensesType[0]);
+        if(idx > -1){
+            nameLicensesType = op[idx].label;
+        }
+        this.setState({ nameLicensesType, optionsLicensesType: op, indexLicensesType:idx });
+        
     }
     getUserData() {
         API.get(`${USER_ME}${Storage.get('user').data.email}`).then(res => {
@@ -712,7 +727,7 @@ class FormExam extends Component {
         }
     }
     render() {
-        let { question, media } = this.state;
+        let { question, media,indexLicensesType } = this.state;
         return (
             <div className="pcoded-main-container">
                 <div className="pcoded-wrapper">
@@ -785,9 +800,30 @@ class FormExam extends Component {
                                                             </div>
                                                         </div>
                                                         <div className="row">
-                                                            <div className="form-field-top-label" style={{ width: 400 }}>
+                                                            <div className="form-field-top-label" style={{ width:"35%" }}>
                                                                 <label for="licenses">Licenses Type<required>*</required></label>
-                                                                <MultiSelect id="licenses" options={this.state.optionsLicensesType} value={this.state.valueLicensesType} onChange={valueLicensesType => this.setState({ valueLicensesType, edited: true })} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Licenses Type" />
+                                                                <div
+                                                                    style={{paddingTop:25, paddingRight:20}}
+                                                                    onClick={()=>{
+                                                                        if(indexLicensesType > -1){
+                                                                            this.colorSelected();
+                                                                            setTimeout(()=>{
+                                                                                let opLabel = document.getElementsByClassName("Option__label")[this.state.indexLicensesType];
+                                                                                if(opLabel){
+                                                                                    opLabel.style.color="red"
+                                                                                }
+                                                                            },50)
+                                                                        }
+                                                                    }} 
+                                                                >
+                                                                    <MultiSelect id="licenses" 
+                                                                        options={this.state.optionsLicensesType} 
+                                                                        value={this.state.valueLicensesType} 
+                                                                        onChange={valueLicensesType =>this.setState({ valueLicensesType, edited: true })}
+                                                                        mode="single" 
+                                                                        enableSearch={true} resetable={true} 
+                                                                        valuePlaceholder="Select Licenses Type" />
+                                                                </div>
                                                             </div>
                                                             <div className="form-field-top-label">
                                                                 <label for="time">Time Limit (Minute)<required>*</required></label>

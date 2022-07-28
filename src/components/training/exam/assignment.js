@@ -187,7 +187,7 @@ class Assignment extends Component {
                   let tmp = [];
                   res.data.result.forEach(str => {
                     try{
-                      let idx = str.list_license.findIndex((check)=>{ return check.licenses_type_id === filterByLicenseAccess });
+                      let idx = str.list_license.findIndex((check)=>{ return (check.licenses_type_id === filterByLicenseAccess && check.status_license === 'active') });
                       if(idx > -1) tmp.push(str);
                     }catch(e){}
                   });
