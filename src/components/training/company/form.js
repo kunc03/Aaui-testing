@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import API, { API_SERVER,APPS_SERVER, USER_ME } from '../../../repository/api';
+import API, { API_SERVER,APPS_SERVER, USER_ME,DEV_MODE } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
 import ToggleSwitch from 'react-switch';
@@ -239,7 +239,7 @@ class FormCompany extends Component {
                                                             Edit
                                                         </button>
                                                         }
-                                                        {this.state.disabledForm && !this.props.lockEdit && (
+                                                        {/* {this.state.disabledForm && !this.props.lockEdit && (
                                                             <button
                                                             onClick={() => this.setState({ modalRegist: true })}
                                                             className="btn btn-icademy-primary float-right"
@@ -247,6 +247,16 @@ class FormCompany extends Component {
                                                             >
                                                             <i className="fa fa-list"></i>
                                                             Public Registration Form
+                                                            </button>
+                                                        )} */}
+                                                        {(this.state.disabledForm && !this.props.lockEdit && !this.props.setupReg ) && (
+                                                            <button
+                                                            onClick={() =>{ return window.location.replace(`/training/company/registration-form/${this.props.id}`) }}
+                                                            className="btn btn-icademy-primary float-right"
+                                                            style={{ padding: '7px 8px !important', marginRight: 30 }}
+                                                            >
+                                                            <i className="fa fa-list"></i>
+                                                            Setup Public Registration Form
                                                             </button>
                                                         )}
                                                     </div>

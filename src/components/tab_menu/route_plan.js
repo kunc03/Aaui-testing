@@ -4,10 +4,25 @@ import { Menu } from './data/training_plan';
 import { Link } from "react-router-dom";
 import { MenuReport } from './data/training-report';
 
+const tabUsers = [
+    {
+        label: 'Users',
+        icon: 'users.svg',
+        iconActive: 'users-active.svg',
+        route: '/training/user'
+    },
+    {
+        label: `Pending Users`,
+        icon: 'webinars.svg',
+        iconActive: 'webinars-active.svg',
+        route: '/training/list-registration-user'
+    }
+]
 class TabMenuRoute extends Component {
     constructor(props) {
         super(props);
     }
+
 
     componentDidMount() {
         if (window.location.href.split('#')[1]) {
@@ -22,8 +37,11 @@ class TabMenuRoute extends Component {
         if(this.props.report){
             menu = MenuReport;
         }else{
-            menu = Menu;
+            menu = this.props.access === 'users' ? tabUsers : Menu;
+            //menu = Menu;
         }
+
+        
         let selected = this.props.selected;
 
         return (
