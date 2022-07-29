@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import API, { API_SERVER,APPS_SERVER, USER_ME,DEV_MODE } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import { Modal } from 'react-bootstrap';
+import ToggleSwitch from 'react-switch';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 class FormCompany extends Component {
   constructor(props) {
@@ -18,7 +21,10 @@ class FormCompany extends Component {
         website: '',
         email: '',
         disabledForm: this.props.disabledForm,
-        isSaving: false
+        isSaving: false,
+        modalRegist: false,
+        registEnable: false,
+        urlRegist: `${APPS_SERVER}training/registration/${this.props.id}`,
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -122,6 +128,25 @@ class FormCompany extends Component {
     }
 }
 
+  closeModalRegist = (e) => {
+    this.setState({ modalRegist: false });
+  };
+
+  ToggleSwitch(checked) {
+    this.setState({ registEnable: !this.state.registEnable }, () => {
+      let form = {
+        enable_registration: this.state.registEnable ? 1 : 0,
+      };
+      API.put(`${API_SERVER}v2/training/company/enable-registration/${this.props.id}`, form).then((res) => {
+        if (res.data.error) {
+          toast.error('Error update registration');
+        } else {
+          toast.info(`Public Registration Form ${this.state.registEnable ? 'Enabled' : 'Disabled'}`);
+        }
+      });
+    });
+  }
+
   handleChange = e => {
       let {name, value} = e.target;
       if (name==='image'){
@@ -214,6 +239,26 @@ class FormCompany extends Component {
                                                             Edit
                                                         </button>
                                                         }
+                                                        {/* {this.state.disabledForm && !this.props.lockEdit && (
+                                                            <button
+                                                            onClick={() => this.setState({ modalRegist: true })}
+                                                            className="btn btn-icademy-primary float-right"
+                                                            style={{ padding: '7px 8px !important', marginRight: 30 }}
+                                                            >
+                                                            <i className="fa fa-list"></i>
+                                                            Public Registration Form
+                                                            </button>
+                                                        )} */}
+                                                        {(this.state.disabledForm && !this.props.lockEdit && !this.props.setupReg ) && (
+                                                            <button
+                                                            onClick={() =>{ return window.location.replace(`/training/company/registration-form/${this.props.id}`) }}
+                                                            className="btn btn-icademy-primary float-right"
+                                                            style={{ padding: '7px 8px !important', marginRight: 30 }}
+                                                            >
+                                                            <i className="fa fa-list"></i>
+                                                            Setup Public Registration Form
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="form-section">
@@ -329,6 +374,53 @@ class FormCompany extends Component {
                     </div>
                 </div>
             </div>
+            <Modal show={this.state.modalRegist} onHide={this.closeModalRegist} centered>
+            <Modal.Header closeButton>
+                <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Public Registration Form
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="form-field-top-label">
+                <label for="amount">Enable</label>
+                <ToggleSwitch
+                    className="form-toggle-switch"
+                    name="registEnable"
+                    onChange={this.ToggleSwitch.bind(this)}
+                    checked={this.state.registEnable}
+                />
+                </div>
+                {this.state.registEnable ? (
+                <div className="form-field-top-label" style={{ width: '100%' }}>
+                    <label for="note">URL</label>
+                    <input
+                    type="text"
+                    name="urlRegist"
+                    style={{ width: '80%' }}
+                    id="urlRegist"
+                    value={this.state.urlRegist}
+                    />
+                </div>
+                ) : null}
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeModalRegist.bind(this)}>
+                Close
+                </button>
+                {
+                    this.state.registEnable && (
+                        <CopyToClipboard
+                        text={this.state.urlRegist}
+                        onCopy={() => {
+                            toast.info('Copied to clipboard');
+                        }}
+                        >
+                        <button className="btn btn-icademy-primary">Copy URL To Clipboard</button>
+                        </CopyToClipboard>
+                    )
+                }
+            </Modal.Footer>
+            </Modal>
         </div>
     )
   }

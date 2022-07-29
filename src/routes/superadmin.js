@@ -76,10 +76,16 @@ const WebinarClient = lazy(() => import('../components/client/webinar/index'));
 const LearningAdmin = lazy(() => import('../components/learning/index'));
 
 const Ptc = lazy(() => import('../components/ptc/index'));
+const RegistrationCustomeAdmin = lazy(() => import('../components/training/company/registrationCustome'));
+const RegistrationCustomePublic = lazy(() => import('../components/public/registrationCustome'));
+const TrainingUserRegistration = lazy(() => import('../components/training/RegistrationUser/index'));
 export default class SuperAdminSwitch extends React.Component {
   render() {
     return (
       <Switch>
+        <Route path="/training/list-registration-user" exact component={TrainingUserRegistration} />
+        <Route path="/training/company/registration-form/:id" component={RegistrationCustomeAdmin} />
+        <Route path="/training/form-registration/:id" component={RegistrationCustomePublic} />
         <Route path="/" exact component={Home} />
         <Route path="/thankyou" component={ThankYou} />
         <Route path="/webinar" component={WebinarClient} />
