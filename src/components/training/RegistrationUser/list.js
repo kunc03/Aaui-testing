@@ -484,7 +484,7 @@ class User extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ width: 400 }}>
-              {Object.keys(this.state.rowSelected).map((input) => {
+              {(DEV_MODE === 'production' ?  Object.keys(this.state.rowSelected).filter((item)=> item !== 'statusPayment') : Object.keys(this.state.rowSelected)).map((input) => {
                 return (
                   <>
                     <div className="row">
