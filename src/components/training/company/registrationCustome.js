@@ -81,6 +81,30 @@ class FormCourse extends Component {
         },
         {
           id:3,
+          "name": "Born Place",
+          "subname":"Enter your born place.",
+          "permanent":true,
+          "type": "text",
+          "mandatory": true
+        },
+        {
+          id:4,
+          "name": "Identity",
+          "subname":"Enter Identity Number.",
+          "permanent":true,
+          "type": "text",
+          "mandatory": true
+        },
+        {
+          id:5,
+          "name": "Identity Image",
+          "subname":"Enter Identity Card Photo.",
+          "permanent":true,
+          "type": "file",
+          "mandatory": true
+        },
+        {
+          id:6,
           "name": "Gender",
           "subname":"Select your gender.",
           "permanent":true,
