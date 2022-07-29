@@ -28,7 +28,7 @@ class registrationCustome extends Component {
       },
       {
         id:3,
-        "name": "Born Date",
+        "name": "Born_Date",
         "type": "date",
         "mandatory": true
       },
