@@ -155,12 +155,14 @@ class Allocation extends Component {
         name: 'Type',
         selector: 'type',
         sortable: true,
-        grow: 6
+        grow: 4
       },
       {
         name: 'Remaining Allocation',
         selector: 'remaining_allocation',
-        sortable: true
+        sortable: true,
+        minWidth: 40,
+        maxWidth: 70
       },
       {
         name: 'Action',
@@ -168,7 +170,24 @@ class Allocation extends Component {
         <div>
             {!this.props.lockEdit && <button onClick={()=> this.setState({modalAllocation: true, licensesId: row.id, licensesTypeId: row.licenses_type_id, mode: 'addition'})} className="button-table-plus">+</button>}
             {!this.props.lockEdit && <button onClick={()=> this.setState({modalAllocation: true, licensesId: row.id, licensesTypeId: row.licenses_type_id, mode: 'reduction'})} className="button-table-min">-</button>}
-        </div>
+        </div>,
+        minWidth: 40,
+        maxWidth: 70
+      }
+    ];
+    const columnsLicensesNoAction = [
+      {
+        name: 'Type',
+        selector: 'type',
+        sortable: true,
+        grow: 4
+      },
+      {
+        name: 'Remaining Allocation',
+        selector: 'remaining_allocation',
+        sortable: true,
+        minWidth: 40,
+        maxWidth: 70
       }
     ];
     let {data, dataLicenses, filter, filterHistory} = this.state;
@@ -198,7 +217,7 @@ class Allocation extends Component {
                             onChange={this.filter}
                             className="form-control float-right col-sm-3"/>
                             <DataTable
-                            columns={columnsLicenses}
+                            columns={this.props.lockEdit ? columnsLicensesNoAction : columnsLicenses}
                             data={dataLicenses}
                             highlightOnHover
                             defaultSortField="type"
