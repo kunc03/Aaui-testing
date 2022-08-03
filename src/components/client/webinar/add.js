@@ -435,7 +435,7 @@ class WebinarAddClass extends Component {
       })
     }
     else {
-      toast.warning('Silahkan pilih webinar terlebih dahulu')
+      toast.warning('Please choose webinar first')
     }
   }
 
@@ -487,7 +487,7 @@ class WebinarAddClass extends Component {
       })
     }
     else {
-      toast.warning('Silahkan pilih training company terlebih dahulu')
+      toast.warning('Please choose training company first')
     }
   }
 

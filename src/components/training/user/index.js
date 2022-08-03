@@ -5,6 +5,7 @@ import TabMenu from '../../tab_menu/route';
 import ListData from './list';
 import API, { API_SERVER } from '../../../repository/api';
 import Storage from '../../../repository/storage';
+import TabMenuReport from '../../tab_menu/route_plan';
 
 class User extends Component {
   constructor(props) {
@@ -59,6 +60,7 @@ class User extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <TabMenu title='Training' selected='User'/>
+                                        <TabMenuReport title='Training' selected='Users' access="users" />
                                         <div>
                                           {
                                             !this.state.isLoading ?

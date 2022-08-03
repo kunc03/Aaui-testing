@@ -39,27 +39,27 @@ class ReportMembership extends Component {
       selectedPeriod:[],
       optionPeriod:[
         {
-          value:0,
+          value:"0",
           label: "January - March",
-          valueDate:{ start: new Date(years,1,1), end: new Date(years,3,0) }
+          valueDate:{ start: new Date(`${years}-01-01`), end: new Date(years,3,0) }
         },
         {
-          value:1,
+          value:"1",
           label: "April - June",
-          valueDate:{ start: new Date(years,4,1), end:new Date(years,6,0) }
+          valueDate:{ start: new Date(`${years}-04-01`), end:new Date(years,6,0) }
         },
         {
-          value:2,
+          value:"2",
           label: "July - September",
-          valueDate:{ start: new Date(years,7,1), end:new Date(years,9,0) }
+          valueDate:{ start: new Date(`${years}-07-01`), end:new Date(years,9,0) }
         },
         {
-          value:3,
+          value:"3",
           label: "October - December",
-          valueDate:{ start: new Date(years,10,1), end:new Date(years,12,0) }
+          valueDate:{ start: new Date(`${years}-10-01`), end:new Date(years,12,0) }
         },
         {
-          value:4,
+          value:"4",
           label: "Manually",
           valueDate:{ start: null, end:null }
         }
@@ -143,7 +143,7 @@ class ReportMembership extends Component {
     }
 
     let idx = opPeriod.findIndex((str)=>{ return str.value == period[0] });
-    if(idx > -1 && opPeriod[idx].value != 4){ form.start = opPeriod[idx].valueDate.start; form.end = opPeriod[idx].valueDate.end; }
+    if(idx > -1 && opPeriod[idx].value != "4"){ form.start = opPeriod[idx].valueDate.start; form.end = opPeriod[idx].valueDate.end; }
 
     API.post(`${API_SERVER}v2/training/report/membership`, form).then(res => {
         if (res.data.error){
@@ -191,10 +191,10 @@ class ReportMembership extends Component {
           this.getOrganizer();
           
           if(this.state.selectedPeriod.length == 0){
-            if(this.state.month <= 3){ this.setState({ selectedPeriod:[0] }) }
-            else if(this.state.month <= 6){ this.setState({ selectedPeriod:[1] }) }
-            else if(this.state.month <= 9){ this.setState({ selectedPeriod:[2] }) }
-            else if(this.state.month <= 12){ this.setState({ selectedPeriod:[3] }) }
+            if(this.state.month <= 3){ this.setState({ selectedPeriod:["0"] }) }
+            else if(this.state.month <= 6){ this.setState({ selectedPeriod:["1"] }) }
+            else if(this.state.month <= 9){ this.setState({ selectedPeriod:["2"] }) }
+            else if(this.state.month <= 12){ this.setState({ selectedPeriod:["3"] }) }
           }
     
           if (res.data.result.level === 'client'){
@@ -342,7 +342,7 @@ class ReportMembership extends Component {
                                                                     <MultiSelect id="pass" options={this.state.optionPeriod} value={this.state.selectedPeriod} onChange={(e) =>{ this.handleChangeFilter('selectedPeriod', e); this.setState({ selectedPeriod : e }); }} mode="single" resetable={true} valuePlaceholder="Select Period" />
                                                                 </div>
                                                                 {
-                                                                  this.state.selectedPeriod[0] == 4 && (
+                                                                  this.state.selectedPeriod[0] == "4" && (
                                                                       <>
                                                                         <div className="form-field-top-label">
                                                                             <label for="start">Start Date</label>

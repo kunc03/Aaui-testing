@@ -38,7 +38,7 @@ const MobileMeeting = lazy(()=> import("./components/liveclass/mobileMeeting"));
 const WebinarLivePublic = lazy(()=> import("./components/client/webinar/livePublic"));
 const ThankYou = lazy(()=> import("./components/public/thankyou"));
 const MeetingRoom = lazy(() => import("./components/liveclass/meetingRoom"));
-const RegistrationCustome = lazy(() => import('./components/training/company/registrationCustome'));
+const RegistrationCustomePublic = lazy(() => import('./components/public/registrationCustome'));
 
 export default class App extends React.Component {
   constructor(props) {
@@ -100,7 +100,7 @@ export class PublicContent extends React.Component {
           <Route path='/OTP/:id' component={OTP} />
           <Route path='/reset-password/:id/:key' component={Login} />
           <Route path="/thankyou" exact component={ThankYou} />
-          <Route path="/training/form-registration/:id" component={RegistrationCustome} />
+          <Route path="/training/form-registration/:id" component={RegistrationCustomePublic} />
           <Route component={Login} />
         </Switch>
       </div>
