@@ -155,7 +155,7 @@ class Allocation extends Component {
         name: 'Type',
         selector: 'type',
         sortable: true,
-        grow: 2
+        grow: 6
       },
       {
         name: 'Remaining Allocation',
