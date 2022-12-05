@@ -81,9 +81,9 @@ class TrainingUserPlan extends Component {
             }
 
             // count exam and liveclass
-            examCount = item.agenda.filter((str)=> str.type === 'Exam');
-            liveclassCount = item.agenda.filter((str)=> str.type === 'Live Class');
-            submissionCount = item.agenda.filter((str)=> str.type === 'Submission');
+            examCount = item.exam;
+            liveclassCount = item.liveclass;
+            submissionCount = [];
 
             tmp.push({
               "id": item.id,
@@ -192,7 +192,9 @@ class TrainingUserPlan extends Component {
                                             
                                             <div className="col-sm" style={{padding:0,width:330}}>
                                               <h5 className={`card-title fontTitleAccess`} style={{color: bgColor[useColor].color}}>{history.title}</h5>
-                                                <p className="card-text fontDefault"> <img alt="plan-book" src={`newasset/book.png`} style={{marginTop: -3}} /> {history.totalItem.file} Files, {history.totalItem.exam} Exam, {history.totalItem.liveclass} Liveclass, {history.totalItem.submission} Submission</p>
+                                                <p className="card-text fontDefault"> <img alt="plan-book" src={`newasset/book.png`} style={{marginTop: -3}} /> {history.totalItem.file} Files, {history.totalItem.exam} Exam, {history.totalItem.liveclass} Liveclass
+                                                {/* , {history.totalItem.submission} Submission */}
+                                                </p>
                                                 <p className="card-text fontDefault"> <img alt="exam-clock" src={`newasset/clock.png`} style={{marginTop: -3}} /> {history.duration}</p>
                                             </div>
                                           </div>
