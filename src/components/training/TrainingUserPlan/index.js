@@ -13,11 +13,7 @@ import { Modal } from 'react-bootstrap';
 import moment from 'moment-timezone';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
-import "../TrainingUserDashboard/traininguserdashboard.css"
-
-const userDashboardMenu = [{
-  label: 'Plan',
-}]
+import "../TrainingUserDashboard/traininguserdashboard.css";
 
 class TrainingUserPlan extends Component {
   constructor(props) {
@@ -28,7 +24,7 @@ class TrainingUserPlan extends Component {
       isLoading: false,
       urlDetail:`/training/detail-course`,
       filter: '',
-      selectedTab: 'Plan',
+      selectedTab: 'All',
       modalActive: false,
       selectedHistory: {},
       updateMembership: false,
@@ -36,6 +32,7 @@ class TrainingUserPlan extends Component {
       imagePreview:'assets/images/no-image.png',
       isSaving:false,
       idMembership:'',
+      userDashboardMenu: [],
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -47,11 +44,30 @@ class TrainingUserPlan extends Component {
       this.props.history.goBack();
     // }
   }
-
-  getDataUserDashboard (tab) {
-    this.setState({isLoading: true, selectedTab: tab});
+  getDataOrganizer(){
     const idCompany = Storage.get('user').data.company_id;
-    let urlCheck =  `${API_SERVER}v2/training/plan/${idCompany}`;
+    API.get(`${API_SERVER}v2/training/settings/organizer/${idCompany}`).then(res=>{
+      let tempData = [{label: 'All', idOrganizer: 0, image: null}];
+      res.data.result.forEach(element => {
+        tempData.push({
+          label: element.name,
+          idOrganizer: element.id,
+          image: element.logo
+        })
+        this.setState({userDashboardMenu: tempData})
+      });
+    })
+  }
+  getDataUserDashboard (tab) {
+    if (!tab){
+      tab = {
+        label: 'All',
+        idOrganizer: 0
+      }
+    }
+    const idCompany = Storage.get('user').data.company_id;
+    this.setState({isLoading: true, selectedTab: tab.label});
+    let urlCheck =  `${API_SERVER}v2/training/plan/${idCompany}${tab.idOrganizer === 0 ? '' : `?organizer=${tab.idOrganizer}`}`;
     
     API.get(urlCheck).then(res=>{
       if(res.data.error){
@@ -114,7 +130,8 @@ class TrainingUserPlan extends Component {
   }
 
   componentDidMount() {
-    this.getDataUserDashboard('Plan');
+    this.getDataUserDashboard();
+    this.getDataOrganizer();
   }
 
 
@@ -163,8 +180,13 @@ class TrainingUserPlan extends Component {
                               <div className="col-sm-12 m-b-20">
                               <ul className="tab-menu-training" style={{float:'none', marginTop:0, padding: 0, marginBottom:30}}>
                                   {
-                                      userDashboardMenu.map(item =>
-                                        <li className={`liUserTabFont ${this.state.selectedTab === item.label && 'active'}`} onClick={this.getDataUserDashboard.bind(this, item.label)}>
+                                      this.state.userDashboardMenu.map(item =>
+                                        <li className={`liUserTabFont ${this.state.selectedTab === item.label && 'active'}`} onClick={this.getDataUserDashboard.bind(this, item)}>
+                                          {
+                                            item.label === 'All'
+                                            ? null
+                                            : <img src={item.image} style={{height: 34, marginRight: 10}}/>
+                                          }
                                             {item.label}
                                         </li>
                                       )
