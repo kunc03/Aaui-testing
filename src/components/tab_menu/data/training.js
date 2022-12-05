@@ -32,11 +32,17 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
 : level.toLowerCase() === 'client' && grupName.toLowerCase() === 'user training' ?
 [
     {
-        label: 'Course',
-        icon: 'theory.svg',
-        iconActive: 'theory-active.svg',
-        route: '/training/course'
-    }
+        label: 'Plan',
+        icon: 'n-plan.svg',
+        iconActive: 'n-plan.svg',
+        route: '/training/plan-user'
+    },
+    {
+        label: 'Exam',
+        icon: 'n-exam.svg',
+        iconActive: 'n-exam.svg',
+        route: '/training-user-dashboard'
+    },
 ]
 : level.toLowerCase() === 'admin' ?
 [

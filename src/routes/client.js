@@ -69,6 +69,9 @@ const KursusNew = lazy(() => import('../components/learning/kursus'));
 
 const MeetRoomPub = lazy(()=> import("../components/liveclass/meetRoomPub"));
 
+const PlanUser = lazy(() => import('../components/training/TrainingUserPlan/index'));
+const TrainingUserDashboard = lazy(() => import('../components/training/TrainingUserDashboard/index'));
+
 export default class ClientSwitch extends React.Component {
     render() {
       return (
@@ -110,6 +113,8 @@ export default class ClientSwitch extends React.Component {
           <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
           <Route path="/training/membership" exact component={TrainingMembership} />
           <Route path="/training/membership/edit/:id" exact component={TrainingMembershipForm} />
+          <Route path="/training/plan-user" exact component={PlanUser} />
+          <Route path="/training-user-dashboard" exact component={TrainingUserDashboard} />
   
           <Route path="/meeting" exact component={Meeting} />
           <Route

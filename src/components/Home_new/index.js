@@ -32,7 +32,7 @@ import DashManagement from './dashmanagement';
 
 // import Training from '../training/company'
 // import TrainingUser from '../training/user'
-import TrainingCourse from '../training/course'
+import TrainingCourse from '../training/TrainingUserPlan/index'
 import TrainingDetailCompany from '../training/company/detailTrainingCompany'
 
 class HomeNew extends Component {

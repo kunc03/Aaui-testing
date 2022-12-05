@@ -243,6 +243,7 @@ class SidebarClass extends Component {
 
       submenuTraining: [
         { iconOn: 'news-sidebar.svg', iconOff: 'news-sidebar.svg', label: "News", link: '/news' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Training', link: '/training/plan-user' },
         { iconOn: 'tugasoff.svg', iconOff: 'tugasoff.svg', label: 'Calendar', link: '/calendar' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
