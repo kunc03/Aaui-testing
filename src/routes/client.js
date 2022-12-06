@@ -74,6 +74,7 @@ const TrainingUserDashboard = lazy(() => import('../components/training/Training
 const UserHistoryExam = lazy(() => import('../components/training/TrainingUserDashboard/userhistoryexam'));
 const DetailCoursePlan = lazy(() => import('../components/training/TrainingUserPlan/detailCoursePlan'));
 const FormExam = lazy(() => import('../components/training/TrainingUserDashboard/formexam'));
+const TrainingUserMembership = lazy(() => import('../components/training/TrainingUserMembership/index'));
 
 export default class ClientSwitch extends React.Component {
     render() {
@@ -121,6 +122,7 @@ export default class ClientSwitch extends React.Component {
           <Route path="/training/userhistory/:idTrainingUser/:resultId" exact component={UserHistoryExam} />
           <Route path="/training/detail-course/:idCourse" exact component={DetailCoursePlan} />
           <Route path="/training/exam-user/:idTrainingUser/:resultId" exact component={FormExam} />
+          <Route path="/training/user-membership" exact component={TrainingUserMembership} />
   
           <Route path="/meeting" exact component={Meeting} />
           <Route
