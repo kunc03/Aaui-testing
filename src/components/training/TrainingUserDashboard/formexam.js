@@ -248,6 +248,7 @@ class TrainingUserHistoryExam extends Component {
                   totalQuestion: result.question.length,
                   seconds: second /*Number(result.time_limit) * 60*/,
                 });
+                this.timer = setInterval(this.countDown, 1000);
               }
             } else {
               if (!result.warning) {
@@ -262,6 +263,7 @@ class TrainingUserHistoryExam extends Component {
                   totalQuestion: result.question.length,
                   seconds: second /*Number(result.time_limit) * 60*/,
                 });
+                this.timer = setInterval(this.countDown, 1000);
               } else {
                 clearInterval(this.timer);
                 localStorage.removeItem(this.state.resultId);
@@ -364,6 +366,7 @@ class TrainingUserHistoryExam extends Component {
       seconds: seconds,
     });
 
+
     // Check if we're at zero.
     if (seconds === 0 || parseInt(seconds) < 0) {
       localStorage.removeItem(this.state.resultId);
@@ -390,8 +393,6 @@ class TrainingUserHistoryExam extends Component {
     this.getUserDetail(this.props.match.params.idTrainingUser);
     this.getUserData();
     //this.setupBeforeUnloadListener();
-
-    this.timer = setInterval(this.countDown, 1000);
   }
 
   pagination(conditional, e) {
@@ -1036,6 +1037,7 @@ class TrainingUserHistoryExam extends Component {
                   accept="image/*"
                   name="image"
                   id="image"
+                  style={{display: 'none'}}
                   onChange={this.handleChange}
                   disabled={this.state.disabledForm}
                 />

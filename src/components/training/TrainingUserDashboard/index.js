@@ -356,7 +356,7 @@ overview (history, index) {
                           </div>
                       </label>
                   </center>
-                  <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                  <input type="file" style={{display: 'none'}} accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm}/>
               </div>
           </Modal.Body>
           <Modal.Footer style={{ justifyContent: 'center' }}>
