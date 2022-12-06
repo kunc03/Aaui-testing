@@ -253,7 +253,7 @@ class SidebarClass extends Component {
       menuBawahTraining: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
         { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Support', link: '/bantuan' },
       ]
     };

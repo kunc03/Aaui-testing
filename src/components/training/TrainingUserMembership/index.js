@@ -129,14 +129,14 @@ class TrainingUserMembership extends Component {
                               </div>
                             </div>
                             <div className="row">
-                            <div className="p-20">
+                            <div className="p-20 col-sm-12">
                               <div className="row">
                                 {listHistoryUser.length ? 
                                   listHistoryUser.map((history, index) => {
                                       return (
                                         <div className="col-md-4 col-sm-12 mb-3">
                                             <a href={history.license_card} target="_blank">
-                                                <img style={{maxWidth: '100%'}} src={history.license_card} />
+                                                <img style={{width: '100%'}} src={history.license_card} />
                                             </a>
                                         </div>
                                       )
