@@ -169,7 +169,7 @@ class TrainingUserPlan extends Component {
                   </div> */}
                   <div className="row">
                     <div className="col-xl-12">
-                      <TabMenu title='Training' selected='Plan' />
+                      <TabMenu title='Training' selected='Course' />
                       <div>
                         <LoadingOverlay
                           active={this.state.isLoading}
