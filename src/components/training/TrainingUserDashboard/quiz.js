@@ -383,7 +383,7 @@ overview (history, index) {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="fontDefaulBold" style={{fontSize:20, textAlign:'center'}}>Are you sure to take this exam ?</div>
+            <div className="fontDefaulBold" style={{fontSize:20, textAlign:'center'}}>Are you sure to take this quiz ?</div>
           </Modal.Body>
           <Modal.Footer style={{justifyContent:'center'}}>
             <button className="btn btm-icademy-primary btn-icademy-grey buttonBack width200" onClick={this.closeModalActivate.bind(this)}>

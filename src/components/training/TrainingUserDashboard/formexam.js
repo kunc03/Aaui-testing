@@ -242,6 +242,7 @@ class TrainingUserHistoryExam extends Component {
                 this.setState({
                   correctAnswer: totalAnswer,
                   detailDataExam: result,
+                  msgSuccesSubmit: `Your ${result.exam === 1 ? 'exam' : 'quiz'} has been successfully submitted`,
                   selectedNumber: formExam.selectedNumber,
                   selectedViewDetail: formExam.selectedViewDetail,
                   isLoading: false,
@@ -259,6 +260,7 @@ class TrainingUserHistoryExam extends Component {
                 this.setState({
                   correctAnswer: totalAnswer,
                   detailDataExam: result,
+                  msgSuccesSubmit: `Your ${result.exam === 1 ? 'exam' : 'quiz'} has been successfully submitted`,
                   isLoading: false,
                   totalQuestion: result.question.length,
                   seconds: second /*Number(result.time_limit) * 60*/,
@@ -615,7 +617,7 @@ class TrainingUserHistoryExam extends Component {
                                   </table>
                                 </div>
                                 <div className="col-sm-3 m-b-20">
-                                  <div className="buttonExamOrange fontWhite m-b-10 m-t-25">Exam</div>
+                                  <div className="buttonExamOrange fontWhite m-b-10 m-t-25" style={{lineHeight: '18px'}}>{this.state.detailDataExam.exam === 1 ? 'Exam' : 'Quiz'}</div>
                                   <div className="liUserTabFont">{detailDataExam.title}</div>
                                   <div>
                                     <p className="card-text fontDefault">
