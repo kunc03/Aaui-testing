@@ -235,7 +235,7 @@ class TrainingUserHistoryExam extends Component {
                                   </table>
                                 </div>
                                 <div className="col-sm-3 m-b-20">
-                                  <div className="buttonExamOrange fontWhite m-b-10 m-t-25">Exam</div>
+                                  <div className="buttonExamOrange fontWhite m-b-10 m-t-25" style={{lineHeight: '18px'}}>{this.state.detailDataExam.exam === 1 ? 'Exam' : 'Quiz'}</div>
                                   <div className='liUserTabFont'>{this.state.detailInfo ? this.state.detailInfo.title : ''}</div>
                                   <div><p className="card-text fontDefault"> <img alt="exam-clock" src={`newasset/clock.png`} style={{ marginTop: -3 }} /> {this.state.detailInfo ? parseInt(this.state.detailInfo.time_limit) : '-'} Minutes</p></div>
                                 </div>
