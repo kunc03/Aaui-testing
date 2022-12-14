@@ -217,6 +217,12 @@ class Allocation extends Component {
         grow: 2
       },
       {
+        name: 'Notes',
+        selector: 'notes',
+        sortable: true,
+        grow: 2
+      },
+      {
         name: 'Remaining Allocation',
         selector: 'remaining_allocation',
         sortable: true

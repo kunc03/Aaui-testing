@@ -35,6 +35,7 @@ class SettingsTraining extends Component {
         modalOther: false,
         showOrganizer: true,
         typeName: '',
+        notes: '',
         duration: 2,
         req_license_type: '',
         license_format: '[YYYY][MM][DD].A0[GENDER]-[NUMBER]',
@@ -56,7 +57,7 @@ class SettingsTraining extends Component {
   }
 
   closeModalCreate = e => {
-    this.setState({ idOrganizer:'',nameOrganizer:'',modalCreate: false, typeName: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '', license_format : '[YYYY][MM][DD].A0[GENDER]-[NUMBER]' })
+    this.setState({ idOrganizer:'',nameOrganizer:'',modalCreate: false, typeName: '', notes: '', typeId: '', imagePreview : API_SERVER+'training/membership/card.svg', image: '', license_format : '[YYYY][MM][DD].A0[GENDER]-[NUMBER]' })
   }
   closeModalCreateOrganizer = e =>{
     this.setState({ modalCreateOrganizer: false,logoOrganizer:'', nameOrganizer: '', idOrganizer: '', imagePreview : API_SERVER+'training/membership/card.svg', imageOrganizer: '' })
@@ -129,6 +130,7 @@ class SettingsTraining extends Component {
             let form = {
                 company_id: this.state.companyId,
                 name : this.state.typeName,
+                notes : this.state.notes,
                 organizer_id: this.state.idOrganizer,
                 duration: this.state.duration,
                 req_license_type: this.state.req_license_type,
@@ -169,6 +171,7 @@ class SettingsTraining extends Component {
             let form = {
                 id: this.state.typeId,
                 name : this.state.typeName,
+                notes : this.state.notes,
                 organizer_id: this.state.idOrganizer,
                 duration: this.state.duration,
                 req_license_type: this.state.req_license_type,
@@ -414,6 +417,10 @@ class SettingsTraining extends Component {
         sortable: true
       },
       {
+        name: 'Notes',
+        selector: 'notes'
+      },
+      {
         name: 'Organizer',
         selector: 'nameOrganizer'
       },
@@ -424,7 +431,7 @@ class SettingsTraining extends Component {
             onSelect={(eventKey) => {
               console.log(row,'?')
               switch (eventKey){
-                case 1 : this.setState({modalCreate: true ,req_license_type: row.required_license_type, typeId: row.id, typeName: row.name, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.organizer_name, duration: row.duration, license_format: row.format || '[YYYY][MM][DD].A0[GENDER]-[NUMBER]'});break;
+                case 1 : this.setState({modalCreate: true ,req_license_type: row.required_license_type, typeId: row.id, typeName: row.name, notes: row.notes, imagePreview: row.image_card.length ? row.image_card : this.state.imagePreview, idOrganizer:row.organizer_id, nameOrganizer:row.organizer_name, duration: row.duration, license_format: row.format || '[YYYY][MM][DD].A0[GENDER]-[NUMBER]'});break;
                 default : this.setState({modalDelete: true, typeId: row.id});break;
               }
             }}
@@ -719,25 +726,29 @@ class SettingsTraining extends Component {
                 </div>
 
                 <div className="form-field-top-label">
-                    <label for="typeName">Duration of Licenses (In a Years)<required>*</required></label>
+                    <label for="duration">Duration of Licenses (In a Years)<required>*</required></label>
                     <input type="text" name="duration" size="50" id="duration" placeholder="Example : Main Exam" value={this.state.duration} onChange={this.handleChange}/>
                 </div>
 
                 <div className="form-field-top-label">
-                    <label for="typeName">Licenses Format</label>
+                    <label for="license_format">Licenses Format</label>
                     <input type="text" name="license_format" size="50" id="license_format" placeholder="Example : [YYYY][MM][DD].A0[GENDER]-[NUMBER]" value={this.state.license_format} onChange={this.handleChange}/>
                     <required>Must Have YYYY MM DD GENDER NUMBER</required>
                 </div>
 
                 <div className="form-field-top-label" style={{ width:"380px" }}>
-                    <label for="typeName">Required License Type<required>*</required></label>
+                    <label for="optionLicenseType">Required License Type<required>*</required></label>
                     <MultiSelect id="optionLicenseType"  options={this.state.optionLicenseType} value={[this.state.req_license_type]} onChange={options => this.setState({ req_license_type:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Required License Type"/>
 
                 </div>
 
                 <div className="form-field-top-label" style={{ width:"380px" }}>
-                    <label for="typeName">Organizer (Additional)<required>*</required></label>
+                    <label for="opOrganizer">Organizer</label>
                     <MultiSelect id="opOrganizer" options={this.state.opOrganizer} value={[this.state.idOrganizer]} onChange={options => this.setState({ idOrganizer:options[0]})} mode="single" enableSearch={true} resetable={true} valuePlaceholder="Select Organizer"/>
+                </div>
+                <div className="form-field-top-label" style={{ width:"380px" }}>
+                    <label for="notes">Notes</label>
+                    <input type="text" name="notes" size="50" id="notes" value={this.state.notes} onChange={this.handleChange}/>
                 </div>
                 <div className="form-field-top-label">
                   <label for="image">Member Card Background</label>
