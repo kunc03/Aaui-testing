@@ -104,6 +104,7 @@ class TrainingUserPlan extends Component {
             tmp.push({
               "id": item.id,
               "title": item.title,
+              "image":  item.image,
               "status": item.progress == 100 ? 'Done' : 'Active',
               "totalItem": {
                   "file": item.fileCount.length,
