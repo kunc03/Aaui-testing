@@ -18,9 +18,11 @@ import SocketContext from "../../../socket";
 
 const userDashboardMenu = [{
   label: 'Exam',
+  subLabel:'Ujian'
 },
 {
   label: 'History',
+  subLabel:'Riwayat'
 }]
 
 class TrainingUserDashboard extends Component {
@@ -221,8 +223,11 @@ overview (history, index) {
                               <ul className="tab-menu-training" style={{float:'none', marginTop:0, padding: 0, marginBottom:30}}>
                                   {
                                       userDashboardMenu.map(item =>
-                                        <li className={`liUserTabFont ${this.state.selectedTab === item.label && 'active'}`} onClick={this.getDataUserDashboard.bind(this, item.label)}>
-                                            {item.label}
+                                        <li style={{paddingTop:3}} className={`liUserTabFont ${this.state.selectedTab === item.label && 'active'}`} onClick={this.getDataUserDashboard.bind(this, item.label)}>
+                                            <p>
+                                              {item.label}<br/>
+                                              <small className="text-muted f-14">{ item.subLabel }</small>
+                                            </p>
                                         </li>
                                       )
                                   }

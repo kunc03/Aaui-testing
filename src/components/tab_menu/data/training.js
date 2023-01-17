@@ -33,24 +33,28 @@ level.toLowerCase() === 'client' && grupName.toLowerCase() === 'admin training' 
 [
     {
         label: 'Course',
+        subLabel:'Materi',
         icon: 'n-plan.svg',
         iconActive: 'n-plan.svg',
         route: '/training/plan-user'
     },
     {
         label: 'Quiz',
+        subLabel:'Latihan',
         icon: 'n-exam.svg',
         iconActive: 'n-exam.svg',
         route: '/training-user-dashboard-quiz'
     },
     {
         label: 'Exam',
+        subLabel:'Ujian',
         icon: 'n-exam.svg',
         iconActive: 'n-exam.svg',
         route: '/training-user-dashboard'
     },
     {
         label: 'Membership',
+        subLabel:'Keanggotaan',
         icon: 'n-membership.png',
         iconActive: 'n-membership.png',
         route: '/training/user-membership'
