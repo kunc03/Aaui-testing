@@ -242,6 +242,9 @@ class SidebarClass extends Component {
       ],
 
       submenuTraining: [
+        { iconOn: 'news-sidebar.svg', iconOff: 'news-sidebar.svg', label: "News", link: '/news' },
+        { iconOn: 'kursus.svg', iconOff: 'kursus.svg', label: 'Training', link: '/training/plan-user' },
+        { iconOn: 'tugasoff.svg', iconOff: 'tugasoff.svg', label: 'Calendar', link: '/calendar' },
         { iconOn: 'logout.svg', iconOff: 'logout.svg', label: 'Logout', link: '/logout' },
       ],
       menuAtasTraining: [
@@ -250,7 +253,7 @@ class SidebarClass extends Component {
       menuBawahTraining: [
         { iconOn: 'dashboard-on.svg', iconOff: 'dashboard.svg', label: 'Dashboard', link: '/' },
         { iconOn: 'setting-on.svg', iconOff: 'setting.svg', label: 'Settings', link: '/pengaturan' },
-        { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
+        // { iconOn: 'user-on.svg', iconOff: 'user.svg', label: 'Profile', link: '/profile' },
         { iconOn: 'bantuan-on.svg', iconOff: 'bantuan-off.svg', label: 'Support', link: '/bantuan' },
       ]
     };

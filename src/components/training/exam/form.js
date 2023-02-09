@@ -490,7 +490,7 @@ class FormExam extends Component {
                         }
                         else {
                             res.data.result.map((item) => {
-                                let name = item.organizer_name+' - '+item.name;
+                                let name = item.organizer_name+' - '+item.name+ (item.notes.length ? `- ${item.notes}` : '');
                                 this.state.optionsLicensesType.push({ label: name, value: item.id })
                             })
                             API.get(`${API_SERVER}v2/training/course-list-question/${this.state.companyId}`).then(res => {

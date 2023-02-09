@@ -190,17 +190,10 @@ class Login extends Component {
             description: res.data.result.email,
             title: 'regular login'
           }
+          let dataUser = res.data.result;
+          dataUser.user = dataUser.name;
           Storage.set('user', {
-            data: {
-              user_id: res.data.result.user_id,
-              user: res.data.result.name,
-              email: res.data.result.email,
-              level: res.data.result.level,
-              grup_id: res.data.result.grup_id,
-              grup_name: res.data.result.grup_name,
-              company_id: res.data.result.company_id,
-              company_type: res.data.result.company_type,
-            }
+            data: { ...dataUser }
           });
 
           Storage.set('access', {

@@ -223,7 +223,7 @@ class Report extends Component {
         }
         else{
             res.data.result.map((item)=>{
-                this.state.optionsLicensesType.push({label: item.name, value: item.id})
+                this.state.optionsLicensesType.push({label: (item.notes.length ? `${item.name} - ${item.notes}` : item.name), value: item.id})
             })
         }
     })

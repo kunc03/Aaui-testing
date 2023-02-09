@@ -69,6 +69,14 @@ const KursusNew = lazy(() => import('../components/learning/kursus'));
 
 const MeetRoomPub = lazy(()=> import("../components/liveclass/meetRoomPub"));
 
+const PlanUser = lazy(() => import('../components/training/TrainingUserPlan/index'));
+const TrainingUserDashboard = lazy(() => import('../components/training/TrainingUserDashboard/index'));
+const TrainingUserDashboardQuiz = lazy(() => import('../components/training/TrainingUserDashboard/quiz'));
+const UserHistoryExam = lazy(() => import('../components/training/TrainingUserDashboard/userhistoryexam'));
+const DetailCoursePlan = lazy(() => import('../components/training/TrainingUserPlan/detailCoursePlan'));
+const FormExam = lazy(() => import('../components/training/TrainingUserDashboard/formexam'));
+const TrainingUserMembership = lazy(() => import('../components/training/TrainingUserMembership/index'));
+
 export default class ClientSwitch extends React.Component {
     render() {
       return (
@@ -110,6 +118,13 @@ export default class ClientSwitch extends React.Component {
           <Route path="/training/user/detail/:id" exact component={TrainingUserDetail} />
           <Route path="/training/membership" exact component={TrainingMembership} />
           <Route path="/training/membership/edit/:id" exact component={TrainingMembershipForm} />
+          <Route path="/training/plan-user" exact component={PlanUser} />
+          <Route path="/training-user-dashboard" exact component={TrainingUserDashboard} />
+          <Route path="/training-user-dashboard-quiz" exact component={TrainingUserDashboardQuiz} />
+          <Route path="/training/userhistory/:idTrainingUser/:resultId" exact component={UserHistoryExam} />
+          <Route path="/training/detail-course/:idCourse" exact component={DetailCoursePlan} />
+          <Route path="/training/exam-user/:idTrainingUser/:resultId" exact component={FormExam} />
+          <Route path="/training/user-membership" exact component={TrainingUserMembership} />
   
           <Route path="/meeting" exact component={Meeting} />
           <Route

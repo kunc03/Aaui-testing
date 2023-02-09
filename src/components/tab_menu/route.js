@@ -19,13 +19,19 @@ class TabMenuRoute extends Component {
         let title = this.props.title;
         let menu = Menu;
         let selected = this.props.selected;
+        let labelId = menu.filter((str)=>str.label === selected);
         return (
             <div className="card main-tab-container" style={{ padding: '0px 20px' }}>
                 <div className="row" style={{ height: '100%' }}>
-                    <div className="col-sm-2" style={{ display: 'flex', alignItems: 'center' }}>
-                        <strong className="f-w-bold f-18" style={{ color: '#000' }}>{title} | {selected}</strong>
+                    <div className="col-sm-3" style={{ display: 'flex', alignItems: 'center' }}>
+                        <span>
+                            <strong className="f-w-bold f-18" style={{ color: '#000' }}>
+                                {title} | {selected}<br/>
+                                <small className="text-muted f-13">{title === 'Training' ? 'Pelatihan' : null} {labelId.length ? ` | ${labelId[0].subLabel}` : null}</small>
+                            </strong>
+                        </span>
                     </div>
-                    <div className="col-sm-10">
+                    <div className="col-sm">
                         <ul className="tab-menu">
                             {
                                 menu.map(item =>
@@ -38,7 +44,10 @@ class TabMenuRoute extends Component {
                                                 width={26}
                                                 style={{ marginRight: 8 }}
                                             ></img>
-                                            {item.label}
+                                            <span>
+                                                {item.label}
+                                            </span><br/>
+                                            {item.subLabel ? <small style={{float:'right'}}>{item.subLabel}</small> : null}
                                         </li>
                                     </Link>
                                 )
