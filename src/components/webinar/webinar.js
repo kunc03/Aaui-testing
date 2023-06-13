@@ -232,6 +232,12 @@ class WebinarTable extends Component {
                             let diffHour = Math.floor((diff % 86400000) / 3600000);
                             let diffMin = Math.round(((diff % 86400000) % 3600000) / 60000);
                             let durasi = item.start_time && item.end_time ? diffHour.toString().padStart(2, "0") + ':' + diffMin.toString().padStart(2, "0") : '-';
+                            let owner = [];
+                            if (item.owner.hasOwnProperty('name')) {
+                              owner = item.owner.user_id;
+                            }else{
+                              owner = item.owner;
+                            }
                             return (
                             <tr style={{borderBottom: '1px solid #DDDDDD'}}>
                                 <td className="fc-muted f-14 f-w-300 p-t-20">
@@ -262,7 +268,7 @@ class WebinarTable extends Component {
                                       </button>
                                       <div class="dropdown-menu" aria-labelledby="dropdownMenu" style={{fontSize:14, padding:5, borderRadius:0}}>
                                         {
-                                          ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) &&
+                                          ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status != 3) &&
                                           <Link to={`/webinar/add/${item.project_id}/${item.id}/${this.props.training ? 'by-training' : 'default'}`} style={{cursor:'pointer'}} class="dropdown-item" type="button">
                                             Detail
                                           </Link>
@@ -286,11 +292,11 @@ class WebinarTable extends Component {
                                 </td>
                                 <td className="fc-muted f-14 f-w-300 " align="center">
                                     {
-                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
+                                        ((item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || owner.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 3) &&
                                         <Link to={`/webinar/riwayat/${item.id}`}><button className="btn btn-icademy-primary btn-icademy-grey">{t('history')}</button></Link>
                                     }
                                     {
-                                        ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || item.owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
+                                        ((levelUser != 'client' || item.moderator.filter((item) => item.user_id == this.state.userId).length >= 1 || item.sekretaris.filter((item) => item.user_id == this.state.userId).length >= 1 || item.pembicara.filter((item) => item.user_id == this.state.userId).length >= 1 || owner.filter((item) => item.user_id == this.state.userId).length >= 1 || item.peserta.filter((item) => item.user_id == this.state.userId).length >= 1) && item.status == 2) &&
                                     <a href={(item.engine === 'zoom') ? (this.state.checkZoom.length ? this.state.checkZoom[0].link : '') : `/webinar/live/${item.id}`} target='_blank'><button className="btn btn-icademy-primary btn-icademy-warning">{t('join')}</button></a>
                                     }
                                     {
