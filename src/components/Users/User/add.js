@@ -38,7 +38,8 @@ class UserAdd extends Component {
     responseEmail: '',
     responsePhone: '',
     optionsGroup: [],
-    valueGroup: []
+    valueGroup: [],
+    isbuttonDisabled: false,
   };
 
 
@@ -56,14 +57,18 @@ class UserAdd extends Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-
     if (name === 'email') {
+      this.setState({isbuttonDisabled : true});
+      
       API.get(`${API_SERVER}v1/user/cek/email/${value}`).then(res => {
         if (res.data.error) {
           target.value = ''
           this.setState({ alertemail: 'Email sudah terdaftar dan aktif. gunakan email lain' })
         } else {
-          this.setState({ [name]: value, alertemail: '' })
+          this.setState({ [name]: value, alertemail: '' });
+          setTimeout(() => {
+            this.setState({isbuttonDisabled : false});
+          }, 600);
         }
       })
     }
@@ -361,7 +366,7 @@ class UserAdd extends Component {
                                 </div>
                               }
                             </div>
-                            <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600">
+                            <button type="submit" className="btn btn-primary btn-block m-t-100 f-20 f-w-600" disabled={this.state.isbuttonDisabled}>
                               Save
                             </button>
                           </form>
