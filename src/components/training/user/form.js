@@ -456,11 +456,11 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="name">Name<required>*</required></label>
-                                                            <input type="text" name="name" id="name" placeholder={!this.state.disabledForm && "XXXX XXXX"} value={this.state.name} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="name" id="name" placeholder={!this.state.disabledForm && "Input Name"} value={this.state.name} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="born_place">Born Place</label>
-                                                            <input type="text" name="born_place" id="born_place" placeholder={!this.state.disabledForm && "Jakarta"} value={this.state.born_place} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="born_place" id="born_place" placeholder={!this.state.disabledForm && "Input Born Place"} value={this.state.born_place} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="born_date">Born Date<required>*</required></label>
@@ -501,15 +501,15 @@ class FormUser extends Component {
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="identity">Identity Card Number<required>*</required></label>
-                                                            <input type="text" name="identity" id="identity" placeholder={!this.state.disabledForm && "1234567890"} maxlength="16" value={this.state.identity} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="identity" id="identity" placeholder={!this.state.disabledForm && "Input Identity Card Number"} maxlength="16" value={this.state.identity} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="tin">Tax Identification Number</label>
-                                                            <input type="text" name="tin" id="tin" placeholder={!this.state.disabledForm && "1234567890"} value={this.state.tin} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" name="tin" id="tin" placeholder={!this.state.disabledForm && "Input Tax Identification Number"} value={this.state.tin} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="license_number">License Number</label>
-                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "1234567890"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" size="30" name="license_number" id="license_number" placeholder={(this.state.disabledForm || this.props.match.params.id) ?  '' : "Input License Number"} value={this.state.license_number} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         {
                                                             this.state.license_number ?
@@ -532,7 +532,7 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="address">Address<required>*</required></label>
-                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder={!this.state.disabledForm && "Jl.Pahlawan Seribu, BSD City, Tangerang, 15322"} value={this.state.address} onChange={this.handleChange} disabled={this.state.disabledForm}></textarea>
+                                                            <textarea name="address" rows="3" cols="60" id="address" placeholder={!this.state.disabledForm && "Input Address"} value={this.state.address} onChange={this.handleChange} disabled={this.state.disabledForm}></textarea>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="city">City<required>*</required></label>
@@ -573,11 +573,11 @@ class FormUser extends Component {
                                                     <div className="row">
                                                         <div className="form-field-top-label">
                                                             <label for="phone">Phone Number<required>*</required></label>
-                                                            <input type="number" name="phone" id="phone" placeholder={!this.state.disabledForm && "081234567890"} value={this.state.phone} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="number" name="phone" id="phone" placeholder={!this.state.disabledForm && "Input Phone Number"} value={this.state.phone} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="email">Email<required>*</required></label>
-                                                            <input type="text" size="50" name="email" id="email" placeholder={!this.state.disabledForm && "email@host.com"} value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
+                                                            <input type="text" size="50" name="email" id="email" placeholder={!this.state.disabledForm && "Input Email"} value={this.state.email} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                             {/* <label for="phone" style={{marginTop:10}}>By default the password is the same as email<required>*</required></label> */}
                                                         </div>
                                                     </div>
