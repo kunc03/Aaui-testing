@@ -154,7 +154,7 @@ class Membership extends Component {
         selector: 'license_card',
         sortable: true,
         cell: row => <a href={row.license_card} target="_blank"><img height="36px" alt='License Card' src={row.license_card ? row.license_card : 'assets/images/no-image.png'} /></a>,
-        cellExport: row => row.license_card
+        cellExport: row => row.license_card,
       },
       {
         cell: row => <Link to={'/training/membership/edit/'+row.id}>{row.license_number}</Link>,
@@ -194,6 +194,16 @@ class Membership extends Component {
         name: 'Expiration Date',
         selector: 'expired',
         sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        cell: row => row.submission_time === null ? '-' :  moment.tz(row.submission_time, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm"),
+        name: 'Submission Time',
+        selector: 'submission_time',
+        sortable: true,
+        minWidth: '150px',
         style: {
           color: 'rgba(0,0,0,.54)',
         },
@@ -249,6 +259,11 @@ class Membership extends Component {
           <td>Expiration Date</td>
           <td>:</td>
           <td>{moment.tz(data.expired, moment.tz.guess(true)).format("DD-MM-YYYY")}</td>
+        </tr>
+        <tr>
+          <td>Submission Time</td>
+          <td>:</td>
+          <td>{data.submission_time === null ? '-' :  moment.tz(data.submission_time, moment.tz.guess(true)).format("DD-MM-YYYY HH:mm")}</td>
         </tr>
         <tr>
           <td>Name</td>
