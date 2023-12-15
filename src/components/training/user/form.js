@@ -4,11 +4,16 @@ import API, { API_SERVER, USER_ME } from '../../../repository/api';
 import Storage from '../../../repository/storage';
 import { Modal } from 'react-bootstrap';
 import moment from 'moment-timezone';
+import ReactSelect from 'react-select';
 
 class FormUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      province: null,
+      selectedProvince: null,
+      cities: null,
+      selectedCity: null,
       image: '',
       imagePreview: 'assets/images/no-profile-picture.jpg',
       imageIdentity: '',
@@ -344,7 +349,48 @@ class FormUser extends Component {
     });
   }
 
+  closeModalPassword = (e) => {
+    this.setState({ modalPassword: false, newPassword: '' });
+  };
+
+  fetchProvince = async () => {
+    try {
+      const response = await API.get(`${API_SERVER}v2/training/provinces`);
+      const data = response.data.result.map((item) => ({ value: item.prov_id, label: item.prov_name }));
+      this.setState({ province: data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  fetchCities = async (province_id) => {
+    try {
+      const response = await API.get(`${API_SERVER}v2/training/cities/${province_id}`);
+      const data = response.data.result.map((item) => ({ value: item.city_id, label: item.city_name }));
+      this.setState({ cities: data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  handleChangeProvince = (data) => {
+    this.setState({ selectedProvince: data, selectedCity: null, cities: null });
+  };
+
+  handleChangeCity = (data) => {
+    this.setState({ selectedCity: data });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.selectedProvince !== this.state.selectedProvince) {
+      if (this.state.selectedProvince) {
+        this.fetchCities(this.state.selectedProvince.value);
+      }
+    }
+  }
+
   componentDidMount() {
+    this.fetchProvince();
     this.getUserData();
     if (this.props.disabledForm && this.props.id) {
       this.getUser(this.props.id);
@@ -357,9 +403,6 @@ class FormUser extends Component {
     });
   }
 
-  closeModalPassword = (e) => {
-    this.setState({ modalPassword: false, newPassword: '' });
-  };
   render() {
     return (
       <div className="pcoded-main-container">
@@ -673,18 +716,34 @@ class FormUser extends Component {
                                   disabled={this.state.disabledForm}
                                 ></textarea>
                               </div>
-                              <div className="form-field-top-label">
+                              <div
+                                className="form-field-top-label"
+                                style={{ display: 'flex', flexDirection: 'column', width: '250px' }}
+                              >
+                                <label for="province">
+                                  City<required>*</required>
+                                </label>
+                                <ReactSelect
+                                  placeholder="Select Province"
+                                  isClearable={true}
+                                  value={this.state.selectedProvince}
+                                  onChange={this.handleChangeProvince}
+                                  options={this.state.province}
+                                />
+                              </div>
+                              <div
+                                className="form-field-top-label"
+                                style={{ display: 'flex', flexDirection: 'column', width: '250px' }}
+                              >
                                 <label for="city">
                                   City<required>*</required>
                                 </label>
-                                <input
-                                  type="text"
-                                  name="city"
-                                  id="city"
-                                  placeholder={!this.state.disabledForm && 'Jakarta'}
-                                  value={this.state.city}
-                                  onChange={this.handleChange}
-                                  disabled={this.state.disabledForm}
+                                <ReactSelect
+                                  placeholder="Select City"
+                                  isClearable={true}
+                                  value={this.state.selectedCity}
+                                  onChange={this.handleChangeCity}
+                                  options={this.state.cities}
                                 />
                               </div>
                               {/* <div className="form-field-top-label">
