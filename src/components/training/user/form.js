@@ -295,6 +295,8 @@ class FormUser extends Component {
         toast.error('Error read user');
       } else {
         this.setState({
+          selectedProvince: { value: res.data.result.prov_id, label: res.data.result.prov_name },
+          selectedCity: { value: res.data.result.city_id, label: res.data.result.city_name },
           training_company_id: res.data.result.training_company_id,
           name: res.data.result.name,
           born_place: res.data.result.born_place,
@@ -378,7 +380,7 @@ class FormUser extends Component {
   };
 
   handleChangeCity = (data) => {
-    this.setState({ selectedCity: data, city: data.label });
+    this.setState({ selectedCity: data, city: data ? data.label : null });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -729,6 +731,7 @@ class FormUser extends Component {
                                   value={this.state.selectedProvince}
                                   onChange={this.handleChangeProvince}
                                   options={this.state.province}
+                                  isDisabled={this.state.disabledForm}
                                 />
                               </div>
                               <div
@@ -744,6 +747,7 @@ class FormUser extends Component {
                                   value={this.state.selectedCity}
                                   onChange={this.handleChangeCity}
                                   options={this.state.cities !== null ? this.state.cities : []}
+                                  isDisabled={this.state.disabledForm}
                                 />
                               </div>
                               {/* <div className="form-field-top-label">
