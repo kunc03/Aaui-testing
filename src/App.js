@@ -24,9 +24,7 @@ import 'react-sm-select/dist/styles.css';
 
 import SocketContext from './socket';
 const socket = io(`${API_SOCKET}`);
-socket.on("connect", () => {
-  console.log("Loading App");
-});
+socket.on("connect", () => {});
 const ClientSwitch = lazy(()=> import("./routes/client"));
 const AdminSwitch = lazy(()=> import("./routes/admin"));
 const SuperAdminSwitch = lazy(()=> import("./routes/superadmin"));

@@ -68,9 +68,7 @@ class Header extends Component {
         console.log(idx, this.state.company, "TEST")
         console.log(this.state.company, 9090);
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+      .catch(function (error) {});
   }
 
   goTo = (id) => {
@@ -449,7 +447,6 @@ class Header extends Component {
       menuContent = menuClients;
     }
 
-    console.log(company, "TEST");
     return (
       <header className="navbar pcoded-header navbar-expand-lg navbar-light" style={{ marginBottom: -1, background: '#FFF' }}>
         <div className="m-header">
