@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { toast } from 'react-toastify';
-import API, { API_SERVER, USER_ME } from '../../../repository/api';
-import Storage from '../../../repository/storage';
-import { Modal } from 'react-bootstrap';
-import moment from 'moment-timezone';
 import ReactSelect from 'react-select';
+import moment from 'moment-timezone';
+import { Modal } from 'react-bootstrap';
+import Storage from '../../../repository/storage';
+import API, { API_SERVER, USER_ME } from '../../../repository/api';
 
 class FormUser extends Component {
   constructor(props) {
@@ -743,7 +743,7 @@ class FormUser extends Component {
                                   isClearable={true}
                                   value={this.state.selectedCity}
                                   onChange={this.handleChangeCity}
-                                  options={this.state.cities}
+                                  options={this.state.cities !== null ? this.state.cities : []}
                                 />
                               </div>
                               {/* <div className="form-field-top-label">
