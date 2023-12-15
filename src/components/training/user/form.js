@@ -378,7 +378,7 @@ class FormUser extends Component {
   };
 
   handleChangeCity = (data) => {
-    this.setState({ selectedCity: data });
+    this.setState({ selectedCity: data, city: data.label });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -721,7 +721,7 @@ class FormUser extends Component {
                                 style={{ display: 'flex', flexDirection: 'column', width: '250px' }}
                               >
                                 <label for="province">
-                                  City<required>*</required>
+                                  Province<required>*</required>
                                 </label>
                                 <ReactSelect
                                   placeholder="Select Province"
