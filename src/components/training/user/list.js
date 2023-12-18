@@ -18,6 +18,8 @@ class User extends Component {
     super(props);
     this.state = {
       dataCompany: null,
+      selectedCompany: null,
+      dataProvince: null,
       usersData: null,
       userId: '',
       companyId: '',
@@ -366,14 +368,6 @@ class User extends Component {
     });
   }
 
-  componentDidMount() {
-    this.getUserData(true);
-    this.setState({
-      level: this.props.level ? this.props.level : 'user',
-      import: this.props.import ? this.props.import : false,
-    });
-  }
-
   filterByCompany = (e) => {
     const originalData = this.state.usersData;
     if (e) {
@@ -383,6 +377,35 @@ class User extends Component {
       this.setState({ data: originalData });
     }
   };
+  filterByProvince = (e) => {
+    const originalData = this.state.usersData;
+    if (e) {
+      const filteredCompany = originalData.filter((item) => item.prov_id === e.value);
+      this.setState({ data: filteredCompany });
+    } else {
+      this.setState({ data: originalData });
+    }
+  };
+
+  fetchProvince = async () => {
+    try {
+      const response = await API.get(`${API_SERVER}v2/training/provinces`);
+      const data = response.data.result.map((item) => ({ value: item.prov_id, label: item.prov_name }));
+      this.setState({ dataProvince: data });
+    } catch (error) {
+      toast.error('Error read province');
+    }
+  };
+
+  componentDidMount() {
+    this.fetchProvince();
+    this.getUserData(true);
+    this.setState({
+      level: this.props.level ? this.props.level : 'user',
+      import: this.props.import ? this.props.import : false,
+    });
+  }
+
   render() {
     const ExportCSV = ({ csvData, fileName }) => {
       // const role = this.state.role
@@ -485,6 +508,22 @@ class User extends Component {
       {
         name: 'Phone',
         selector: 'phone',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Province',
+        selector: 'prov_name',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'City',
+        selector: 'city_name',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
@@ -706,12 +745,18 @@ class User extends Component {
     if (filter != '') {
       data = data.filter((x) => JSON.stringify(Object.values(x)).match(new RegExp(filter, 'gmi')));
     }
-    // let { valueCompany } = this.state;
+    let { selectedCompany } = this.state;
     // if (valueCompany != '') {
     //   data = data.filter((item) => item.training_company_id === valueCompany[0]);
     //   console.log(valueCompany);
     //   console.log(data);
     // }
+    if (selectedCompany) {
+      data = data.filter((item) => item.training_company_id === selectedCompany.value);
+    } else {
+      data = data;
+    }
+
     return (
       <div>
         {/* {this.props.level === 'user' ?
@@ -861,11 +906,32 @@ class User extends Component {
                     //   valuePlaceholder="Filter Company"
                     // />
                     <ReactSelect
+                      options={this.state.dataProvince}
+                      isSearchable={true}
+                      isClearable={true}
+                      placeholder="Filter Province"
+                      onChange={(e) => this.filterByProvince(e)}
+                    />
+                  )}
+                </div>
+                <div className="float-right col-sm-3 lite-filter">
+                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                    // <MultiSelect
+                    //   id="company"
+                    //   options={this.state.optionsCompany}
+                    //   value={this.state.valueCompany}
+                    //   onChange={(valueCompany) => this.setState({ valueCompany })}
+                    //   mode="single"
+                    //   enableSearch={true}
+                    //   resetable={true}
+                    //   valuePlaceholder="Filter Company"
+                    // />
+                    <ReactSelect
                       options={this.state.dataCompany}
                       isSearchable={true}
                       isClearable={true}
                       placeholder="Filter Company"
-                      onChange={(e) => this.filterByCompany(e)}
+                      onChange={(e) => this.setState({ selectedCompany: e })}
                     />
                   )}
                 </div>
