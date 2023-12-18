@@ -472,8 +472,9 @@ class User extends Component {
             No: index + 1,
             Name: str.name,
             Address: str.address,
-            City: str.city,
-            DateOfBirth: str.born_date,
+            City: str.city_name,
+            Province: str.prov_name,
+            DateOfBirth: moment(str.born_date).format("DD-MM-YYYY"),
             PlaceOfBirth: str.born_place,
             Company: str.company,
             Email: str.email,
@@ -487,8 +488,25 @@ class User extends Component {
         });
         csvData = arr;
       }
+
       const exportToCSV = (csvData, fileName) => {
         const ws = XLSX.utils.json_to_sheet(csvData);
+        ws['!cols'] = [
+          { width: 5 }, // width of Number
+          { width: 18 }, // width of Name
+          { width: 25 }, // width of Address
+          { width: 20 }, // width of City
+          { width: 20 }, // width of Province
+          { width: 15 }, // width of DateOfBirth
+          { width: 15 }, // width of PlaceOfBirth
+          { width: 25 }, // width of Company
+          { width: 20 }, // width of Email
+          { width: 15 }, // width of Gender
+          { width: 15 }, // width of Identity
+          { width: 15 }, // width of Phone
+          { width: 25 }, // width of LicenseNumber
+          { width: 10 }, // width of Level
+        ];
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const data = new Blob([excelBuffer], { type: fileType });
