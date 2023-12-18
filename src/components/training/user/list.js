@@ -20,6 +20,7 @@ class User extends Component {
       dataCompany: null,
       selectedCompany: null,
       selectedProvince: null,
+      selectedCity: null,
       dataProvince: null,
       dataByProvince: null,
       dataCity: null,
@@ -402,11 +403,12 @@ class User extends Component {
       const filteredProvince = originalData.filter((item) => item.prov_id === e.value);
       this.setState({ data: filteredProvince, dataByProvince: filteredProvince });
     } else {
-      this.setState({ data: originalData });
+      this.setState({ data: originalData, selectedCity: null });
     }
   };
 
   filterByCity = (e) => {
+    this.setState({ selectedCity: e });
     const originalData = this.state.dataByProvince;
     if (e) {
       const filteredCity = originalData.filter((item) => item.city_id === e.value);
@@ -964,10 +966,11 @@ class User extends Component {
                 <div className="float-right col-sm-2 lite-filter">
                   {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
                     <ReactSelect
-                      options={this.state.dataCity}
+                      options={this.state.dataCity ? this.state.dataCity : []}
                       isSearchable={true}
                       isClearable={true}
                       placeholder="Filter City"
+                      value={this.state.selectedCity}
                       onChange={(e) => this.filterByCity(e)}
                     />
                   )}
