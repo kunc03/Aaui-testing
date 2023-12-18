@@ -19,7 +19,10 @@ class User extends Component {
     this.state = {
       dataCompany: null,
       selectedCompany: null,
+      selectedProvince: null,
       dataProvince: null,
+      dataByProvince: null,
+      dataCity: null,
       usersData: null,
       userId: '',
       companyId: '',
@@ -377,11 +380,37 @@ class User extends Component {
       this.setState({ data: originalData });
     }
   };
+
+  filterByRegion = (e, type) => {
+    console.log(e);
+    let { data } = this.state;
+    const originalData = this.state.usersData;
+    if (e && type === 'province') {
+      this.setState({ selectedProvince: e });
+      data = data.filter((item) => item.prov_id === e.value);
+      console.log(data);
+      this.setState({ data });
+    } else {
+      this.setState({ data: originalData });
+    }
+  };
+
   filterByProvince = (e) => {
+    this.setState({ selectedProvince: e });
     const originalData = this.state.usersData;
     if (e) {
-      const filteredCompany = originalData.filter((item) => item.prov_id === e.value);
-      this.setState({ data: filteredCompany });
+      const filteredProvince = originalData.filter((item) => item.prov_id === e.value);
+      this.setState({ data: filteredProvince, dataByProvince: filteredProvince });
+    } else {
+      this.setState({ data: originalData });
+    }
+  };
+
+  filterByCity = (e) => {
+    const originalData = this.state.dataByProvince;
+    if (e) {
+      const filteredCity = originalData.filter((item) => item.city_id === e.value);
+      this.setState({ data: filteredCity });
     } else {
       this.setState({ data: originalData });
     }
@@ -396,6 +425,28 @@ class User extends Component {
       toast.error('Error read province');
     }
   };
+
+  fetchCityByProvince = async (prov_id) => {
+    try {
+      const response = await API.get(`${API_SERVER}v2/training/cities/${prov_id}`);
+      const data = response.data.result.map((item) => ({ value: item.city_id, label: item.city_name }));
+      console.log(data);
+      this.setState({ dataCity: data });
+    } catch (error) {
+      toast.error('Error read city');
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.selectedProvince !== this.state.selectedProvince) {
+      if (this.state.selectedProvince) {
+        this.fetchCityByProvince(this.state.selectedProvince.value);
+        console.log('state province changed', this.state.selectedProvince.value);
+      } else {
+        this.setState({ dataCity: null });
+      }
+    }
+  }
 
   componentDidMount() {
     this.fetchProvince();
@@ -893,18 +944,19 @@ class User extends Component {
                   onChange={this.filter}
                   className="form-control float-right col-sm-3"
                 />
-                <div className="float-right col-sm-3 lite-filter">
+                <div className="float-right col-sm-2 lite-filter">
                   {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
-                    // <MultiSelect
-                    //   id="company"
-                    //   options={this.state.optionsCompany}
-                    //   value={this.state.valueCompany}
-                    //   onChange={(valueCompany) => this.setState({ valueCompany })}
-                    //   mode="single"
-                    //   enableSearch={true}
-                    //   resetable={true}
-                    //   valuePlaceholder="Filter Company"
-                    // />
+                    <ReactSelect
+                      options={this.state.dataCity}
+                      isSearchable={true}
+                      isClearable={true}
+                      placeholder="Filter City"
+                      onChange={(e) => this.filterByCity(e)}
+                    />
+                  )}
+                </div>
+                <div className="float-right col-sm-2 lite-filter">
+                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
                     <ReactSelect
                       options={this.state.dataProvince}
                       isSearchable={true}
@@ -914,18 +966,8 @@ class User extends Component {
                     />
                   )}
                 </div>
-                <div className="float-right col-sm-3 lite-filter">
+                <div className="float-right col-sm-2 lite-filter">
                   {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
-                    // <MultiSelect
-                    //   id="company"
-                    //   options={this.state.optionsCompany}
-                    //   value={this.state.valueCompany}
-                    //   onChange={(valueCompany) => this.setState({ valueCompany })}
-                    //   mode="single"
-                    //   enableSearch={true}
-                    //   resetable={true}
-                    //   valuePlaceholder="Filter Company"
-                    // />
                     <ReactSelect
                       options={this.state.dataCompany}
                       isSearchable={true}
