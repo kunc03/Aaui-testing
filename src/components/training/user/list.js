@@ -11,11 +11,14 @@ import { MultiSelect } from 'react-sm-select';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
 import * as XLSX from 'xlsx';
+import ReactSelect from 'react-select';
 
 class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      dataCompany: null,
+      usersData: null,
       userId: '',
       companyId: '',
       data: [],
@@ -97,6 +100,8 @@ class User extends Component {
 
   getCompany(id) {
     API.get(`${API_SERVER}v2/training/company/${id}`).then((res) => {
+      const data = res.data.result.map((item) => ({ value: item.id, label: item.name, company_id: item.company_id }));
+      this.setState({ dataCompany: data });
       if (res.data.error) {
         toast.error('Error read company');
       } else {
@@ -252,7 +257,7 @@ class User extends Component {
         toast.error(`Error read ${this.state.level}`);
         this.setState({ isLoading: false });
       } else {
-        this.setState({ data: res.data.result, isLoading: false });
+        this.setState({ data: res.data.result, usersData: res.data.result, isLoading: false });
       }
     });
   }
@@ -369,6 +374,15 @@ class User extends Component {
     });
   }
 
+  filterByCompany = (e) => {
+    const originalData = this.state.usersData;
+    if (e) {
+      const filteredCompany = originalData.filter((item) => item.training_company_id === e.value);
+      this.setState({ data: filteredCompany });
+    } else {
+      this.setState({ data: originalData });
+    }
+  };
   render() {
     const ExportCSV = ({ csvData, fileName }) => {
       // const role = this.state.role
@@ -692,10 +706,12 @@ class User extends Component {
     if (filter != '') {
       data = data.filter((x) => JSON.stringify(Object.values(x)).match(new RegExp(filter, 'gmi')));
     }
-    let { valueCompany } = this.state;
-    if (valueCompany != '') {
-      data = data.filter((x) => x.training_company_id === valueCompany[0]);
-    }
+    // let { valueCompany } = this.state;
+    // if (valueCompany != '') {
+    //   data = data.filter((item) => item.training_company_id === valueCompany[0]);
+    //   console.log(valueCompany);
+    //   console.log(data);
+    // }
     return (
       <div>
         {/* {this.props.level === 'user' ?
@@ -834,15 +850,22 @@ class User extends Component {
                 />
                 <div className="float-right col-sm-3 lite-filter">
                   {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
-                    <MultiSelect
-                      id="company"
-                      options={this.state.optionsCompany}
-                      value={this.state.valueCompany}
-                      onChange={(valueCompany) => this.setState({ valueCompany })}
-                      mode="single"
-                      enableSearch={true}
-                      resetable={true}
-                      valuePlaceholder="Filter Company"
+                    // <MultiSelect
+                    //   id="company"
+                    //   options={this.state.optionsCompany}
+                    //   value={this.state.valueCompany}
+                    //   onChange={(valueCompany) => this.setState({ valueCompany })}
+                    //   mode="single"
+                    //   enableSearch={true}
+                    //   resetable={true}
+                    //   valuePlaceholder="Filter Company"
+                    // />
+                    <ReactSelect
+                      options={this.state.dataCompany}
+                      isSearchable={true}
+                      isClearable={true}
+                      placeholder="Filter Company"
+                      onChange={(e) => this.filterByCompany(e)}
                     />
                   )}
                 </div>
