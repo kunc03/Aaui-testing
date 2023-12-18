@@ -29,7 +29,7 @@ class User extends Component {
     this.setState({isLoading: true});
     API.get(`${API_SERVER}v2/training/user/read/user/${Storage.get('user').data.user_id}`).then(res => {
       if (res.status === 200) {
-        this.setState({ training_company_id: res.data.result .training_company_id, isLoading: false })
+        this.setState({ training_company_id: res.data.result.training_company_id, isLoading: false })
       }
     })
   }
