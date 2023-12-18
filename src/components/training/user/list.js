@@ -430,7 +430,6 @@ class User extends Component {
     try {
       const response = await API.get(`${API_SERVER}v2/training/cities/${prov_id}`);
       const data = response.data.result.map((item) => ({ value: item.city_id, label: item.city_name }));
-      console.log(data);
       this.setState({ dataCity: data });
     } catch (error) {
       toast.error('Error read city');
@@ -571,6 +570,7 @@ class User extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        width: '130px',
       },
       {
         name: 'City',
@@ -579,6 +579,7 @@ class User extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        width: '150px',
       },
       {
         name: 'Email',
@@ -689,6 +690,22 @@ class User extends Component {
         cell: (row) => moment(row.created_at).local().format('DD-MM-YYYY HH:mm'),
         name: 'Created at',
         selector: 'created_at',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'Province',
+        selector: 'prov_name',
+        sortable: true,
+        style: {
+          color: 'rgba(0,0,0,.54)',
+        },
+      },
+      {
+        name: 'City',
+        selector: 'city_name',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
