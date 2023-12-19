@@ -465,7 +465,13 @@ class User extends Component {
 
       let arr = [];
       if (csvData.length > 0) {
-        csvData = csvData.filter((str) => str.training_company_id == parseInt(this.props.trainingCompany));
+
+        const levelUser = Storage.get('user').data.level.toLowerCase();
+
+        csvData = (levelUser === 'superadmin' || levelUser === 'admin')
+        ? csvData
+        : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
+
 
         csvData.forEach((str, index) => {
           let obj = {
