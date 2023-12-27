@@ -383,13 +383,11 @@ class User extends Component {
   };
 
   filterByRegion = (e, type) => {
-    console.log(e);
     let { data } = this.state;
     const originalData = this.state.usersData;
     if (e && type === 'province') {
       this.setState({ selectedProvince: e });
       data = data.filter((item) => item.prov_id === e.value);
-      console.log(data);
       this.setState({ data });
     } else {
       this.setState({ data: originalData });
@@ -442,7 +440,6 @@ class User extends Component {
     if (prevState.selectedProvince !== this.state.selectedProvince) {
       if (this.state.selectedProvince) {
         this.fetchCityByProvince(this.state.selectedProvince.value);
-        console.log('state province changed', this.state.selectedProvince.value);
       } else {
         this.setState({ dataCity: null });
       }
@@ -459,7 +456,6 @@ class User extends Component {
   }
 
   render() {
-    console.log(this.props.trainingCompany);
     const ExportCSV = ({ csvData, fileName }) => {
       // const role = this.state.role
       const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
