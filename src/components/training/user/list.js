@@ -459,19 +459,19 @@ class User extends Component {
   }
 
   render() {
+    console.log(this.props.trainingCompany);
     const ExportCSV = ({ csvData, fileName }) => {
       // const role = this.state.role
       const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
       let arr = [];
       if (csvData.length > 0) {
-
         const levelUser = Storage.get('user').data.level.toLowerCase();
 
-        csvData = (levelUser === 'superadmin' || levelUser === 'admin')
-        ? csvData
-        : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
-
+        csvData =
+          levelUser === 'superadmin' || levelUser === 'admin'
+            ? csvData
+            : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
 
         csvData.forEach((str, index) => {
           let obj = {
@@ -480,7 +480,7 @@ class User extends Component {
             Address: str.address,
             City: str.city_name,
             Province: str.prov_name,
-            DateOfBirth: moment(str.born_date).format("DD-MM-YYYY"),
+            DateOfBirth: moment(str.born_date).format('DD-MM-YYYY'),
             PlaceOfBirth: str.born_place,
             Company: str.company,
             Email: str.email,
@@ -988,7 +988,9 @@ class User extends Component {
                   className="form-control float-right col-sm-3"
                 />
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                  {Storage.get('user').data.level === 'client' ||
+                  Storage.get('user').data.level === 'superadmin' ||
+                  this.props.trainingCompany ? (
                     <ReactSelect
                       options={this.state.dataCity ? this.state.dataCity : []}
                       isSearchable={true}
@@ -997,10 +999,12 @@ class User extends Component {
                       value={this.state.selectedCity}
                       onChange={(e) => this.filterByCity(e)}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                  {Storage.get('user').data.level === 'client' ||
+                  Storage.get('user').data.level === 'superadmin' ||
+                  this.props.trainingCompany ? (
                     <ReactSelect
                       options={this.state.dataProvince}
                       isSearchable={true}
@@ -1008,10 +1012,12 @@ class User extends Component {
                       placeholder="Filter Province"
                       onChange={(e) => this.filterByProvince(e)}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                  {Storage.get('user').data.level === 'client' ||
+                  Storage.get('user').data.level === 'superadmin' ||
+                  this.props.trainingCompany ? null : (
                     <ReactSelect
                       options={this.state.dataCompany}
                       isSearchable={true}
