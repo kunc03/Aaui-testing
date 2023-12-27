@@ -287,7 +287,7 @@ class User extends Component {
           toast.error(`Error read ${this.state.level}`);
           this.setState({ isLoading: false });
         } else {
-          this.setState({ data: res.data.result, isLoading: false });
+          this.setState({ data: res.data.result, usersData: res.data.result, isLoading: false });
         }
       },
     );
@@ -456,7 +456,7 @@ class User extends Component {
   }
 
   render() {
-    const ExportCSV = ({ csvData, fileName }) => {
+    const ExportCSV = ({ csvData, fileName, selectedProvince, selectedCity }) => {
       // const role = this.state.role
       const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
@@ -470,24 +470,31 @@ class User extends Component {
             : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
 
         csvData.forEach((str, index) => {
-          let obj = {
-            No: index + 1,
-            Name: str.name,
-            Address: str.address,
-            City: str.city_name,
-            Province: str.prov_name,
-            DateOfBirth: moment(str.born_date).format('DD-MM-YYYY'),
-            PlaceOfBirth: str.born_place,
-            Company: str.company,
-            Email: str.email,
-            Gender: str.gender,
-            Identity: str.identity,
-            Phone: str.phone,
-            LicenseNumber: str.license_number,
-            Level: str.level,
-          };
-          arr.push(obj);
+          // Check if the current item matches the selected province and city filters
+          if (
+            (!selectedProvince || str.prov_name === selectedProvince.label) &&
+            (!selectedCity || str.city_name === selectedCity.label)
+          ) {
+            let obj = {
+              No: index + 1,
+              Name: str.name,
+              Address: str.address,
+              City: str.city_name,
+              Province: str.prov_name,
+              DateOfBirth: moment(str.born_date).format('DD-MM-YYYY'),
+              PlaceOfBirth: str.born_place,
+              Company: str.company,
+              Email: str.email,
+              Gender: str.gender,
+              Identity: str.identity,
+              Phone: str.phone,
+              LicenseNumber: str.license_number,
+              Level: str.level,
+            };
+            arr.push(obj);
+          }
         });
+
         csvData = arr;
       }
 
@@ -950,6 +957,8 @@ class User extends Component {
                           ? localStorage.getItem('companyName')
                           : Storage.get('user').data.company_name
                       }`}
+                      selectedProvince={this.state.selectedProvince}
+                      selectedCity={this.state.selectedCity}
                     />
                   </div>
                 </div>
