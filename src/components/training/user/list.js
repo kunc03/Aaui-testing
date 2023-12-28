@@ -287,7 +287,7 @@ class User extends Component {
           toast.error(`Error read ${this.state.level}`);
           this.setState({ isLoading: false });
         } else {
-          this.setState({ data: res.data.result, isLoading: false });
+          this.setState({ data: res.data.result, usersData: res.data.result, isLoading: false });
         }
       },
     );
@@ -383,13 +383,11 @@ class User extends Component {
   };
 
   filterByRegion = (e, type) => {
-    console.log(e);
     let { data } = this.state;
     const originalData = this.state.usersData;
     if (e && type === 'province') {
       this.setState({ selectedProvince: e });
       data = data.filter((item) => item.prov_id === e.value);
-      console.log(data);
       this.setState({ data });
     } else {
       this.setState({ data: originalData });
@@ -442,7 +440,6 @@ class User extends Component {
     if (prevState.selectedProvince !== this.state.selectedProvince) {
       if (this.state.selectedProvince) {
         this.fetchCityByProvince(this.state.selectedProvince.value);
-        console.log('state province changed', this.state.selectedProvince.value);
       } else {
         this.setState({ dataCity: null });
       }
@@ -459,39 +456,45 @@ class User extends Component {
   }
 
   render() {
-    const ExportCSV = ({ csvData, fileName }) => {
+    const ExportCSV = ({ csvData, fileName, selectedProvince, selectedCity }) => {
       // const role = this.state.role
       const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
       let arr = [];
       if (csvData.length > 0) {
-
         const levelUser = Storage.get('user').data.level.toLowerCase();
 
-        csvData = (levelUser === 'superadmin' || levelUser === 'admin')
-        ? csvData
-        : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
-
+        csvData =
+          levelUser === 'superadmin' || levelUser === 'admin'
+            ? csvData
+            : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
 
         csvData.forEach((str, index) => {
-          let obj = {
-            No: index + 1,
-            Name: str.name,
-            Address: str.address,
-            City: str.city_name,
-            Province: str.prov_name,
-            DateOfBirth: moment(str.born_date).format("DD-MM-YYYY"),
-            PlaceOfBirth: str.born_place,
-            Company: str.company,
-            Email: str.email,
-            Gender: str.gender,
-            Identity: str.identity,
-            Phone: str.phone,
-            LicenseNumber: str.license_number,
-            Level: str.level,
-          };
-          arr.push(obj);
+          // Check if the current item matches the selected province and city filters
+          if (
+            (!selectedProvince || str.prov_name === selectedProvince.label) &&
+            (!selectedCity || str.city_name === selectedCity.label)
+          ) {
+            let obj = {
+              No: index + 1,
+              Name: str.name,
+              Address: str.address,
+              City: str.city_name,
+              Province: str.prov_name,
+              DateOfBirth: moment(str.born_date).format('DD-MM-YYYY'),
+              PlaceOfBirth: str.born_place,
+              Company: str.company,
+              Email: str.email,
+              Gender: str.gender,
+              Identity: str.identity,
+              Phone: str.phone,
+              LicenseNumber: str.license_number,
+              Level: str.level,
+            };
+            arr.push(obj);
+          }
         });
+
         csvData = arr;
       }
 
@@ -954,6 +957,8 @@ class User extends Component {
                           ? localStorage.getItem('companyName')
                           : Storage.get('user').data.company_name
                       }`}
+                      selectedProvince={this.state.selectedProvince}
+                      selectedCity={this.state.selectedCity}
                     />
                   </div>
                 </div>
@@ -988,7 +993,9 @@ class User extends Component {
                   className="form-control float-right col-sm-3"
                 />
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                  {Storage.get('user').data.level === 'client' ||
+                  Storage.get('user').data.level === 'superadmin' ||
+                  this.props.trainingCompany ? (
                     <ReactSelect
                       options={this.state.dataCity ? this.state.dataCity : []}
                       isSearchable={true}
@@ -997,10 +1004,12 @@ class User extends Component {
                       value={this.state.selectedCity}
                       onChange={(e) => this.filterByCity(e)}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                  {Storage.get('user').data.level === 'client' ||
+                  Storage.get('user').data.level === 'superadmin' ||
+                  this.props.trainingCompany ? (
                     <ReactSelect
                       options={this.state.dataProvince}
                       isSearchable={true}
@@ -1008,10 +1017,12 @@ class User extends Component {
                       placeholder="Filter Province"
                       onChange={(e) => this.filterByProvince(e)}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' || this.props.trainingCompany ? null : (
+                  {Storage.get('user').data.level === 'client' ||
+                  Storage.get('user').data.level === 'superadmin' ||
+                  this.props.trainingCompany ? null : (
                     <ReactSelect
                       options={this.state.dataCompany}
                       isSearchable={true}
