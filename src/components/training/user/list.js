@@ -456,7 +456,7 @@ class User extends Component {
   }
 
   render() {
-    const ExportCSV = ({ csvData, fileName, selectedProvince, selectedCity }) => {
+    const ExportCSV = ({ csvData, fileName, selectedCompany, selectedProvince, selectedCity }) => {
       // const role = this.state.role
       const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
@@ -473,7 +473,8 @@ class User extends Component {
           // Check if the current item matches the selected province and city filters
           if (
             (!selectedProvince || str.prov_name === selectedProvince.label) &&
-            (!selectedCity || str.city_name === selectedCity.label)
+            (!selectedCity || str.city_name === selectedCity.label) &&
+            (!selectedCompany || str.company === selectedCompany.label)
           ) {
             let obj = {
               No: index + 1,
@@ -957,6 +958,7 @@ class User extends Component {
                           ? localStorage.getItem('companyName')
                           : Storage.get('user').data.company_name
                       }`}
+                      selectedCompany={this.state.selectedCompany}
                       selectedProvince={this.state.selectedProvince}
                       selectedCity={this.state.selectedCity}
                     />
@@ -1020,9 +1022,8 @@ class User extends Component {
                   ) : null}
                 </div>
                 <div className="float-right col-sm-2 lite-filter">
-                  {Storage.get('user').data.level === 'client' ||
-                  Storage.get('user').data.level === 'superadmin' ||
-                  this.props.trainingCompany ? null : (
+                  {
+                  Storage.get('user').data.level === 'superadmin' ? (
                     <ReactSelect
                       options={this.state.dataCompany}
                       isSearchable={true}
@@ -1030,7 +1031,7 @@ class User extends Component {
                       placeholder="Filter Company"
                       onChange={(e) => this.setState({ selectedCompany: e })}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div
                   class={`text-menu ${!this.state.dataState && 'active'}`}
