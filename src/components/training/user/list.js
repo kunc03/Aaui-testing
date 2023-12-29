@@ -200,6 +200,9 @@ class User extends Component {
   };
 
   getUserData(state) {
+
+    this.setState({selectedCompany: null, selectedProvince: null, selectedCity: null,})
+
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
       if (res.status === 200) {
         this.setState({
@@ -470,8 +473,8 @@ class User extends Component {
           levelUser === 'superadmin' || levelUser === 'admin'
             ? csvData
             : csvData.filter((str) => str.training_company_id === parseInt(this.props.trainingCompany));
-        
-        csvData.forEach((str, index) => {
+        let filteredIndex = 0;
+        csvData.forEach((str) => {
           // Check if the current item matches the selected province and city filters
           if (
             (!selectedProvince || str.prov_name === selectedProvince.label) &&
@@ -479,7 +482,7 @@ class User extends Component {
             (!selectedCompany || str.company === selectedCompany.label)
           ) {
             let obj = {
-              No: index + 1,
+              No: filteredIndex + 1,
               Name: str.name,
               Address: str.address,
               City: str.city_name,
@@ -495,6 +498,7 @@ class User extends Component {
               Level: str.level,
             };
             arr.push(obj);
+            filteredIndex++;
           }
         });
 
@@ -1019,6 +1023,7 @@ class User extends Component {
                       isSearchable={true}
                       isClearable={true}
                       placeholder="Filter Province"
+                      value={this.state.selectedProvince}
                       onChange={(e) => this.filterByProvince(e)}
                     />
                   ) : null}
@@ -1031,6 +1036,7 @@ class User extends Component {
                       isSearchable={true}
                       isClearable={true}
                       placeholder="Filter Company"
+                      value={this.state.selectedCompany}
                       onChange={(e) => this.setState({ selectedCompany: e })}
                     />
                   ) : null}
