@@ -58,6 +58,10 @@ class User extends Component {
       valueCompany: [],
       isSaving: false,
       listDataExport: [],
+      searchKeyword: '',
+      searchResults: [],
+      isSearching: false,
+      showSearchResults: false,
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -200,8 +204,7 @@ class User extends Component {
   };
 
   getUserData(state) {
-
-    this.setState({selectedCompany: null, selectedProvince: null, selectedCity: null,})
+    this.setState({ selectedCompany: null, selectedProvince: null, selectedCity: null });
 
     API.get(`${USER_ME}${Storage.get('user').data.email}`).then((res) => {
       if (res.status === 200) {
@@ -299,7 +302,9 @@ class User extends Component {
   }
 
   getUserTrainingCompanyLevelUser(level, id) {
-    API.get(`${API_SERVER}v2/training/user${!this.state.dataState ? '' : '-archived'}/training-company/${level}/${id}`).then((res) => {
+    API.get(
+      `${API_SERVER}v2/training/user${!this.state.dataState ? '' : '-archived'}/training-company/${level}/${id}`,
+    ).then((res) => {
       if (res.data.error) {
         this.setState({ isLoading: false });
       } else {
@@ -438,6 +443,32 @@ class User extends Component {
       this.setState({ dataCity: data });
     } catch (error) {
       toast.error('Error read city');
+    }
+  };
+
+  onSubmitSearch = async (e) => {
+    e.preventDefault();
+    if (!this.state.searchKeyword) return;
+    if (this.state.isSearching) return;
+    await this.setState({ isSearching: true });
+
+    try {
+      const response = await API.post(`${API_SERVER}v2/training/user/read/search`, {
+        keyword: this.state.searchKeyword,
+      });
+
+      if (!response.data.error) {
+        const result = [response.data.result];
+        this.setState({ searchResults: result });
+      } else {
+        this.setState({ searchResults: [] });
+      }
+
+      this.setState({ showSearchResults: true });
+    } catch (error) {
+      toast.error('Error user search');
+    } finally {
+      this.setState({ isSearching: false });
     }
   };
 
@@ -974,6 +1005,79 @@ class User extends Component {
             </div>
           </div>
         )}
+
+        <div className="card p-20 main-tab-container">
+          <strong className="f-w-bold f-18" style={{ color: '#000' }}>
+            Check
+          </strong>
+          <div className="my-4 row ">
+            <div className="col-12 col-md-6 ">
+              <div className="position-relative">
+                <form onSubmit={this.onSubmitSearch}>
+                  <input
+                    className="w-100 pl-4 form-control"
+                    placeholder="Search by keyword email or identity number"
+                    style={{ borderRadius: 10, paddingRight: 70 }}
+                    name="searchKeyword"
+                    autoComplete="off"
+                    value={this.state.searchKeyword}
+                    onChange={this.handleChange}
+                  />
+                  {this.state.searchKeyword && (
+                    <div
+                      onClick={() => this.setState({ searchKeyword: '' })}
+                      className="position-absolute d-flex justify-content-center align-items-center"
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        top: '50%',
+                        translate: '0px -50%',
+                        right: 70,
+                        cursor: 'pointer',
+                        filter: 'invert(51%) sepia(0%) saturate(1576%) brightness(137%) contrast(73%)',
+                      }}
+                    >
+                      <img src="/newasset/clear-search.svg" />
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={!this.state.searchKeyword}
+                    className="button-gradient-blue position-absolute"
+                    style={{ padding: '11.5px 12px', borderRadius: '0 10px 10px 0', right: 0, top: 0 }}
+                  >
+                    Search
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {this.state.showSearchResults && (
+            <DataTable
+              title="Result"
+              columns={[
+                {
+                  name: 'Name',
+                  selector: 'name',
+                },
+                {
+                  name: 'Identity Number',
+                  selector: 'identity',
+                },
+                {
+                  name: 'Email',
+                  selector: 'email',
+                },
+              ]}
+              data={this.state.searchResults}
+              highlightOnHover
+              noDataComponent="No data available"
+            />
+          )}
+          {/* <p className="text-center">No Data Available</p> */}
+        </div>
+
         <LoadingOverlay active={this.state.isLoading} spinner={<BeatLoader size="30" color="#008ae6" />}>
           <div className="card p-20 main-tab-container">
             <div className="row">
@@ -1029,8 +1133,7 @@ class User extends Component {
                   ) : null}
                 </div>
                 <div className="float-right col-sm-2 lite-filter">
-                  {
-                  Storage.get('user').data.level === 'superadmin' ? (
+                  {Storage.get('user').data.level === 'superadmin' ? (
                     <ReactSelect
                       options={this.state.dataCompany}
                       isSearchable={true}
