@@ -38,8 +38,8 @@ class Pengaturan extends Component {
       confirm9: '',
 
       index: 0,
-      security: true,
-      profile: false,
+      security: false,
+      profile: true,
       globalSetting: false,
       webinar: false,
       meeting: false,
@@ -112,7 +112,7 @@ class Pengaturan extends Component {
     let stringUrl = `${API_SERVER}v1/setting/user/${Storage.get('user').data.user_id}`;
     API.get(stringUrl).then((res) => {
       if (res.status === 200) {
-        console.log('response: ', res.data.result);
+        // console.log('response: ', res.data.result);
         this.setState({
           confirm1: res.data.result.confirm_1 !== 1 ? false : true,
           confirm2: res.data.result.confirm_2 !== 1 ? false : true,
@@ -125,7 +125,12 @@ class Pengaturan extends Component {
           confirm9: res.data.result.confirm_9 !== 1 ? false : true,
         });
         if (res.data.result.is_new_password === 0) {
-          document.getElementById('changePass').click();
+          setTimeout(() => {
+            const btn = document.getElementById('changePass');
+            if(btn !== null) {
+              document.getElementById('changePass').click();
+            }
+          }, 500)
         }
       }
     });
@@ -223,7 +228,6 @@ class Pengaturan extends Component {
   }
 
   render() {
-    console.log('response: ', this.state);
     let levelUser = Storage.get('user').data.level === 'client' ? false : true;
 
     return (
@@ -310,6 +314,7 @@ class Pengaturan extends Component {
                               )
                             })} */}
                             <div
+                              id='security'
                               className="col-xl-12 p-10 mb-3"
                               style={{ borderBottom: '1px solid #e0e0e0', cursor: 'pointer' }}
                               onClick={this.tabChoice.bind(this, 'security')}
