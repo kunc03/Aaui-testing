@@ -275,7 +275,7 @@ class ProjekNew extends Component {
   componentDidMount() {
     this.fetchProject()
     this.fetchOtherData()
-    this.fetchCheckAccess(Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
+    this.fetchCheckAccess(Storage.get('user').data.grup_name && Storage.get('user').data.grup_name.toLowerCase(), Storage.get('user').data.company_id, Storage.get('user').data.level,
       ['CD_PROJECT'])
   }
 
