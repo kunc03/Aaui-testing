@@ -256,10 +256,14 @@ class Profile extends Component {
             resData && resData.current_rt
           ) {
             const tagSecurity = document.getElementById('security');
+            Storage.set('dataAddressCompleted', true);
             // tagSecurity.click();
             // window.location.href = `${window.location.origin}`;
           } else {
-            this.setState({ isUpdateData: true });
+            if(Storage.get('dataAddressCompleted') == false){
+              this.setState({ isUpdateData: true });
+            }
+            Storage.set('dataAddressCompleted', false);
           }
           // console.log('res: ', res.data)
           this.setState({
@@ -700,6 +704,7 @@ class Profile extends Component {
                         placeholder="Complete Current Address"
                         value={user_data.currentAddress}
                         onChange={this.handleChange}
+                        disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
 
@@ -713,6 +718,7 @@ class Profile extends Component {
                         value={user_data.selectedCurrentProvince}
                         onChange={(data) => this.handleChangeProvince({ data: data, current: 'current' })}
                         options={this.state.province}
+                        isDisabled={this.state.switchButtonAddressSame}
                       />
                     </div>
 
@@ -726,6 +732,7 @@ class Profile extends Component {
                         value={user_data.selectedCurrentCity}
                         onChange={(data) => this.handleChangeCity({ data: data, current: 'current' })}
                         options={this.state.cities}
+                        isDisabled={this.state.switchButtonAddressSame}
                       />
                     </div>
 
@@ -742,6 +749,7 @@ class Profile extends Component {
                         placeholder="Complete Current District"
                         value={user_data.selectedCurrentDistrict}
                         onChange={this.handleChange}
+                        disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
 
@@ -758,6 +766,7 @@ class Profile extends Component {
                         placeholder="Complete Current Sub District"
                         value={user_data.selectedCurrentSubDistrict}
                         onChange={this.handleChange}
+                        disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
 
@@ -774,6 +783,7 @@ class Profile extends Component {
                         placeholder="Complete Current RW"
                         value={user_data.currentRw}
                         onChange={this.handleChange}
+                        disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
 
@@ -790,6 +800,7 @@ class Profile extends Component {
                         placeholder="Complete Current RT"
                         value={user_data.currentRt}
                         onChange={this.handleChange}
+                        disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
                   </div>

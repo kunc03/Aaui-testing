@@ -45,8 +45,7 @@ class FormCompany extends Component {
     if (!this.state.no_identitas_company || !this.state.name || !this.state.address || !this.state.telephone || !this.state.email){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false});
-    }
-    else{
+    }else{
         if (this.props.match.params.id){
             let form = {
                 no_identitas_company: this.state.no_identitas_company,
@@ -86,8 +85,7 @@ class FormCompany extends Component {
                     }
                 }
             })
-        }
-        else{
+        } else{
             let form = {
                 company_id: this.state.companyId,
                 no_identitas_company: this.state.no_identitas_company,
@@ -103,8 +101,7 @@ class FormCompany extends Component {
                 if (res.data.error){
                     toast.error('Error create company')
                     this.setState({isSaving: false});
-                }
-                else{
+                }else{
                     if (this.state.image){
                         let formData = new FormData();
                         formData.append("image", this.state.image)
@@ -113,7 +110,7 @@ class FormCompany extends Component {
                                 toast.warning('Company created but fail to upload image')
                                 this.setState({isSaving: false});
                             }
-                            else{
+                            else {
                                 toast.success('New company added')
                                 this.setState({isSaving: false});
                                 this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)

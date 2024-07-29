@@ -852,7 +852,7 @@ class FormUser extends Component {
                                   disabled={this.state.disabledForm}
                                 />
                               </div>
-                              
+
                               {this.state.license_number &&
                                 this.state.license_number.length &&
                                 !this.props.match.params.id &&
@@ -869,7 +869,7 @@ class FormUser extends Component {
                                         type="date"
                                         name="expired"
                                         id="expired"
-                                        style={{width: '100%'}}
+                                        style={{ width: '100%' }}
                                         placeholder={'Input Certificate Expired'}
                                         value={this.state.expired}
                                         onChange={this.handleChange}
@@ -879,7 +879,7 @@ class FormUser extends Component {
                                   </>
                                 )}
 
-                            {/* <div className="row"> */}
+                              {/* <div className="row"> */}
                               <div className="form-field-top-label">
                                 <label for="license_no">License No</label>
                                 <input
@@ -888,7 +888,9 @@ class FormUser extends Component {
                                   name="license_no"
                                   id="license_no"
                                   placeholder={
-                                    this.state.disabledForm || this.props.match.params.id ? '' : 'No SK Agen Asurance from OJK'
+                                    this.state.disabledForm || this.props.match.params.id
+                                      ? ''
+                                      : 'No SK Agen Asurance from OJK'
                                   }
                                   value={this.state.license_no}
                                   onChange={this.handleChange}
@@ -909,14 +911,14 @@ class FormUser extends Component {
                                       type="date"
                                       name="license_date"
                                       id="license_date"
-                                      style={{width: '100%'}}
+                                      style={{ width: '100%' }}
                                       value={this.state.license_date}
                                       onChange={this.handleChange}
                                       disabled={this.state.disabledForm}
                                     />
                                   </div>
                                 )}
-                            {/* </div> */}
+                              {/* </div> */}
                             </div>
                           </div>
 
@@ -970,7 +972,7 @@ class FormUser extends Component {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     width: '100%',
-                                    marginLeft: '-15px',
+                                    marginLeft: '-10px',
                                   }}
                                 >
                                   <label for="province">
@@ -1056,7 +1058,7 @@ class FormUser extends Component {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     width: '100%',
-                                    marginLeft: '-15px',
+                                    marginLeft: '-10px',
                                   }}
                                 >
                                   <label for="selectedSubDistrict">
@@ -1074,7 +1076,7 @@ class FormUser extends Component {
                                     type="text"
                                     name="selectedSubDistrict"
                                     id="selectedSubDistrict"
-                                    size="60"
+                                    size="100"
                                     style={{
                                       height: 15,
                                       width: '100%',
@@ -1086,47 +1088,47 @@ class FormUser extends Component {
                                     onChange={this.handleChange}
                                     disabled={!this.state.selectedDistrict || this.state.disabledForm}
                                   />
+
+                                  <label for="rw" className='mt-3'>
+                                    RW<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="rw"
+                                    id="rw"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.rw}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
+                                  />
+
+                                  <label for="rt" className='mt-3'>
+                                    RT<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="rt"
+                                    id="rt"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.rt}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.rw || this.state.disabledForm}
+                                  />
                                 </div>
-
-                                <label for="rw">
-                                  RW<required>*</required>
-                                </label>
-                                <input
-                                  type="text"
-                                  name="rw"
-                                  id="rw"
-                                  size="60"
-                                  style={{
-                                    height: 15,
-                                    width: '100%',
-                                    borderRadius: 5,
-                                    backgroundColor: 'hsl(0, 0%, 95%)',
-                                    borderColor: 'hsl(0, 0%, 90%)',
-                                  }}
-                                  value={this.state.rw}
-                                  onChange={this.handleChange}
-                                  disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
-                                />
-
-                                <label for="rt">
-                                  RT<required>*</required>
-                                </label>
-                                <input
-                                  type="text"
-                                  name="rt"
-                                  id="rt"
-                                  size="60"
-                                  style={{
-                                    height: 15,
-                                    width: '98%',
-                                    borderRadius: 5,
-                                    backgroundColor: 'hsl(0, 0%, 95%)',
-                                    borderColor: 'hsl(0, 0%, 90%)',
-                                  }}
-                                  value={this.state.rt}
-                                  onChange={this.handleChange}
-                                  disabled={!this.state.rw || this.state.disabledForm}
-                                />
                               </div>
 
                               {/* current address */}
@@ -1143,7 +1145,7 @@ class FormUser extends Component {
                                   placeholder={!this.state.disabledForm && 'Input Address'}
                                   value={this.state.currentAddress}
                                   onChange={this.handleChange}
-                                  disabled={this.state.disabledForm}
+                                  disabled={this.state.disabledForm || this.state.switchButtonAddressSame}
                                 ></textarea>
 
                                 <div
@@ -1152,7 +1154,7 @@ class FormUser extends Component {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     width: '100%',
-                                    marginLeft: '-15px',
+                                    marginLeft: '-10px',
                                   }}
                                 >
                                   <label for="province">
@@ -1164,7 +1166,7 @@ class FormUser extends Component {
                                     value={this.state.selectedCurrentProvince}
                                     onChange={(data) => this.handleChangeProvince({ data: data, current: 'current' })}
                                     options={this.state.province}
-                                    isDisabled={this.state.disabledForm}
+                                    isDisabled={this.state.disabledForm || this.state.switchButtonAddressSame}
                                   />
                                 </div>
 
@@ -1186,7 +1188,11 @@ class FormUser extends Component {
                                     value={this.state.selectedCurrentCity}
                                     onChange={(data) => this.handleChangeCity({ data: data, current: 'current' })}
                                     options={this.state.cities}
-                                    isDisabled={!this.state.selectedCurrentProvince || this.state.disabledForm}
+                                    isDisabled={
+                                      !this.state.selectedCurrentProvince ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
                                   />
                                 </div>
 
@@ -1218,14 +1224,18 @@ class FormUser extends Component {
                                     size="60"
                                     style={{
                                       height: 15,
-                                      width: '98%',
+                                      width: '100%',
                                       borderRadius: 5,
                                       backgroundColor: 'hsl(0, 0%, 95%)',
                                       borderColor: 'hsl(0, 0%, 90%)',
                                     }}
                                     value={this.state.selectedCurrentDistrict}
                                     onChange={this.handleChange}
-                                    disabled={!this.state.selectedCurrentCity || this.state.disabledForm}
+                                    disabled={
+                                      !this.state.selectedCurrentCity ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
                                   />
                                 </div>
 
@@ -1235,7 +1245,7 @@ class FormUser extends Component {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     width: '100%',
-                                    marginLeft: '-15px',
+                                    marginLeft: '-10px',
                                   }}
                                 >
                                   <label for="selectedCurrentSubDistrict">
@@ -1253,59 +1263,71 @@ class FormUser extends Component {
                                     type="text"
                                     name="selectedCurrentSubDistrict"
                                     id="selectedCurrentSubDistrict"
-                                    size="60"
+                                    size="100"
                                     style={{
                                       height: 15,
-                                      width: '98%',
+                                      width: '100%',
                                       borderRadius: 5,
                                       backgroundColor: 'hsl(0, 0%, 95%)',
                                       borderColor: 'hsl(0, 0%, 90%)',
                                     }}
                                     value={this.state.selectedCurrentSubDistrict}
                                     onChange={this.handleChange}
-                                    disabled={!this.state.selectedCurrentDistrict || this.state.disabledForm}
+                                    disabled={
+                                      !this.state.selectedCurrentDistrict ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+
+                                  <label for="currentRw" className='mt-3'>
+                                    Current RW<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="currentRw"
+                                    id="currentRw"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.currentRw}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.selectedCurrentSubDistrict ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+
+                                  <label for="currentRt" className='mt-3'>
+                                    Current RT<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="currentRt"
+                                    id="currentRt"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.currentRt}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.currentRw ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
                                   />
                                 </div>
-
-                                <label for="currentRw">
-                                  RW<required>*</required>
-                                </label>
-                                <input
-                                  type="text"
-                                  name="currentRw"
-                                  id="currentRw"
-                                  size="60"
-                                  style={{
-                                    height: 15,
-                                    width: '98%',
-                                    borderRadius: 5,
-                                    backgroundColor: 'hsl(0, 0%, 95%)',
-                                    borderColor: 'hsl(0, 0%, 90%)',
-                                  }}
-                                  value={this.state.currentRw}
-                                  onChange={this.handleChange}
-                                  disabled={!this.state.selectedCurrentSubDistrict || this.state.disabledForm}
-                                />
-
-                                <label for="currentRt">
-                                  RT<required>*</required>
-                                </label>
-                                <input
-                                  type="text"
-                                  name="currentRt"
-                                  id="currentRt"
-                                  size="60"
-                                  style={{
-                                    height: 15,
-                                    width: '98%',
-                                    borderRadius: 5,
-                                    backgroundColor: 'hsl(0, 0%, 95%)',
-                                    borderColor: 'hsl(0, 0%, 90%)',
-                                  }}
-                                  value={this.state.currentRt}
-                                  onChange={this.handleChange}
-                                  disabled={!this.state.currentRw || this.state.disabledForm}
-                                />
                               </div>
 
                               {/* <div className="form-field-top-label">
