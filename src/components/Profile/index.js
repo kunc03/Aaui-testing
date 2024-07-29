@@ -242,18 +242,18 @@ class Profile extends Component {
         if (!res.data.error) {
           const resData = res.data.result.training_user[0];
           if (
-            resData.address &&
-            resData.current_address &&
-            resData.city &&
-            resData.current_city &&
-            resData.district &&
-            resData.current_district &&
-            resData.sub_district &&
-            resData.current_sub_district &&
-            resData.rw &&
-            resData.current_rw &&
-            resData.rt &&
-            resData.current_rt
+            resData && resData.address &&
+            resData && resData.current_address &&
+            resData && resData.city &&
+            resData && resData.current_city &&
+            resData && resData.district &&
+            resData && resData.current_district &&
+            resData && resData.sub_district &&
+            resData && resData.current_sub_district &&
+            resData && resData.rw &&
+            resData && resData.current_rw &&
+            resData && resData.rt &&
+            resData && resData.current_rt
           ) {
             const tagSecurity = document.getElementById('security');
             // tagSecurity.click();
@@ -264,7 +264,7 @@ class Profile extends Component {
           // console.log('res: ', res.data)
           this.setState({
             ...this.state,
-            switchButtonAddressSame: resData.auto_fill,
+            switchButtonAddressSame: resData && resData.auto_fill,
             user_data: {
               ...this.state.user_data,
               avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png',
@@ -277,27 +277,27 @@ class Profile extends Component {
               email: res.data.result.email,
               name: res.data.result.name,
               identity: res.data.result.identity,
-              address: resData.address,
-              city: resData.city,
+              address: resData && resData.address,
+              city: resData && resData.city,
               phone: res.data.result.phone,
               unlimited: res.data.result.unlimited,
               validity: res.data.result.validity ? res.data.result.validity.toString().substring(0, 10) : '0000-00-00',
               training_user: res.data.result.training_user,
               //address
-              rw: resData.rw,
-              rt: resData.rt,
-              selectedProvince: { label: resData.province },
-              selectedCity: { label: resData.city },
-              selectedDistrict: resData.district,
-              selectedSubDistrict: resData.sub_district,
+              rw: resData && resData.rw,
+              rt: resData && resData.rt,
+              selectedProvince: { label: resData && resData.province },
+              selectedCity: { label: resData && resData.city },
+              selectedDistrict: resData && resData.district,
+              selectedSubDistrict: resData && resData.sub_district,
               //current
-              currentRw: resData.current_rw,
-              currentRt: resData.current_rt,
-              currentAddress: resData.current_address,
-              selectedCurrentProvince: { label: resData.current_province },
-              selectedCurrentCity: { label: resData.current_city },
-              selectedCurrentDistrict: resData.current_district,
-              selectedCurrentSubDistrict: resData.current_sub_district,
+              currentRw: resData && resData.current_rw,
+              currentRt: resData && resData.current_rt,
+              currentAddress: resData && resData.current_address,
+              selectedCurrentProvince: { label: resData && resData.current_province },
+              selectedCurrentCity: { label: resData && resData.current_city },
+              selectedCurrentDistrict: resData && resData.current_district,
+              selectedCurrentSubDistrict: resData && resData.current_sub_district,
             },
           });
           // if (this.state.user_data.level==='client'){

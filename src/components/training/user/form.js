@@ -888,7 +888,7 @@ class FormUser extends Component {
                                   name="license_no"
                                   id="license_no"
                                   placeholder={
-                                    this.state.disabledForm || this.props.match.params.id ? '' : 'Input License No'
+                                    this.state.disabledForm || this.props.match.params.id ? '' : 'No SK Agen Asurance from OJK'
                                   }
                                   value={this.state.license_no}
                                   onChange={this.handleChange}
