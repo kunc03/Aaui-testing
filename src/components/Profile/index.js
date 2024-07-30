@@ -255,17 +255,26 @@ class Profile extends Component {
             resData && resData.rt &&
             resData && resData.current_rt
           ) {
-            const tagSecurity = document.getElementById('security');
+            // const tagSecurity = document.getElementById('security');
             Storage.set('dataAddressCompleted', true);
+            Storage.set('isUpdateData', false);
+            this.setState({ isUpdateData: false });
             // tagSecurity.click();
-            // window.location.href = `${window.location.origin}`;
+            window.location.href = `${window.location.origin}`;
           } else {
-            if(Storage.get('dataAddressCompleted') == false){
+            Storage.set('dataAddressCompleted', false);
+            if(Storage.get('isUpdateData') === false){
+              Storage.set('isUpdateData', false);
+            }else{
+              Storage.set('isUpdateData', true);
+            }
+          }
+          if(Storage.get('dataAddressCompleted') == false){
+            if(Storage.get('isUpdateData') === true){
               this.setState({ isUpdateData: true });
             }
-            Storage.set('dataAddressCompleted', false);
           }
-          console.log('res: ', res.data)
+          // console.log('res: ', res.data)
           this.setState({
             ...this.state,
             switchButtonAddressSame: resData && resData.auto_fill || res.data.result.auto_fill,
@@ -372,6 +381,7 @@ class Profile extends Component {
       this.setState({ isNotifikasi: false, isiNotifikasi: '' });
     } else {
       this.setState({ isUpdateData: false });
+      Storage.set('isUpdateData', false);
     }
   };
 
@@ -888,7 +898,7 @@ class Profile extends Component {
                 className="btn btn-block f-w-bold"
                 onClick={() => this.closeNotifikasi('isNotifikasi')}
               >
-                Mengerti
+                Close
               </button>
             </Modal.Body>
           </Modal>
@@ -902,7 +912,7 @@ class Profile extends Component {
                 className="btn btn-block f-w-bold mt-2"
                 onClick={() => this.closeNotifikasi('isUpdateData')}
               >
-                Mengerti
+                Close
               </button>
             </Modal.Body>
           </Modal>
