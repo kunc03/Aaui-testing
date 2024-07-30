@@ -265,10 +265,10 @@ class Profile extends Component {
             }
             Storage.set('dataAddressCompleted', false);
           }
-          // console.log('res: ', res.data)
+          console.log('res: ', res.data)
           this.setState({
             ...this.state,
-            switchButtonAddressSame: resData && resData.auto_fill,
+            switchButtonAddressSame: resData && resData.auto_fill || res.data.result.auto_fill,
             user_data: {
               ...this.state.user_data,
               avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png',
@@ -281,27 +281,27 @@ class Profile extends Component {
               email: res.data.result.email,
               name: res.data.result.name,
               identity: res.data.result.identity,
-              address: resData && resData.address,
-              city: resData && resData.city,
+              address: resData && resData.address || res.data.result.address,
+              city: resData && resData.city || res.data.result.city,
               phone: res.data.result.phone,
               unlimited: res.data.result.unlimited,
               validity: res.data.result.validity ? res.data.result.validity.toString().substring(0, 10) : '0000-00-00',
               training_user: res.data.result.training_user,
               //address
-              rw: resData && resData.rw,
-              rt: resData && resData.rt,
-              selectedProvince: { label: resData && resData.province },
-              selectedCity: { label: resData && resData.city },
-              selectedDistrict: resData && resData.district,
-              selectedSubDistrict: resData && resData.sub_district,
+              rw: resData && resData.rw || res.data.result.rw,
+              rt: resData && resData.rt || res.data.result.rt,
+              selectedProvince: { label: resData && resData.province || res.data.result.current_province },
+              selectedCity: { label: resData && resData.city || res.data.result.current_city },
+              selectedDistrict: resData && resData.district || res.data.result.current_district,
+              selectedSubDistrict: resData && resData.sub_district || res.data.result.current_sub_district,
               //current
-              currentRw: resData && resData.current_rw,
-              currentRt: resData && resData.current_rt,
-              currentAddress: resData && resData.current_address,
-              selectedCurrentProvince: { label: resData && resData.current_province },
-              selectedCurrentCity: { label: resData && resData.current_city },
-              selectedCurrentDistrict: resData && resData.current_district,
-              selectedCurrentSubDistrict: resData && resData.current_sub_district,
+              currentRw: resData && resData.current_rw || res.data.result.current_rw,
+              currentRt: resData && resData.current_rt || res.data.result.current_rt,
+              currentAddress: resData && resData.current_address || res.data.result.current_address,
+              selectedCurrentProvince: { label: resData && resData.current_province || res.data.result.current_province },
+              selectedCurrentCity: { label: resData && resData.current_city || res.data.result.current_city},
+              selectedCurrentDistrict: resData && resData.current_district || res.data.result.current_district,
+              selectedCurrentSubDistrict: resData && resData.current_sub_district || res.data.result.current_sub_district,
             },
           });
           // if (this.state.user_data.level==='client'){
