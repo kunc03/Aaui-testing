@@ -15,6 +15,7 @@ class FormCompany extends Component {
         logo:'',
         imagePreview:'assets/images/no-logo.jpg',
         name: '',
+        no_identitas_company: '',
         address: '',
         telephone: '',
         fax: '',
@@ -41,13 +42,13 @@ class FormCompany extends Component {
   save = (e) =>{
     this.setState({isSaving: true});
     e.preventDefault();
-    if (!this.state.name || !this.state.address || !this.state.telephone || !this.state.email){
+    if (!this.state.no_identitas_company || !this.state.name || !this.state.address || !this.state.telephone || !this.state.email){
         toast.warning('Some field is required, please check your data.')
         this.setState({isSaving: false});
-    }
-    else{
+    }else{
         if (this.props.match.params.id){
             let form = {
+                no_identitas_company: this.state.no_identitas_company,
                 name: this.state.name,
                 address: this.state.address,
                 telephone: this.state.telephone,
@@ -84,10 +85,10 @@ class FormCompany extends Component {
                     }
                 }
             })
-        }
-        else{
+        } else{
             let form = {
                 company_id: this.state.companyId,
+                no_identitas_company: this.state.no_identitas_company,
                 name: this.state.name,
                 address: this.state.address,
                 telephone: this.state.telephone,
@@ -100,8 +101,7 @@ class FormCompany extends Component {
                 if (res.data.error){
                     toast.error('Error create company')
                     this.setState({isSaving: false});
-                }
-                else{
+                }else{
                     if (this.state.image){
                         let formData = new FormData();
                         formData.append("image", this.state.image)
@@ -110,7 +110,7 @@ class FormCompany extends Component {
                                 toast.warning('Company created but fail to upload image')
                                 this.setState({isSaving: false});
                             }
-                            else{
+                            else {
                                 toast.success('New company added')
                                 this.setState({isSaving: false});
                                 this.props.history.push(`/training/company/detail/${res.data.result.insertId}`)
@@ -164,9 +164,46 @@ class FormCompany extends Component {
         }
       }
       else{
-          this.setState({[name]: value})
+        if(name === 'no_identitas_company'){
+            const formattedValue = this.formatInput(value);
+            this.setState({ no_identitas_company: formattedValue });
+        }else{
+            this.setState({[name]: value})
+        }
       }
   }
+
+  formatInput = (value) => {
+    // Menghapus semua karakter yang bukan angka
+    let numbers = value.replace(/\D/g, '');
+
+    // Batasi panjang sesuai pola
+    if (numbers.length > 15) {
+        numbers = numbers.slice(0, 15);
+    }
+
+    let formatted = '';
+    if (numbers.length > 0) {
+        formatted += numbers.slice(0, 2);
+    }
+    if (numbers.length > 2) {
+        formatted += '.' + numbers.slice(2, 5);
+    }
+    if (numbers.length > 5) {
+        formatted += '.' + numbers.slice(5, 8);
+    }
+    if (numbers.length > 8) {
+        formatted += '.' + numbers.slice(8, 9);
+    }
+    if (numbers.length > 9) {
+        formatted += '-' + numbers.slice(9, 12);
+    }
+    if (numbers.length > 12) {
+        formatted += '.' + numbers.slice(12, 15);
+    }
+
+    return formatted;
+}
   getCompany(id){
     API.get(`${API_SERVER}v2/training/company/read/${id}`).then(res => {
         if (res.data.error){
@@ -180,6 +217,7 @@ class FormCompany extends Component {
                 fax: res.data.result.fax,
                 website: res.data.result.website,
                 email: res.data.result.email,
+                no_identitas_company: res.data.result.no_identitas_company,
                 imagePreview: res.data.result.image ? res.data.result.image : this.state.imagePreview
             })
         }
@@ -283,6 +321,10 @@ class FormCompany extends Component {
                                                                 </label>
                                                             </center>
                                                             <input type="file" accept="image/*" name="image" id="image" onChange={this.handleChange} disabled={this.state.disabledForm} onClick={e=> e.target.value = null}/>
+                                                        </div>
+                                                        <div className="form-field-top-label">
+                                                            <label for="no-identitas-company">Assurance Company Identification Number<required>*</required></label>
+                                                            <input style={{ width: '100%'}} type="text" name="no_identitas_company" size="50" id="no_identitas_company" placeholder={!this.state.disabledForm && "XX.XXX.XXX.X-XXX.XXX"} value={this.state.no_identitas_company} onChange={this.handleChange} disabled={this.state.disabledForm}/>
                                                         </div>
                                                         <div className="form-field-top-label">
                                                             <label for="name">Company Name<required>*</required></label>

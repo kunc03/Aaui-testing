@@ -5,15 +5,31 @@ import moment from 'moment-timezone';
 import { Modal } from 'react-bootstrap';
 import Storage from '../../../repository/storage';
 import API, { API_SERVER, USER_ME } from '../../../repository/api';
+import './form.css';
 
 class FormUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      province: null,
+      idNumber: null,
+      province: [],
+      cities: [],
+      district: null,
+      subDistrict: null,
+      //address
+      rw: null,
+      rt: null,
       selectedProvince: null,
-      cities: null,
       selectedCity: null,
+      selectedDistrict: null,
+      selectedSubDistrict: null,
+      //current
+      currentRw: null,
+      currentRt: null,
+      selectedCurrentProvince: null,
+      selectedCurrentCity: null,
+      selectedCurrentDistrict: null,
+      selectedCurrentSubDistrict: null,
       image: '',
       imagePreview: 'assets/images/no-profile-picture.jpg',
       imageIdentity: '',
@@ -26,12 +42,15 @@ class FormUser extends Component {
       identity: '',
       tin: '',
       address: '',
+      currentAddress: '',
       city: '',
       phone: '',
       email: '',
       level: '',
       license_number: '',
       expired: '',
+      license_no: '',
+      license_date: '',
       optionCompany: [],
       companyId: '',
       modalPassword: false,
@@ -39,6 +58,7 @@ class FormUser extends Component {
       history: [],
       disabledForm: this.props.disabledForm && this.props.id,
       isSaving: false,
+      switchButtonAddressSame: false,
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -89,7 +109,19 @@ class FormUser extends Component {
       !this.state.born_date ||
       !this.state.gender ||
       !this.state.address ||
-      !this.state.city ||
+      !this.state.currentAddress ||
+      !this.state.selectedProvince ||
+      !this.state.selectedCurrentProvince ||
+      !this.state.selectedCity ||
+      !this.state.selectedCurrentCity ||
+      !this.state.selectedDistrict ||
+      !this.state.selectedCurrentDistrict ||
+      !this.state.selectedSubDistrict ||
+      !this.state.selectedCurrentSubDistrict ||
+      !this.state.rt ||
+      !this.state.currentRt ||
+      !this.state.rw ||
+      !this.state.currentRw ||
       !this.state.phone ||
       !this.state.email ||
       !this.state.training_company_id
@@ -100,7 +132,7 @@ class FormUser extends Component {
       if (this.props.match.params.id) {
         let form = {
           image: this.state.image,
-          training_company_id: this.state.training_company_id,
+          training_company_id: parseInt(this.state.training_company_id),
           name: this.state.name,
           born_place: this.state.born_place,
           born_date: this.state.born_date,
@@ -108,12 +140,28 @@ class FormUser extends Component {
           identity: this.state.identity,
           tin: this.state.tin,
           license_number: this.state.license_number,
+          license_expired: !this.state.expired ? null : this.state.expired,
+          license_no: this.state.license_no,
+          license_date: !this.state.license_date ? null : this.state.license_date,
           address: this.state.address,
-          city: this.state.city,
+          currentAddress: this.state.currentAddress,
+          province: this.state.selectedProvince.label,
+          currentprovince: this.state.selectedCurrentProvince.label,
+          city: this.state.selectedCity.label,
+          currentCity: this.state.selectedCurrentCity.label,
+          district: this.state.selectedDistrict,
+          currentDistrict: this.state.selectedCurrentDistrict,
+          subDistrict: this.state.selectedSubDistrict,
+          currentSubDistrict: this.state.selectedCurrentSubDistrict,
+          rt: this.state.rt,
+          rw: this.state.rw,
+          currentRt: this.state.currentRt,
+          currentRw: this.state.currentRw,
           phone: this.state.phone,
           email: this.state.email,
           created_by: Storage.get('user').data.user_id,
           tag: this.state.tag,
+          auto_fill: this.state.switchButtonAddressSame,
         };
         API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then((res) => {
           if (res.data.error) {
@@ -176,7 +224,7 @@ class FormUser extends Component {
         });
       } else {
         let form = {
-          training_company_id: this.state.training_company_id,
+          training_company_id: parseInt(this.state.training_company_id),
           image: this.state.image,
           name: this.state.name,
           born_place: this.state.born_place,
@@ -185,13 +233,28 @@ class FormUser extends Component {
           identity: this.state.identity,
           tin: this.state.tin,
           license_number: this.state.license_number,
-          expired: this.state.expired,
+          license_expired: !this.state.expired ? null : this.state.expired,
+          license_no: this.state.license_no,
+          license_date: !this.state.license_date ? null : this.state.license_date,
           address: this.state.address,
-          city: this.state.city,
+          currentAddress: this.state.currentAddress,
+          province: this.state.selectedProvince.label,
+          currentprovince: this.state.selectedCurrentProvince.label,
+          city: this.state.selectedCity.label,
+          currentCity: this.state.selectedCurrentCity.label,
+          district: this.state.selectedDistrict,
+          currentDistrict: this.state.selectedCurrentDistrict,
+          subDistrict: this.state.selectedSubDistrict,
+          currentSubDistrict: this.state.selectedCurrentSubDistrict,
+          rt: this.state.rt,
+          rw: this.state.rw,
+          currentRt: this.state.currentRt,
+          currentRw: this.state.currentRw,
           phone: this.state.phone,
           email: this.state.email,
           level: this.props.match.params.level,
           created_by: Storage.get('user').data.user_id,
+          auto_fill: this.state.switchButtonAddressSame,
         };
         API.post(`${API_SERVER}v2/training/user`, form).then((res) => {
           if (res.data.error) {
@@ -295,8 +358,23 @@ class FormUser extends Component {
         toast.error('Error read user');
       } else {
         this.setState({
+          //!address
           selectedProvince: { value: res.data.result.prov_id, label: res.data.result.prov_name },
           selectedCity: { value: res.data.result.city_id, label: res.data.result.city_name },
+          selectedDistrict: res.data.result.district,
+          selectedSubDistrict: res.data.result.sub_district,
+          rt: res.data.result.rt,
+          rw: res.data.result.rw,
+
+          //!current address
+          currentAddress: res.data.result.current_address,
+          selectedCurrentProvince: { label: res.data.result.current_province },
+          selectedCurrentCity: { label: res.data.result.current_city },
+          selectedCurrentDistrict: res.data.result.current_district,
+          selectedCurrentSubDistrict: res.data.result.current_sub_district,
+          currentRt: res.data.result.current_rt,
+          currentRw: res.data.result.current_rw,
+
           training_company_id: res.data.result.training_company_id,
           name: res.data.result.name,
           born_place: res.data.result.born_place,
@@ -305,6 +383,9 @@ class FormUser extends Component {
           identity: res.data.result.identity,
           tin: res.data.result.tin,
           license_number: res.data.result.license_number,
+          license_no: res.data.result.license_no,
+          license_date: res.data.result.license_date,
+          license_expired: res.data.result.license_expired,
           address: res.data.result.address,
           city: res.data.result.city,
           phone: res.data.result.phone,
@@ -313,6 +394,7 @@ class FormUser extends Component {
           imageIdentityPreview: res.data.result.identity_image
             ? res.data.result.identity_image
             : this.state.imageIdentityPreview,
+          switchButtonAddressSame: res.data.result.auto_fill,
         });
       }
     });
@@ -375,20 +457,118 @@ class FormUser extends Component {
     }
   };
 
-  handleChangeProvince = (data) => {
-    this.setState({ selectedProvince: data, selectedCity: null, cities: null });
+  fetchDistrict = async (cities_id) => {
+    try {
+      const response = await API.get(`${API_SERVER}v2/training/district/${cities_id}`);
+      const data = response.data.result.map((item) => ({ value: item.district_id, label: item.district_name }));
+      this.setState({ district: data });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  handleChangeCity = (data) => {
-    this.setState({ selectedCity: data, city: data ? data.label : null });
+  fetchSubDistrict = async (district_id) => {
+    try {
+      const response = await API.get(`${API_SERVER}v2/training/subdistrict/${district_id}`);
+      const data = response.data.result.map((item) => ({ value: item.subDistrict_id, label: item.subDistrict_name }));
+      this.setState({ subDistrict: data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  handleChangeProvince = ({ data, current }) => {
+    if (current === 'current') {
+      this.setState({ selectedCurrentProvince: data, selectedCurrentCity: null, cities: null });
+    } else {
+      this.setState({ selectedProvince: data, selectedCity: null, cities: null });
+    }
+  };
+
+  handleChangeCity = ({ data, current }) => {
+    if (current === 'current') {
+      this.setState({ selectedCurrentCity: data, city: data ? data.label : null });
+    } else {
+      this.setState({ selectedCity: data, city: data ? data.label : null });
+    }
+  };
+
+  handleChangeDistrict = ({ data, current }) => {
+    if (current === 'current') {
+      this.setState({ selectedCurrentDistrict: data, district: data ? data.label : null });
+    } else {
+      this.setState({ selectedDistrict: data, district: data ? data.label : null });
+    }
+  };
+
+  handleChangeSubDistrict = ({ data, current }) => {
+    if (current === 'current') {
+      this.setState({ selectedCurrentSubDistrict: data, subDistrict: data ? data.label : null });
+    } else {
+      this.setState({ selectedSubDistrict: data, subDistrict: data ? data.label : null });
+    }
+  };
+
+  handleSwitchButton = () => {
+    this.setState((prevState) => {
+      const switchButtonAddressSame = !prevState.switchButtonAddressSame;
+
+      let updatedState = {
+        switchButtonAddressSame,
+      };
+
+      // auto complete toggle button address same
+      if (switchButtonAddressSame) {
+        updatedState = {
+          ...updatedState,
+          currentRt: prevState.rt,
+          currentRw: prevState.rw,
+          currentAddress: prevState.address,
+          selectedCurrentProvince: prevState.selectedProvince,
+          selectedCurrentCity: prevState.selectedCity,
+          selectedCurrentDistrict: prevState.selectedDistrict,
+          selectedCurrentSubDistrict: prevState.selectedSubDistrict,
+        };
+      } else {
+        updatedState = {
+          ...updatedState,
+          currentRt: null,
+          currentRw: null,
+          currentAddress: '',
+          selectedCurrentProvince: null,
+          selectedCurrentCity: null,
+          selectedCurrentDistrict: '',
+          selectedCurrentSubDistrict: '',
+        };
+      }
+
+      return updatedState;
+    });
   };
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.selectedProvince !== this.state.selectedProvince) {
       if (this.state.selectedProvince) {
-        this.fetchCities(this.state.selectedProvince.value);
+        this.fetchCities(this.state.selectedProvince.value || null);
       }
     }
+
+    if (prevState.selectedCurrentProvince !== this.state.selectedCurrentProvince) {
+      if (this.state.selectedCurrentProvince) {
+        this.fetchCities(this.state.selectedCurrentProvince.value || null);
+      }
+    }
+    // fetch district dan sub district
+    // if (prevState.selectedCity !== this.state.selectedCity) {
+    //   if (this.state.selectedCity) {
+    //     this.fetchDistrict(this.state.selectedCity.value);
+    //   }
+    // }
+    // if (prevState.selectedDistrict !== this.state.selectedDistrict) {
+    //   if (this.state.selectedDistrict) {
+    //     this.fetchSubDistrict(this.state.selectedDistrict.value);
+    //   }
+    // }
   }
 
   componentDidMount() {
@@ -663,47 +843,114 @@ class FormUser extends Component {
                                   name="license_number"
                                   id="license_number"
                                   placeholder={
-                                    this.state.disabledForm || this.props.match.params.id ? '' : 'Input License Number'
+                                    this.state.disabledForm || this.props.match.params.id
+                                      ? ''
+                                      : 'Input Certificate Number'
                                   }
                                   value={this.state.license_number}
                                   onChange={this.handleChange}
                                   disabled={this.state.disabledForm}
                                 />
                               </div>
-                              {this.state.license_number ? (
+
+                              {this.state.license_number &&
                                 this.state.license_number.length &&
                                 !this.props.match.params.id &&
-                                !this.state.disabledForm ? (
+                                !this.state.disabledForm && (
+                                  <>
+                                    <div className="form-field-top-label">
+                                      <label for="expired">
+                                        License Expired
+                                        <required style={{ fontSize: '11px' }}>
+                                          *Required if License Number filled
+                                        </required>
+                                      </label>
+                                      <input
+                                        type="date"
+                                        name="expired"
+                                        id="expired"
+                                        style={{ width: '100%' }}
+                                        placeholder={'Input Certificate Expired'}
+                                        value={this.state.expired}
+                                        onChange={this.handleChange}
+                                        disabled={this.state.disabledForm}
+                                      />
+                                    </div>
+                                  </>
+                                )}
+
+                              {/* <div className="row"> */}
+                              <div className="form-field-top-label">
+                                <label for="license_no">License No</label>
+                                <input
+                                  type="text"
+                                  size="30"
+                                  name="license_no"
+                                  id="license_no"
+                                  placeholder={
+                                    this.state.disabledForm || this.props.match.params.id
+                                      ? ''
+                                      : 'No SK Agen Asurance from OJK'
+                                  }
+                                  value={this.state.license_no}
+                                  onChange={this.handleChange}
+                                  disabled={this.state.disabledForm}
+                                />
+                              </div>
+
+                              {this.state.license_no &&
+                                this.state.license_no.length &&
+                                !this.props.match.params.id &&
+                                !this.state.disabledForm && (
                                   <div className="form-field-top-label">
-                                    <label for="expired">
-                                      License Expired
-                                      <required style={{ fontSize: '11px' }}>
-                                        *Required if License Number filled
-                                      </required>
+                                    <label for="license_date">
+                                      License Date
+                                      <required style={{ fontSize: '11px' }}>*Required if License No filled</required>
                                     </label>
                                     <input
                                       type="date"
-                                      name="expired"
-                                      id="expired"
-                                      value={this.state.expired}
+                                      name="license_date"
+                                      id="license_date"
+                                      style={{ width: '100%' }}
+                                      value={this.state.license_date}
                                       onChange={this.handleChange}
                                       disabled={this.state.disabledForm}
                                     />
                                   </div>
-                                ) : null
-                              ) : null}
+                                )}
+                              {/* </div> */}
                             </div>
                           </div>
+
+                          {/* address */}
                           <div className="form-section">
                             <div className="row">
-                              <div className="col-sm-12 m-b-20">
+                              <div className="col-sm-6 m-b-20">
                                 <strong className="f-w-bold" style={{ color: '#000', fontSize: '15px' }}>
                                   Address
                                 </strong>
                               </div>
+                              <div className="row">
+                                <div className="col-sm-6 m-b-20">
+                                  <strong className="f-w-bold" style={{ color: '#000', fontSize: '15px' }}>
+                                    Address is the same as Current Address
+                                  </strong>
+                                </div>
+                                <div className="col-sm-6 m-b-20">
+                                  <label className="switch">
+                                    <input
+                                      type="checkbox"
+                                      onChange={this.handleSwitchButton}
+                                      checked={this.state.switchButtonAddressSame}
+                                    />
+                                    <span className="slider round"></span>
+                                  </label>
+                                </div>
+                              </div>
                             </div>
                             <div className="row">
-                              <div className="form-field-top-label">
+                              {/* address */}
+                              <div className="col-sm-6 col-md-6 form-field-top-label">
                                 <label for="address">
                                   Address<required>*</required>
                                 </label>
@@ -712,44 +959,378 @@ class FormUser extends Component {
                                   rows="3"
                                   cols="60"
                                   id="address"
+                                  style={{ width: '100%' }}
                                   placeholder={!this.state.disabledForm && 'Input Address'}
                                   value={this.state.address}
                                   onChange={this.handleChange}
                                   disabled={this.state.disabledForm}
                                 ></textarea>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="province">
+                                    Province<required>*</required>
+                                  </label>
+                                  <ReactSelect
+                                    placeholder="Select Province"
+                                    isClearable={true}
+                                    value={this.state.selectedProvince}
+                                    onChange={(data) =>
+                                      this.handleChangeProvince({ data: data, current: 'not-current' })
+                                    }
+                                    options={this.state.province}
+                                    isDisabled={this.state.disabledForm}
+                                  />
+                                </div>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="city">
+                                    City<required>*</required>
+                                  </label>
+                                  <ReactSelect
+                                    placeholder="Select City"
+                                    isClearable={true}
+                                    value={this.state.selectedCity}
+                                    onChange={(data) => this.handleChangeCity({ data: data, current: 'not-current' })}
+                                    options={this.state.cities}
+                                    isDisabled={!this.state.selectedProvince || this.state.disabledForm}
+                                  />
+                                </div>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="selectedDistrict">
+                                    District<required>*</required>
+                                  </label>
+                                  {/* <ReactSelect
+                                    placeholder="Select District"
+                                    isClearable={true}
+                                    value={this.state.District}
+                                    onChange={(data) =>
+                                      this.handleChangeDistrict({ data: data, current: 'not-current' })
+                                    }
+                                    options={this.state.district}
+                                    isDisabled={!this.state.selectedCity}
+                                  /> */}
+                                  <input
+                                    type="text"
+                                    name="selectedDistrict"
+                                    id="selectedDistrict"
+                                    size="60"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.selectedDistrict}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.selectedCity || this.state.disabledForm}
+                                  />
+                                </div>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="selectedSubDistrict">
+                                    SubDistrict<required>*</required>
+                                  </label>
+                                  {/* <ReactSelect
+                                    placeholder="Select Ward"
+                                    isClearable={true}
+                                    value={this.state.selectedSubDistrict}
+                                    onChange={(data) => this.handleChangeWard({ data: data, current: 'not-current' })}
+                                    options={this.state.subDistrict}
+                                    isDisabled={!this.state.selectedDistrict}
+                                  /> */}
+                                  <input
+                                    type="text"
+                                    name="selectedSubDistrict"
+                                    id="selectedSubDistrict"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.selectedSubDistrict}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.selectedDistrict || this.state.disabledForm}
+                                  />
+
+                                  <label for="rt" className='mt-3'>
+                                    RT<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="rt"
+                                    id="rt"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.rt}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
+                                  />
+
+                                  <label for="rw" className='mt-3'>
+                                    RW<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="rw"
+                                    id="rw"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.rw}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.rt || this.state.disabledForm}
+                                  />
+                                </div>
                               </div>
-                              <div
-                                className="form-field-top-label"
-                                style={{ display: 'flex', flexDirection: 'column', width: '250px' }}
-                              >
-                                <label for="province">
-                                  Province<required>*</required>
+
+                              {/* current address */}
+                              <div className="col-sm-6 col-md-6 form-field-top-label">
+                                <label for="currentAddress">
+                                  Current Address<required>*</required>
                                 </label>
-                                <ReactSelect
-                                  placeholder="Select Province"
-                                  isClearable={true}
-                                  value={this.state.selectedProvince}
-                                  onChange={this.handleChangeProvince}
-                                  options={this.state.province}
-                                  isDisabled={this.state.disabledForm}
-                                />
+                                <textarea
+                                  name="currentAddress"
+                                  rows="3"
+                                  cols="60"
+                                  id="currentAddress"
+                                  style={{ width: '100%' }}
+                                  placeholder={!this.state.disabledForm && 'Input Address'}
+                                  value={this.state.currentAddress}
+                                  onChange={this.handleChange}
+                                  disabled={this.state.disabledForm || this.state.switchButtonAddressSame}
+                                ></textarea>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="province">
+                                    Current Province<required>*</required>
+                                  </label>
+                                  <ReactSelect
+                                    placeholder="Select Province"
+                                    isClearable={true}
+                                    value={this.state.selectedCurrentProvince}
+                                    onChange={(data) => this.handleChangeProvince({ data: data, current: 'current' })}
+                                    options={this.state.province}
+                                    isDisabled={this.state.disabledForm || this.state.switchButtonAddressSame}
+                                  />
+                                </div>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="city">
+                                    Current City<required>*</required>
+                                  </label>
+                                  <ReactSelect
+                                    placeholder="Select City"
+                                    isClearable={true}
+                                    value={this.state.selectedCurrentCity}
+                                    onChange={(data) => this.handleChangeCity({ data: data, current: 'current' })}
+                                    options={this.state.cities}
+                                    isDisabled={
+                                      !this.state.selectedCurrentProvince ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+                                </div>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="district">
+                                    Current District<required>*</required>
+                                  </label>
+                                  {/* <ReactSelect
+                                    placeholder="Select District"
+                                    isClearable={true}
+                                    value={this.state.selectedCurrentDistrict}
+                                    onChange={(data) => this.handleChangeDistrict({ data: data, current: 'current' })}
+                                    options={this.state.district}
+                                    isDisabled={!this.state.selectedCurrentCity}
+                                  /> */}
+
+                                  <input
+                                    type="text"
+                                    name="selectedCurrentDistrict"
+                                    id="selectedCurrentDistrict"
+                                    size="60"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.selectedCurrentDistrict}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.selectedCurrentCity ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+                                </div>
+
+                                <div
+                                  className="form-field-top-label"
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%',
+                                    marginLeft: '-10px',
+                                  }}
+                                >
+                                  <label for="selectedCurrentSubDistrict">
+                                    Current SubDistrict<required>*</required>
+                                  </label>
+                                  {/* <ReactSelect
+                                    placeholder="Select Ward"
+                                    isClearable={true}
+                                    value={this.state.selectedCurrentSubDistrict}
+                                    onChange={(data) => this.handleChangeWard({ data: data, current: 'current' })}
+                                    options={this.state.subDistrict}
+                                    isDisabled={!this.state.selectedCurrentDistrict}
+                                  /> */}
+                                  <input
+                                    type="text"
+                                    name="selectedCurrentSubDistrict"
+                                    id="selectedCurrentSubDistrict"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.selectedCurrentSubDistrict}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.selectedCurrentDistrict ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+
+                                  <label for="currentRt" className='mt-3'>
+                                    Current RT<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="currentRt"
+                                    id="currentRt"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.currentRt}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.selectedCurrentSubDistrict ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+
+                                  <label for="currentRw" className='mt-3'>
+                                    Current RW<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="currentRw"
+                                    id="currentRw"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.currentRw}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.currentRt ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+
+                                </div>
                               </div>
-                              <div
-                                className="form-field-top-label"
-                                style={{ display: 'flex', flexDirection: 'column', width: '250px' }}
-                              >
-                                <label for="city">
-                                  City<required>*</required>
-                                </label>
-                                <ReactSelect
-                                  placeholder="Select City"
-                                  isClearable={true}
-                                  value={this.state.selectedCity}
-                                  onChange={this.handleChangeCity}
-                                  options={this.state.cities !== null ? this.state.cities : []}
-                                  isDisabled={this.state.disabledForm}
-                                />
-                              </div>
+
                               {/* <div className="form-field-top-label">
                                                             <label for="street">Street<required>*</required></label>
                                                             <input type="text" name="street" id="street" placeholder="Jl. Pahlawan Seribu"/>
@@ -776,11 +1357,13 @@ class FormUser extends Component {
                                                         </div> */}
                             </div>
                           </div>
+
                           <div
                             className={`form-section ${
                               !this.props.disabledForm && this.state.history.length ? 'no-border' : ''
                             }`}
                           >
+                            {/* contact */}
                             <div className="row">
                               <div className="col-sm-12 m-b-20">
                                 <strong className="f-w-bold" style={{ color: '#000', fontSize: '15px' }}>

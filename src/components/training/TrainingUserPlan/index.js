@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import DataTable from 'react-data-table-component';
 import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+import { withRouter } from 'react-router-dom';
 import Dropdown, {
   MenuItem,
 } from '@trendmicro/react-dropdown';
@@ -121,7 +122,7 @@ class TrainingUserPlan extends Component {
         }
       }
       this.setState({isLoading: false});
-      console.log("TEST")
+      // console.log("TEST")
     });
   }
 
@@ -133,6 +134,9 @@ class TrainingUserPlan extends Component {
   componentDidMount() {
     this.getDataUserDashboard();
     this.getDataOrganizer();
+    if(!Storage.get('dataAddressCompleted')){
+     this.props.history.push('/pengaturan')
+    }
   }
 
 
@@ -252,4 +256,4 @@ class TrainingUserPlan extends Component {
   }
 }
 
-export default TrainingUserPlan;
+export default withRouter(TrainingUserPlan);
