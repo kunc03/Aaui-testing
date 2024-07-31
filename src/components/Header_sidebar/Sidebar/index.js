@@ -524,7 +524,7 @@ class SidebarClass extends Component {
                     <div>
                       {item.label === 'News' && <div className="side-submenu-groupname">MENU</div>}
                       {item.label === 'Logout' && <div className="side-submenu-groupname">SESSION</div>}
-                      {item.label === 'My Company' && <div className="side-submenu-groupname">{localStorage.getItem("companyName") ? localStorage.getItem("companyName").toUpperCase() : this.state.companyName.toUpperCase()}</div>}
+                      {item.label === 'My Company' && <div className="side-submenu-groupname">{localStorage.getItem("companyName") ? localStorage.getItem("companyName").toUpperCase() : this.state.companyName && this.state.companyName.toUpperCase()}</div>}
                       <Link to={item.link} style={{ color: '#797979' }}>
                         <div className="side-submenu">
                           <img

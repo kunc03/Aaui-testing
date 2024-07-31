@@ -223,7 +223,7 @@ class Report extends Component {
         }
         else{
             res.data.result.map((item)=>{
-                this.state.optionsLicensesType.push({label: (item.notes.length ? `${item.name} - ${item.notes}` : item.name), value: item.id})
+                this.state.optionsLicensesType.push({label: (item.notes && item.notes.length > 0 ? `${item.name} - ${item.notes}` : item.name), value: item.id})
             })
         }
     })
@@ -435,34 +435,34 @@ class Report extends Component {
         <tr>
           <td>Name</td>
           <td>:</td>
-          <td>{data.name}</td>
+          <td>{data.name || '-'}</td>
           <td>Exam</td>
           <td>:</td>
-          <td>{data.exam_name}</td>
+          <td>{data.exam_name || '-'}</td>
         </tr>
         <tr>
           <td>Email</td>
           <td>:</td>
-          <td>{data.email}</td>
+          <td>{data.email || '-'}</td>
           <td>Work Time (Minute)</td>
           <td>:</td>
-          <td>{data.work_time}</td>
+          <td>{data.work_time || '-'}</td>
         </tr>
         <tr>
           <td>Training Company</td>
           <td>:</td>
-          <td>{data.training_company}</td>
+          <td>{data.training_company || '-'}</td>
           <td>Minimum Score</td>
           <td>:</td>
-          <td>{data.minimum_score}</td>
+          <td>{data.minimum_score || '-'}</td>
         </tr>
         <tr>
           <td>License type</td>
           <td>:</td>
-          <td>{data.licenses_type}</td>
+          <td>{data.licenses_type || '-'}</td>
           <td>Score</td>
           <td>:</td>
-          <td>{data.score}</td>
+          <td>{data.score || '-'}</td>
         </tr>
         <tr>
           <td>Type</td>
@@ -473,51 +473,80 @@ class Report extends Component {
           <td>{data.pass ? 'Yes' : 'No'}</td>
         </tr>
         <tr>
+          <td>License number</td>
+          <td>:</td>
+          <td>{data.license_number || '-'}</td>
+          <td>License expired</td>
+          <td>:</td>
+          <td>{moment(data.expired).local().format("DD-MM-YYYY HH:mm") || '-'}</td>
+        </tr>
+        <tr>
+          <td>License No</td>
+          <td>:</td>
+          <td>{data.license_no || '-'}</td>
+          <td>License Date</td>
+          <td>:</td>
+          <td>{moment(data.license_date).local().format("DD-MM-YYYY HH:mm") ||  '-'}</td>
+        </tr>
+        <tr>
           <td>Submission Time</td>
           <td>:</td>
           <td>{moment(data.submission_time).local().format("DD-MM-YYYY HH:mm")}</td>
-          <td>License number</td>
+          <td>Submission Condition</td>
           <td>:</td>
-          <td>{data.license_number}</td>
+          <td>{data.submission_condition || '-'}</td>
+        </tr>
+        <tr>
+          <td>Born Date</td>
+          <td>:</td>
+          <td>{moment(data.born_date).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(data.born_date).local().format("DD-MM-YYYY")}</td>
+          <td>Expired</td>
+          <td>:</td>
+          <td>{moment(data.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(data.expired).local().format("DD-MM-YYYY")}</td>
+        </tr>
+        <tr>
+          <td>Identity Card Number</td>
+          <td>:</td>
+          <td>{data.identity ||  '-'}</td>
+          <td>Gender</td>
+          <td>:</td>
+          <td>{data.gender ||  '-'}</td>
+        </tr>
+        <tr>
+          <td>Address</td>
+          <td>:</td>
+          <td>{data.address || '-'}</td>
+          <td>City</td>
+          <td>:</td>
+          <td>{data.city || '-'}</td>
+        </tr>
+        <tr>
+          <td>District</td>
+          <td>:</td>
+          <td>{data.district || '-'}</td>
+          <td>Sub District</td>
+          <td>:</td>
+          <td>{data.sub_district || '-'}</td>
+        </tr>
+        <tr>
+          <td>RW</td>
+          <td>:</td>
+          <td>{data.rw || '-'}</td>
+          <td>RT</td>
+          <td>:</td>
+          <td>{data.rt || '-'}</td>
         </tr>
         <tr>
           <td>Certificate</td>
           <td>:</td>
           <td>
-                    {
-                    data.certificate_status === null ? '-' :
-                    data.certificate_status === 'Sent' ? <a href={data.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
-                    data.certificate_status === 'Processing' ? <Badge variant="warning">{data.certificate_status}</Badge> :
-                    <Badge variant="danger">{data.certificate_status}</Badge>
-                    }
+            {
+            data.certificate_status === null ? '-' :
+            data.certificate_status === 'Sent' ? <a href={data.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
+            data.certificate_status === 'Processing' ? <Badge variant="warning">{data.certificate_status}</Badge> :
+            <Badge variant="danger">{data.certificate_status}</Badge>
+            }
           </td>
-          <td>Submission Condition</td>
-          <td>:</td>
-          <td>{data.submission_condition}</td>
-        </tr>
-        <tr>
-          <td>Born Date</td>
-          <td>:</td>
-          <td>{moment(data.born_date).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(data.born_date).local().format("DD-MM-YYYY")}</td>
-          <td>City</td>
-          <td>:</td>
-          <td>{data.city}</td>
-        </tr>
-        <tr>
-          <td>Identity Card Number</td>
-          <td>:</td>
-          <td>{data.identity}</td>
-          <td>Gender</td>
-          <td>:</td>
-          <td>{data.gender}</td>
-        </tr>
-        <tr>
-          <td>Address</td>
-          <td>:</td>
-          <td>{data.address}</td>
-          <td>Expired</td>
-          <td>:</td>
-          <td>{moment(data.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(data.expired).local().format("DD-MM-YYYY")}</td>
         </tr>
       </table>
     );

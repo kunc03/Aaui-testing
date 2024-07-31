@@ -36,7 +36,9 @@ import TrainingCourse from '../training/TrainingUserPlan/index'
 import TrainingDetailCompany from '../training/company/detailTrainingCompany'
 
 class HomeNew extends Component {
-  state = {
+  constructor(props) {
+  super(props);
+  this.state = {
     user: {
       name: 'Anonymous',
       registered: '2019-12-09',
@@ -50,6 +52,7 @@ class HomeNew extends Component {
     kursusDiikuti: [],
     recentDocs: []
   }
+}
 
   onChangeInput = e => {
     const name = e.target.name;
