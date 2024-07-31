@@ -513,20 +513,34 @@ class User extends Component {
             (!selectedCompany || str.company === selectedCompany.label)
           ) {
             let obj = {
-              No: filteredIndex + 1,
-              Name: str.name,
-              Address: str.address,
-              City: str.city_name,
-              Province: str.prov_name,
-              DateOfBirth: moment(str.born_date).format('DD-MM-YYYY'),
-              PlaceOfBirth: str.born_place,
-              Company: str.company,
-              Email: str.email,
-              Gender: str.gender,
-              Identity: str.identity,
-              Phone: str.phone,
-              LicenseNumber: str.license_number,
-              Level: str.level,
+              'No': filteredIndex + 1,
+              'Name': str.name || '-',
+              'Address': str.address || '-',
+              'Current Address': str.current_address || '-',
+              'City': str.city_name || '-',
+              'Current City': str.current_city || '-',
+              'Province': str.prov_name || '-',
+              'Current Province': str.current_province || '-',
+              'District': str.district || '-',
+              'Current District': str.current_district || '-',
+              'Sub District': str.sub_district || '-',
+              'Current Sub District': str.current_sub_district || '-',
+              'RW': str.rw || '-',
+              'Current Rw': str.current_rw || '-',
+              'RT': str.rt || '-',
+              'Current RT': str.current_rt || '-',
+              'Date Of Birth': moment(str.born_date).format('DD-MM-YYYY') || '-',
+              'Place Of Birth': str.born_place || '-',
+              'Company': str.company || '-',
+              'Email': str.email || '-',
+              'Gender': str.gender || '-',
+              'Identity': str.identity || '-',
+              'Phone': str.phone || '-',
+              'License Number': str.license_number || '-',
+              'License Expired': moment(str.license_expired).local().format('YYYY-MM-DD') || '-',
+              'License No': str.license_no || '-',
+              'License Date': moment(str.license_date).local().format('YYYY-MM-DD') || '-',
+              'Level': str.level || '-',
             };
             arr.push(obj);
             filteredIndex++;
@@ -542,8 +556,19 @@ class User extends Component {
           { width: 5 }, // width of Number
           { width: 18 }, // width of Name
           { width: 25 }, // width of Address
+          { width: 25 }, // width of Current Address
           { width: 20 }, // width of City
+          { width: 20 }, // width of Current City
           { width: 20 }, // width of Province
+          { width: 20 }, // width of Current Province
+          { width: 20 }, // width of District
+          { width: 20 }, // width of Current District
+          { width: 20 }, // width of Sub District
+          { width: 20 }, // width of Current District
+          { width: 20 }, // width of RW
+          { width: 20 }, // width of Current RW
+          { width: 20 }, // width of RT
+          { width: 20 }, // width of Current RT
           { width: 15 }, // width of DateOfBirth
           { width: 15 }, // width of PlaceOfBirth
           { width: 25 }, // width of Company
@@ -552,6 +577,9 @@ class User extends Component {
           { width: 15 }, // width of Identity
           { width: 15 }, // width of Phone
           { width: 25 }, // width of LicenseNumber
+          { width: 25 }, // width of License Expired
+          { width: 25 }, // width of License No
+          { width: 25 }, // width of License Date
           { width: 10 }, // width of Level
         ];
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
