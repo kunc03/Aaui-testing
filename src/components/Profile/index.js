@@ -359,6 +359,7 @@ class Profile extends Component {
       selectedCurrentProvince: user_data.selectedCurrentProvince.label,
       selectedCurrentCity: user_data.selectedCurrentCity.label,
       auto_fill: Boolean(switchButtonAddressSame) ? 1 : 0,
+      level: 'user',
     };
     API.put(`${USER}/${user_data.user_id}`, data)
       .then((res) => {
