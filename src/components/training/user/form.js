@@ -1089,26 +1089,6 @@ class FormUser extends Component {
                                     disabled={!this.state.selectedDistrict || this.state.disabledForm}
                                   />
 
-                                  <label for="rw" className='mt-3'>
-                                    RW<required>*</required>
-                                  </label>
-                                  <input
-                                    type="text"
-                                    name="rw"
-                                    id="rw"
-                                    size="100"
-                                    style={{
-                                      height: 15,
-                                      width: '100%',
-                                      borderRadius: 5,
-                                      backgroundColor: 'hsl(0, 0%, 95%)',
-                                      borderColor: 'hsl(0, 0%, 90%)',
-                                    }}
-                                    value={this.state.rw}
-                                    onChange={this.handleChange}
-                                    disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
-                                  />
-
                                   <label for="rt" className='mt-3'>
                                     RT<required>*</required>
                                   </label>
@@ -1127,6 +1107,26 @@ class FormUser extends Component {
                                     value={this.state.rt}
                                     onChange={this.handleChange}
                                     disabled={!this.state.rw || this.state.disabledForm}
+                                  />
+
+                                  <label for="rw" className='mt-3'>
+                                    RW<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="rw"
+                                    id="rw"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.rw}
+                                    onChange={this.handleChange}
+                                    disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
                                   />
                                 </div>
                               </div>
@@ -1280,6 +1280,30 @@ class FormUser extends Component {
                                     }
                                   />
 
+                                  <label for="currentRt" className='mt-3'>
+                                    Current RT<required>*</required>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="currentRt"
+                                    id="currentRt"
+                                    size="100"
+                                    style={{
+                                      height: 15,
+                                      width: '100%',
+                                      borderRadius: 5,
+                                      backgroundColor: 'hsl(0, 0%, 95%)',
+                                      borderColor: 'hsl(0, 0%, 90%)',
+                                    }}
+                                    value={this.state.currentRt}
+                                    onChange={this.handleChange}
+                                    disabled={
+                                      !this.state.currentRw ||
+                                      this.state.disabledForm ||
+                                      this.state.switchButtonAddressSame
+                                    }
+                                  />
+
                                   <label for="currentRw" className='mt-3'>
                                     Current RW<required>*</required>
                                   </label>
@@ -1304,29 +1328,6 @@ class FormUser extends Component {
                                     }
                                   />
 
-                                  <label for="currentRt" className='mt-3'>
-                                    Current RT<required>*</required>
-                                  </label>
-                                  <input
-                                    type="text"
-                                    name="currentRt"
-                                    id="currentRt"
-                                    size="100"
-                                    style={{
-                                      height: 15,
-                                      width: '100%',
-                                      borderRadius: 5,
-                                      backgroundColor: 'hsl(0, 0%, 95%)',
-                                      borderColor: 'hsl(0, 0%, 90%)',
-                                    }}
-                                    value={this.state.currentRt}
-                                    onChange={this.handleChange}
-                                    disabled={
-                                      !this.state.currentRw ||
-                                      this.state.disabledForm ||
-                                      this.state.switchButtonAddressSame
-                                    }
-                                  />
                                 </div>
                               </div>
 

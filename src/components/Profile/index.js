@@ -669,6 +669,22 @@ class Profile extends Component {
 
                     <div className="form-group">
                       <label className="label-input" htmlFor>
+                        RT <required>*</required>
+                      </label>
+                      <input
+                        name="rt"
+                        type="rt"
+                        className="form-control"
+                        required
+                        inputMode="text"
+                        placeholder="Complete RT"
+                        value={user_data.rt}
+                        onChange={this.handleChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label className="label-input" htmlFor>
                         RW <required>*</required>
                       </label>
                       <input
@@ -683,21 +699,6 @@ class Profile extends Component {
                       />
                     </div>
 
-                    <div className="form-group">
-                      <label className="label-input" htmlFor>
-                        RT <required>*</required>
-                      </label>
-                      <input
-                        name="rt"
-                        type="rt"
-                        className="form-control"
-                        required
-                        inputMode="text"
-                        placeholder="Complete RT"
-                        value={user_data.rt}
-                        onChange={this.handleChange}
-                      />
-                    </div>
                   </div>
 
                   {/* current address */}
@@ -782,6 +783,23 @@ class Profile extends Component {
 
                     <div className="form-group">
                       <label className="label-input" htmlFor>
+                        Current RT <required>*</required>
+                      </label>
+                      <input
+                        name="currentRt"
+                        type="currentRt"
+                        className="form-control"
+                        required
+                        inputMode="text"
+                        placeholder="Complete Current RT"
+                        value={user_data.currentRt}
+                        onChange={this.handleChange}
+                        disabled={this.state.switchButtonAddressSame}
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label className="label-input" htmlFor>
                         Current RW <required>*</required>
                       </label>
                       <input
@@ -797,22 +815,6 @@ class Profile extends Component {
                       />
                     </div>
 
-                    <div className="form-group">
-                      <label className="label-input" htmlFor>
-                        Current RT <required>*</required>
-                      </label>
-                      <input
-                        name="currentRt"
-                        type="currentRt"
-                        className="form-control"
-                        required
-                        inputMode="text"
-                        placeholder="Complete Current RT"
-                        value={user_data.currentRt}
-                        onChange={this.handleChange}
-                        disabled={this.state.switchButtonAddressSame}
-                      />
-                    </div>
                   </div>
                 </div>
 
