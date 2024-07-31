@@ -260,7 +260,9 @@ class Profile extends Component {
             Storage.set('isUpdateData', false);
             this.setState({ isUpdateData: false });
             // tagSecurity.click();
-            window.location.href = `${window.location.origin}`;
+            if(Storage.set('dataAddressCompleted', true) && Storage.set('isUpdateData', false)){
+              window.location.href = `${window.location.origin}`;
+            }
           } else {
             Storage.set('dataAddressCompleted', false);
             if(Storage.get('isUpdateData') === false){
