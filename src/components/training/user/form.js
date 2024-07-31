@@ -1106,7 +1106,7 @@ class FormUser extends Component {
                                     }}
                                     value={this.state.rt}
                                     onChange={this.handleChange}
-                                    disabled={!this.state.rw || this.state.disabledForm}
+                                    disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
                                   />
 
                                   <label for="rw" className='mt-3'>
@@ -1126,7 +1126,7 @@ class FormUser extends Component {
                                     }}
                                     value={this.state.rw}
                                     onChange={this.handleChange}
-                                    disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
+                                    disabled={!this.state.rt || this.state.disabledForm}
                                   />
                                 </div>
                               </div>
@@ -1298,7 +1298,7 @@ class FormUser extends Component {
                                     value={this.state.currentRt}
                                     onChange={this.handleChange}
                                     disabled={
-                                      !this.state.currentRw ||
+                                      !this.state.selectedCurrentSubDistrict ||
                                       this.state.disabledForm ||
                                       this.state.switchButtonAddressSame
                                     }
@@ -1322,7 +1322,7 @@ class FormUser extends Component {
                                     value={this.state.currentRw}
                                     onChange={this.handleChange}
                                     disabled={
-                                      !this.state.selectedCurrentSubDistrict ||
+                                      !this.state.currentRt ||
                                       this.state.disabledForm ||
                                       this.state.switchButtonAddressSame
                                     }
