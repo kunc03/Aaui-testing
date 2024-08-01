@@ -528,9 +528,9 @@ class User extends Component {
                 'Insurance Company': str.company || '-',
                 // 'Sub Sub Sector ID' : idCompany || str.company_id ||  '-',
                 'License Number': str.license_number || '-',
-                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).local().format('YYYY-MM-DD') : '-',
+                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_expired).format('YYYY-MM-DD') : '-',
                 'License No': (str.license_no === null || str.license_no === undefined || str.license_no === "null" || str.license_no === "undefined") ? '-' : str.license_no,
-                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).local().format('YYYY-MM-DD') : '-',
+                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_date).format('YYYY-MM-DD') : '-',
                 'Email': str.email || '-',
                 'Address': str.address || '-',
                 'RT': str.rt || '-',
@@ -573,9 +573,9 @@ class User extends Component {
                 'Identity': str.identity || '-',
                 'Phone': str.phone || '-',
                 'License Number': str.license_number || '-',
-                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).local().format('YYYY-MM-DD') : '-',
+                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_expired).format('YYYY-MM-DD') : '-',
                 'License No': (str.license_no === null || str.license_no === undefined || str.license_no === "null" || str.license_no === "undefined") ? '-' : str.license_no,
-                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).local().format('YYYY-MM-DD') : '-',
+                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_date).format('YYYY-MM-DD') : '-',
                 'Level': str.level || '-',
               };
             }
