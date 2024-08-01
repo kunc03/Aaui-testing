@@ -472,6 +472,13 @@ class User extends Component {
     }
   };
 
+  onDownloadTemplate = (companyId) => {
+    if(parseInt(companyId) === 88){
+      return window.location.href = `${API_SERVER}template-excel/template-import-training-user-aaui.xlsx`;
+    }
+    return window.location.href = `${API_SERVER}template-excel/template-import-training-user.xlsx`;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.selectedProvince !== this.state.selectedProvince) {
       if (this.state.selectedProvince) {
@@ -492,7 +499,7 @@ class User extends Component {
   }
 
   render() {
-    const ExportCSV = ({ csvData, fileName, selectedCompany, selectedProvince, selectedCity }) => {
+    const ExportCSV = ({ idCompany, csvData, fileName, selectedCompany, selectedProvince, selectedCity }) => {
       // const role = this.state.role
       const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
@@ -512,36 +519,67 @@ class User extends Component {
             (!selectedCity || str.city_name === selectedCity.label) &&
             (!selectedCompany || str.company === selectedCompany.label)
           ) {
-            let obj = {
-              'No': filteredIndex + 1,
-              'Name': str.name || '-',
-              'Address': str.address || '-',
-              'Current Address': str.current_address || '-',
-              'City': str.city_name || '-',
-              'Current City': str.current_city || '-',
-              'Province': str.prov_name || '-',
-              'Current Province': str.current_province || '-',
-              'District': str.district || '-',
-              'Current District': str.current_district || '-',
-              'Sub District': str.sub_district || '-',
-              'Current Sub District': str.current_sub_district || '-',
-              'RW': str.rw || '-',
-              'Current Rw': str.current_rw || '-',
-              'RT': str.rt || '-',
-              'Current RT': str.current_rt || '-',
-              'Date Of Birth': moment(str.born_date).format('DD-MM-YYYY') || '-',
-              'Place Of Birth': str.born_place || '-',
-              'Company': str.company || '-',
-              'Email': str.email || '-',
-              'Gender': str.gender || '-',
-              'Identity': str.identity || '-',
-              'Phone': str.phone || '-',
-              'License Number': str.license_number || '-',
-              'License Expired': moment(str.license_expired).local().format('YYYY-MM-DD') || '-',
-              'License No': str.license_no || '-',
-              'License Date': moment(str.license_date).local().format('YYYY-MM-DD') || '-',
-              'Level': str.level || '-',
-            };
+           let obj;
+            if(parseInt(idCompany) === 88){
+              obj = {
+                'No': filteredIndex + 1,
+                'ID No': str.identity,
+                'Agent Name': str.name || '-',
+                'Insurance Company': str.company || '-',
+                // 'Sub Sub Sector ID' : idCompany || str.company_id ||  '-',
+                'License Number': str.license_number || '-',
+                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).local().format('YYYY-MM-DD') : '-',
+                'License No': (str.license_no === null || str.license_no === undefined || str.license_no === "null" || str.license_no === "undefined") ? '-' : str.license_no,
+                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).local().format('YYYY-MM-DD') : '-',
+                'Email': str.email || '-',
+                'Address': str.address || '-',
+                'RT': str.rt || '-',
+                'RW': str.rw || '-',
+                'District': str.district || '-',
+                'Sub District': str.sub_district || '-',
+                'City': str.city_name || '-',
+                'Province': str.prov_name || '-',
+                'Current Address': str.current_address || '-',
+                'Current RT': str.current_rt || '-',
+                'Current Rw': str.current_rw || '-',
+                'Current District': str.current_district || '-',
+                'Current Sub District': str.current_sub_district || '-',
+                'Current City': str.current_city || '-',
+                'Current Province': str.current_province || '-',
+              };
+            }else{
+              obj = {
+                'No': filteredIndex + 1,
+                'Name': str.name || '-',
+                'Address': str.address || '-',
+                'Current Address': str.current_address || '-',
+                'City': str.city_name || '-',
+                'Current City': str.current_city || '-',
+                'Province': str.prov_name || '-',
+                'Current Province': str.current_province || '-',
+                'District': str.district || '-',
+                'Current District': str.current_district || '-',
+                'Sub District': str.sub_district || '-',
+                'Current Sub District': str.current_sub_district || '-',
+                'RW': str.rw || '-',
+                'Current Rw': str.current_rw || '-',
+                'RT': str.rt || '-',
+                'Current RT': str.current_rt || '-',
+                'Date Of Birth': moment(str.born_date).format('DD-MM-YYYY') || '-',
+                'Place Of Birth': str.born_place || '-',
+                'Company': str.company || '-',
+                'Email': str.email || '-',
+                'Gender': str.gender || '-',
+                'Identity': str.identity || '-',
+                'Phone': str.phone || '-',
+                'License Number': str.license_number || '-',
+                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).local().format('YYYY-MM-DD') : '-',
+                'License No': (str.license_no === null || str.license_no === undefined || str.license_no === "null" || str.license_no === "undefined") ? '-' : str.license_no,
+                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).local().format('YYYY-MM-DD') : '-',
+                'Level': str.level || '-',
+              };
+            }
+
             arr.push(obj);
             filteredIndex++;
           }
@@ -945,12 +983,10 @@ class User extends Component {
                     </strong>
                   </div>
                   <div className="col-sm-12 m-b-20">
-                    <a href={`${API_SERVER}template-excel/template-import-training-user.xlsx`}>
-                      <button className="button-bordered">
+                      <button className="button-bordered" onClick={() => this.onDownloadTemplate(this.state.companyId)}>
                         <i className="fa fa-download" style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }} />
                         Download Template
                       </button>
-                    </a>
                   </div>
                   <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
                     <label
@@ -1012,11 +1048,12 @@ class User extends Component {
                 <div className="col-md">
                   <div className="col-sm-12 m-b-20">
                     <strong className="f-w-bold f-18" style={{ color: '#000' }}>
-                      Export Users
-                    </strong>
+                      Export Users 
+                    </strong> 
                   </div>
                   <div className="col-sm-12 m-b-20">
                     <ExportCSV
+                      idCompany={this.state.companyId}
                       csvData={this.state.listDataExport}
                       fileName={`Data-Training-User-${
                         localStorage.getItem('companyName')
