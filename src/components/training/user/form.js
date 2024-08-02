@@ -532,8 +532,8 @@ class FormUser extends Component {
       } else {
         updatedState = {
           ...updatedState,
-          currentRt: null,
-          currentRw: null,
+          currentRt: '',
+          currentRw: '',
           currentAddress: '',
           selectedCurrentProvince: null,
           selectedCurrentCity: null,
