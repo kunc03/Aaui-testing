@@ -490,7 +490,8 @@ class FormExam extends Component {
                         }
                         else {
                             res.data.result.map((item) => {
-                                let name = item.organizer_name+' - '+item.name+ (item.notes.length ? `- ${item.notes}` : '');
+                                let name = `${item.organizer_name}-${item.name}${item.notes && item.notes.length && item.notes}`;
+                                // let name = item.organizer_name+' - '+item.name+ (item.notes.length ? `- ${item.notes}` : '');
                                 this.state.optionsLicensesType.push({ label: name, value: item.id })
                             })
                             API.get(`${API_SERVER}v2/training/course-list-question/${this.state.companyId}`).then(res => {
@@ -640,8 +641,9 @@ class FormExam extends Component {
         e.preventDefault();
         if (!this.state.file) {
             toast.warning('Choose the file first')
-        }
-        else {
+        }else if(!this.state.id){
+            toast.warning('Please click button save first')
+        } else {
             this.setState({ isUploading: true })
             let form = new FormData();
             form.append('exam_id', this.state.id);
