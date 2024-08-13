@@ -161,7 +161,7 @@ class FormUser extends Component {
           email: this.state.email,
           created_by: Storage.get('user').data.user_id,
           tag: this.state.tag,
-          auto_fill: this.state.switchButtonAddressSame,
+          auto_fill: this.state.switchButtonAddressSame ? 1 : 0,
         };
         API.put(`${API_SERVER}v2/training/user/${this.props.match.params.id}`, form).then((res) => {
           if (res.data.error) {
@@ -254,7 +254,7 @@ class FormUser extends Component {
           email: this.state.email,
           level: this.props.match.params.level,
           created_by: Storage.get('user').data.user_id,
-          auto_fill: this.state.switchButtonAddressSame,
+          auto_fill: this.state.switchButtonAddressSame ? 1 : 0,
         };
         API.post(`${API_SERVER}v2/training/user`, form).then((res) => {
           if (res.data.error) {
