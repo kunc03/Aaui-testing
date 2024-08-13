@@ -109,11 +109,11 @@ class Event extends Component {
       this.setState({
         infoClass: result,
         infoParticipant: participants,
-        countHadir: participants.length ? participants.filter((item) => item.confirmation == 'Hadir').length : 0,
-        countTidakHadir: participants.length ? participants.filter((item) => item.confirmation == 'Tidak Hadir').length : 0,
-        countTentative: participants.length ? participants.filter((item) => item.confirmation == '').length : 0,
-        needConfirmation: participants.length ? participants.filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation === '').length : 0,
-        attendanceConfirmation: participants.length ? participants.filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? participants.filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null : ''
+        countHadir: participants && participants.length ? participants.filter((item) => item.confirmation == 'Hadir').length : 0,
+        countTidakHadir: participants && participants.length ? participants.filter((item) => item.confirmation == 'Tidak Hadir').length : 0,
+        countTentative: participants && participants.length ? participants.filter((item) => item.confirmation == '').length : 0,
+        needConfirmation: participants && participants.length ? participants.filter((item) => item.user_id == Storage.get('user').data.user_id && item.confirmation === '').length : 0,
+        attendanceConfirmation: participants && participants.length ? participants.filter((item) => item.user_id == Storage.get('user').data.user_id).length >= 1 ? participants.filter((item) => item.user_id == Storage.get('user').data.user_id)[0].confirmation : null : ''
       })
     })
   }
