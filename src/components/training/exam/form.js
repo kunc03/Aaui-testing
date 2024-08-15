@@ -829,11 +829,11 @@ class FormExam extends Component {
                                                             </div>
                                                             <div className="form-field-top-label">
                                                                 <label for="time">Time Limit (Minute)<required>*</required></label>
-                                                                <input type="number" name="time" style={{ width: 100 }} id="time" placeholder="00" value={this.state.time} onChange={this.handleChange} disabled={this.state.disabledForm} />
+                                                                <input type="number" name="time" style={{ width: 100 }} id="time" min={0} placeholder="00" value={this.state.time} onChange={this.handleChange} disabled={this.state.disabledForm} />
                                                             </div>
                                                             <div className="form-field-top-label">
                                                                 <label for="minScore">Minimum Score<required>*</required></label>
-                                                                <input type="number" name="minScore" style={{ width: 100 }} id="minScore" placeholder="0" value={this.state.minScore} onChange={this.handleChange} disabled={this.state.disabledForm} />
+                                                                <input type="number" name="minScore" style={{ width: 100 }} id="minScore" min={0} placeholder="0" value={this.state.minScore} onChange={this.handleChange} disabled={this.state.disabledForm} />
                                                             </div>
                                                             <div className="form-field-top-label" style={{ maxWidth: 240 }}>
                                                                 <label for="generate">Generate Question</label>
