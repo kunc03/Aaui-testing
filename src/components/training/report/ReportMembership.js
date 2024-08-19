@@ -221,7 +221,6 @@ class ReportMembership extends Component {
   }
 
   render() {
-
     let {data, filter} = this.state;
     if (filter != "") {
       data = data.filter(x =>
@@ -277,30 +276,127 @@ class ReportMembership extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
-      },
-      {
-        name: 'Gender',
-        selector: 'training_user_gender',
-        sortable: true,
-        grow:0
-      },
-      {
-        name: 'City',
-        selector: 'training_user_address_city',
-        sortable: true,
-        grow:1
+        cell: row => row.license_number ? row.license_number : '-'
       },
       {
         name: 'License Certified',
         selector: 'license_certified',
         sortable: true,
-        grow:1
+        grow:1,
+        cell: row => row.license_certified ? row.license_certified : '-'
       },
       {
         name: 'License Expired',
         selector: 'license_expired',
         sortable: true,
-        grow:1
+        grow:1,
+        cell: row => row.license_expired ? row.license_expired : '-'
+      },
+      {
+        name: 'Gender',
+        selector: 'training_user_gender',
+        sortable: true,
+        grow:0,
+        cell: row => row.training_user_gender ? row.training_user_gender : '-'
+      },
+      {
+        name: 'Address',
+        selector: 'training_user_address',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address ? row.training_user_address : '-'
+      },
+      {
+        name: 'Province',
+        selector: 'training_user_address_province',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address_province ? row.training_user_address_province : '-'
+      },
+      {
+        name: 'City',
+        selector: 'training_user_address_city',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address_city ? row.training_user_address_city : '-'
+      },
+      {
+        name: 'District',
+        selector: 'training_user_address_district',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address_district ? row.training_user_address_district : '-'
+      },
+      {
+        name: 'Sub District',
+        selector: 'training_user_address_sub_district',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address_sub_district ? row.training_user_address_sub_district : '-'
+      },
+      {
+        name: 'RT',
+        selector: 'training_user_address_rt',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address_rt ? row.training_user_address_rt : '-'
+      },
+      {
+        name: 'RW',
+        selector: 'training_user_address_rw',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_address_rw ? row.training_user_address_rw : '-'
+      },
+
+      {
+        name: 'Current Address',
+        selector: 'training_user_current_address',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address ? row.training_user_current_address : '-'
+      },
+      {
+        name: 'Current Province',
+        selector: 'training_user_current_address_province',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address_province ? row.training_user_current_address_province : '-'
+      },
+      {
+        name: 'Current City',
+        selector: 'training_user_current_address_city',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address_city ? row.training_user_current_address_city : '-'
+      },
+      {
+        name: 'Current District',
+        selector: 'training_user_current_address_district',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address_district ? row.training_user_current_address_district : '-'
+      },
+      {
+        name: 'Current Sub District',
+        selector: 'training_user_current_address_sub_district',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address_sub_district ? row.training_user_current_address_sub_district : '-'
+      },
+      {
+        name: 'Current RT',
+        selector: 'training_user_current_address_rt',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address_rt ? row.training_user_current_address_rt : '-'
+      },
+      {
+        name: 'Current RW',
+        selector: 'training_user_current_address_rw',
+        sortable: true,
+        grow:1,
+        cell: row => row.training_user_current_address_rw ? row.training_user_current_address_rw : '-'
       },
       {
         name: 'Status',
@@ -309,6 +405,7 @@ class ReportMembership extends Component {
         grow:1
       }
     ];
+
     return(
         <div className="pcoded-main-container">
             <div className="pcoded-wrapper">
@@ -396,7 +493,7 @@ class ReportMembership extends Component {
                                                     <div className="col-sm-12 m-b-20 table-f-small">
                                                         <strong className="f-w-bold f-18" style={{color:'#000', marginBottom:20}}>Data</strong>
                                                         <DataTableExtensions print={false} export exportHeaders fileName='Report-membership' columns={columns} data={data} filterPlaceholder='Filter Data'>
-                                                          <DataTable
+                                                        <DataTable
                                                           columns={columns}
                                                           data={data}
                                                           highlightOnHover
@@ -405,7 +502,7 @@ class ReportMembership extends Component {
                                                           paginationPerPage={10}
                                                           paginationRowsPerPageOptions={[10, 15, 20, 25, 30, 50, 100, 250]}
                                                           onSelectedRowsChange={this.onSelectDataTable}
-                                                          />
+                                                        />
                                                         </DataTableExtensions>
                                                     </div>
                                                 </div>
