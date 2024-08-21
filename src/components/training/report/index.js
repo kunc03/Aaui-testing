@@ -550,9 +550,9 @@ class Report extends Component {
           <td>License number</td>
           <td>:</td>
           <td>{data.license_number || '-'}</td>
-          <td>License expired</td>
+          <td>License Expired</td>
           <td>:</td>
-          <td>{moment(data.expired).local().format("DD-MM-YYYY HH:mm") || '-'}</td>
+          <td>{moment(data.license_expired).local().format("DD-MM-YYYY HH:mm") || '-'}</td>
         </tr>
         <tr>
           <td>License No</td>
@@ -574,9 +574,16 @@ class Report extends Component {
           <td>Born Date</td>
           <td>:</td>
           <td>{moment(data.born_date).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(data.born_date).local().format("DD-MM-YYYY")}</td>
-          <td>Expired</td>
+          <td>Certificate</td>
           <td>:</td>
-          <td>{moment(data.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(data.expired).local().format("DD-MM-YYYY")}</td>
+          <td>
+            {
+            data.certificate_status === null ? '-' :
+            data.certificate_status === 'Sent' ? <a href={data.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
+            data.certificate_status === 'Processing' ? <Badge variant="warning">{data.certificate_status}</Badge> :
+            <Badge variant="danger">{data.certificate_status}</Badge>
+            }
+          </td>
         </tr>
         <tr>
           <td>Identity Card Number</td>
@@ -648,19 +655,6 @@ class Report extends Component {
           <td>Current RT</td>
           <td>:</td>
           <td>{data.current_rt || '-'}</td>
-        </tr>
-
-        <tr>
-          <td>Certificate</td>
-          <td>:</td>
-          <td>
-            {
-            data.certificate_status === null ? '-' :
-            data.certificate_status === 'Sent' ? <a href={data.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
-            data.certificate_status === 'Processing' ? <Badge variant="warning">{data.certificate_status}</Badge> :
-            <Badge variant="danger">{data.certificate_status}</Badge>
-            }
-          </td>
         </tr>
       </table>
     );
