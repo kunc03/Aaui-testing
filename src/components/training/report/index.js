@@ -11,10 +11,11 @@ import { Modal, Button, Form, Badge } from 'react-bootstrap';
 import TabMenuPlan from '../../tab_menu/route_plan';
 import LoadingOverlay from 'react-loading-overlay';
 import BeatLoader from 'react-spinners/BeatLoader';
+import * as XLSX from 'xlsx';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
-
+import './index.css';
 class Report extends Component {
   constructor(props) {
     super(props);
@@ -254,6 +255,67 @@ class Report extends Component {
     })
   }
 
+  exportToExcel = (columns, data) => {
+    // Extract headers from columns
+    const headers = columns.map(col => col.name);
+  
+    // Convert data to the format needed for the worksheet
+    const formattedData = data.map(row => {
+      const rowData = {};
+      columns.forEach(col => {
+        rowData[col.name] = row[col.selector] || '-'; // Ensure every row has the column values
+      });
+      return rowData;
+    });
+  
+    // Create worksheet
+    const ws = XLSX.utils.json_to_sheet(formattedData, { header: headers });
+  
+    // Set column widths (adjust as needed)
+    ws['!cols'] = [
+      { wpx: 150 },  // Name
+      { wpx: 100 },  // Born Date
+      { wpx: 200 },  // Identity Card Number
+      { wpx: 80 },   // Gender
+      { wpx: 250 },  // Email
+      { wpx: 150 },  // Training Company
+      { wpx: 150 },  // License Type
+      { wpx: 100 },  // Type
+      { wpx: 200 },  // Exam Name
+      { wpx: 200 },  // Course
+      { wpx: 180 },  // Submission Time
+      { wpx: 150 },  // Submission Condition
+      { wpx: 150 },  // Work Time (Minute)
+      { wpx: 100 },  // Min Score
+      { wpx: 100 },  // Score
+      { wpx: 80 },   // Pass
+      { wpx: 200 },  // License Number
+      { wpx: 150 },  // Expired Date
+      { wpx: 300 },  // Address
+      { wpx: 200 },  // Province
+      { wpx: 200 },  // City
+      { wpx: 200 },  // District
+      { wpx: 200 },  // Sub District
+      { wpx: 50 },   // RT
+      { wpx: 50 },   // RW
+      { wpx: 300 },  // Current Address
+      { wpx: 200 },  // Current Province
+      { wpx: 200 },  // Current City
+      { wpx: 200 },  // Current District
+      { wpx: 200 },  // Current Sub District
+      { wpx: 50 },   // Current RT
+      { wpx: 50 },   // Current RW
+      { wpx: 200 },  // Certificate Status (or link)
+    ];
+  
+    // Create workbook and append worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  
+    // Write file
+    XLSX.writeFile(wb, 'ICADEMY.xlsx');
+  };
+  
   componentDidMount(){
     this.getUserData()
   }
@@ -284,6 +346,8 @@ class Report extends Component {
         name: 'Identity Card Number',
         selector: 'identity',
         sortable: true,
+        grow: 2,
+        cell: row => row.identity ? `'${row.identity}'` : '-',
       },
       {
         name: 'Gender',
@@ -337,6 +401,7 @@ class Report extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        cell: row => row.course_name ? row.course_name : '-',
       },
       {
         cell: row => moment(row.submission_time).local().format("DD-MM-YYYY HH:mm"),
@@ -396,98 +461,125 @@ class Report extends Component {
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        cell: row => row.license_number ? row.license_number : '-',
       },
       {
-        cell: row => moment(row.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '' : moment(row.expired).local().format("DD-MM-YYYY"),
+        cell: row => moment(row.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(row.expired).local().format("DD-MM-YYYY"),
         name: 'Expired Date',
         selector: 'expired',
         sortable: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
+        cell: row => row.expired ? row.expired : '-',
       },
       {
         name: 'Address',
         selector: 'address',
         sortable: true,
+        grow: 2,
+        wrap: true,
         cell: row => row.address ? row.address : '-',
       },
       {
         name: 'Province',
         selector: 'province',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.province ? row.province : '-',
       },
       {
         name: 'City',
         selector: 'city',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.city ? row.city : '-',
       },
       {
         name: 'District',
         selector: 'district',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.district ? row.district : '-',
       },
       {
         name: 'Sub District',
         selector: 'sub_district',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.sub_district ? row.sub_district : '-',
       },
       {
         name: 'RT',
         selector: 'rt',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.rt ? row.rt : '-',
       },
       {
         name: 'RW',
         selector: 'rw',
         sortable: true,
+        wrap: true,
         cell: row => row.rw ? row.rw : '-',
       },
       {
         name: 'Current Address',
         selector: 'current_address',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.current_address ? row.current_address : '-',
       },
       {
         name: 'Current Province',
         selector: 'current_province',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.current_province ? row.current_province : '-',
       },
       {
         name: 'Current City',
         selector: 'current_city',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.current_city ? row.current_city : '-',
       },
       {
-        name: 'District',
+        name: 'Current District',
         selector: 'current_district',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.current_district ? row.current_district : '-',
       },
       {
-        name: 'Sub District',
+        name: 'Current Sub District',
         selector: 'current_sub_district',
+        grow: 2,
         sortable: true,
+        wrap: true,
         cell: row => row.current_sub_district ? row.current_sub_district : '-',
       },
       {
-        name: 'RT',
+        name: 'Current RT',
         selector: 'current_rt',
         sortable: true,
+        wrap: true,
         cell: row => row.current_rt ? row.current_rt : '-',
       },
       {
-        name: 'RW',
+        name: 'Current RW',
         selector: 'current_rw',
         sortable: true,
+        wrap: true,
         cell: row => row.current_rw ? row.current_rw : '-',
       },
       {
@@ -498,6 +590,7 @@ class Report extends Component {
         name: 'Certificate',
         selector: 'certificate_status',
         sortable: true,
+        wrap: true,
         style: {
           color: 'rgba(0,0,0,.54)',
         },
@@ -549,18 +642,18 @@ class Report extends Component {
         <tr>
           <td>License number</td>
           <td>:</td>
-          <td>{data.license_number || '-'}</td>
+          <td>{data.license_number ? data.license_number : '-'}</td>
           <td>License Expired</td>
           <td>:</td>
-          <td>{moment(data.license_expired).local().format("DD-MM-YYYY HH:mm") || '-'}</td>
+          <td>{data.license_expired ? moment(data.license_expired).local().format("DD-MM-YYYY HH:mm") : '-'}</td>
         </tr>
         <tr>
           <td>License No</td>
           <td>:</td>
-          <td>{data.license_no || '-'}</td>
+          <td>{data.license_no ? data.license_no : '-'}</td>
           <td>License Date</td>
           <td>:</td>
-          <td>{moment(data.license_date).local().format("DD-MM-YYYY HH:mm") ||  '-'}</td>
+          <td>{data.license_date ? moment(data.license_date).local().format("DD-MM-YYYY HH:mm") :  '-'}</td>
         </tr>
         <tr>
           <td>Submission Time</td>
@@ -726,7 +819,11 @@ class Report extends Component {
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20 table-f-small">
                                                         <strong className="f-w-bold f-18" style={{color:'#000', marginBottom:20}}>Data</strong>
-                                                        <DataTableExtensions print={false} export exportHeaders columns={columns} data={data} filterPlaceholder='Filter Data'>
+                                                        <div className='export' onClick={() => this.exportToExcel(columns, data)}>
+                                                            <img src="\assets\images\export.png" alt='export' /> 
+                                                            <p>Export</p>
+                                                        </div>
+                                                        <DataTableExtensions  print={false} export={false} exportHeaders={true} columns={columns} data={data} filterPlaceholder='Filter Data'>
                                                           <DataTable
                                                           columns={columns}
                                                           data={data}
