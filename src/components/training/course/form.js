@@ -290,7 +290,7 @@ handleOverview = (e) => {
                 };
                 axios.post(`${API_SERVER}v2/training/course/session/media/${this.state.selectedSession}`, formData, config).then(res => {
                     if (res.data.error){
-                        toast.warning('Fail to upload image')
+                        toast.warning('Fail to upload media')
                         // this.setState({isUploading: false, progressUploadMedia: 0})
                         let session = this.state.session;
                         session[i].progressUploadMedia = 0;
@@ -784,7 +784,7 @@ handleOverview = (e) => {
                                                                 </div>
                                                                 <div className="form-field-top-label">
                                                                     <label for="time">Time (Minute)<required>*</required></label>
-                                                                    <input type="number" name="time" size="30" id="name" placeholder="00" onChange={this.handleChange} value={this.state.time}/>
+                                                                    <input type="number" name="time" size="30" id="name" min={0} placeholder="00" onChange={this.handleChange} value={this.state.time}/>
                                                                 </div>
                                                                 <div className="form-field-top-label" style={{width:'80%'}}>
                                                                     <label for="name">Content</label>
