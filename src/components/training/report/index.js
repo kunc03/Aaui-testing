@@ -819,8 +819,8 @@ class Report extends Component {
                                                 <div className="row">
                                                     <div className="col-sm-12 m-b-20 table-f-small">
                                                         <strong className="f-w-bold f-18" style={{color:'#000', marginBottom:20}}>Data</strong>
-                                                        <div className='export' onClick={() => this.exportToExcel(columns, data)}>
-                                                            <img src="\assets\images\export.png" alt='export' /> 
+                                                        <div className='export'>
+                                                            <img src="\assets\images\export.png" alt='export' onClick={() => this.exportToExcel(columns, data)}/> 
                                                             <p>Export</p>
                                                         </div>
                                                         <DataTableExtensions  print={false} export={false} exportHeaders={true} columns={columns} data={data} filterPlaceholder='Filter Data'>
