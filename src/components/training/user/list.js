@@ -200,7 +200,12 @@ class User extends Component {
 
   filter = (e) => {
     e.preventDefault();
-    this.setState({ filter: e.target.value });
+    const val = e.target.value;
+    if(val.length > 3){
+      setTimeout(() => {
+        this.setState({ filter: val });
+      }, 1000);
+    }
   };
 
   getUserData(state) {

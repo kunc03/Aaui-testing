@@ -81,7 +81,7 @@
     "socket.io-client": "^2.3.0",
     "styled-components": "^5.2.1",
     "styled-system": "^5.1.5",
-    "xlsx": "^0.15.5",
+    "xlsx": "^0.15.6",
     "yarn": "^1.22.0"
   },
   "scripts": {
