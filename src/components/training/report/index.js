@@ -583,6 +583,90 @@ class Report extends Component {
         cell: row => row.current_rw ? row.current_rw : '-',
       },
       {
+        name: 'Address',
+        selector: 'address',
+        sortable: true,
+        cell: row => row.address ? row.address : '-',
+      },
+      {
+        name: 'Province',
+        selector: 'province',
+        sortable: true,
+        cell: row => row.province ? row.province : '-',
+      },
+      {
+        name: 'City',
+        selector: 'city',
+        sortable: true,
+        cell: row => row.city ? row.city : '-',
+      },
+      {
+        name: 'District',
+        selector: 'district',
+        sortable: true,
+        cell: row => row.district ? row.district : '-',
+      },
+      {
+        name: 'Sub District',
+        selector: 'sub_district',
+        sortable: true,
+        cell: row => row.sub_district ? row.sub_district : '-',
+      },
+      {
+        name: 'RT',
+        selector: 'rt',
+        sortable: true,
+        cell: row => row.rt ? row.rt : '-',
+      },
+      {
+        name: 'RW',
+        selector: 'rw',
+        sortable: true,
+        cell: row => row.rw ? row.rw : '-',
+      },
+      {
+        name: 'Current Address',
+        selector: 'current_address',
+        sortable: true,
+        cell: row => row.current_address ? row.current_address : '-',
+      },
+      {
+        name: 'Current Province',
+        selector: 'current_province',
+        sortable: true,
+        cell: row => row.current_province ? row.current_province : '-',
+      },
+      {
+        name: 'Current City',
+        selector: 'current_city',
+        sortable: true,
+        cell: row => row.current_city ? row.current_city : '-',
+      },
+      {
+        name: 'District',
+        selector: 'current_district',
+        sortable: true,
+        cell: row => row.current_district ? row.current_district : '-',
+      },
+      {
+        name: 'Sub District',
+        selector: 'current_sub_district',
+        sortable: true,
+        cell: row => row.current_sub_district ? row.current_sub_district : '-',
+      },
+      {
+        name: 'RT',
+        selector: 'current_rt',
+        sortable: true,
+        cell: row => row.current_rt ? row.current_rt : '-',
+      },
+      {
+        name: 'RW',
+        selector: 'current_rw',
+        sortable: true,
+        cell: row => row.current_rw ? row.current_rw : '-',
+      },
+      {
         cell: row => row.certificate_status === null ? '-' :
         row.certificate_status === 'Sent' ? <a href={row.certificate} target="_blank"><Badge variant="primary">View</Badge></a> :
         row.certificate_status === 'Processing' ? <Badge variant="warning">{row.certificate_status}</Badge> :
@@ -667,6 +751,83 @@ class Report extends Component {
           <td>Born Date</td>
           <td>:</td>
           <td>{moment(data.born_date).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(data.born_date).local().format("DD-MM-YYYY")}</td>
+          <td>Expired</td>
+          <td>:</td>
+          <td>{moment(data.expired).local().format("DD-MM-YYYY") === 'Invalid date' ? '-' : moment(data.expired).local().format("DD-MM-YYYY")}</td>
+        </tr>
+        <tr>
+          <td>Identity Card Number</td>
+          <td>:</td>
+          <td>{data.identity ||  '-'}</td>
+          <td>Gender</td>
+          <td>:</td>
+          <td>{data.gender ||  '-'}</td>
+        </tr>
+
+        <tr>
+          <td>Address</td>
+          <td>:</td>
+          <td>{data.address || '-'}</td>
+          <td>Current Address</td>
+          <td>:</td>
+          <td>{data.current_address || '-'}</td>
+        </tr>
+
+        <tr>
+          <td>Province</td>
+          <td>:</td>
+          <td>{data.province || '-'}</td>
+          <td>Current Province</td>
+          <td>:</td>
+          <td>{data.current_province || '-'}</td>
+        </tr>
+
+        <tr>
+          <td>City</td>
+          <td>:</td>
+          <td>{data.city || '-'}</td>
+          <td>Current City</td>
+          <td>:</td>
+          <td>{data.current_city || '-'}</td>
+        </tr>
+
+        <tr>
+          <td>District</td>
+          <td>:</td>
+          <td>{data.district || '-'}</td>
+          <td>Current District</td>
+          <td>:</td>
+          <td>{data.current_district || '-'}</td>
+        </tr>
+
+        <tr>
+          <td>Sub District</td>
+          <td>:</td>
+          <td>{data.sub_district || '-'}</td>
+          <td>Current District</td>
+          <td>:</td>
+          <td>{data.current_sub_district || '-'}</td>
+        </tr>
+
+        <tr>
+          <td>RW</td>
+          <td>:</td>
+          <td>{data.rw || '-'}</td>
+          <td>Current RW</td>
+          <td>:</td>
+          <td>{data.current_rw || '-'}</td>
+        </tr>
+
+        <tr>
+          <td>RT</td>
+          <td>:</td>
+          <td>{data.rt || '-'}</td>
+          <td>Current RT</td>
+          <td>:</td>
+          <td>{data.current_rt || '-'}</td>
+        </tr>
+
+        <tr>
           <td>Certificate</td>
           <td>:</td>
           <td>
