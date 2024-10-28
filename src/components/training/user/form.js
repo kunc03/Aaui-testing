@@ -215,9 +215,16 @@ class FormUser extends Component {
                   },
                 );
               } else {
+                const valueExam = sessionStorage.getItem('valueExam');
                 toast.success(`${this.state.level} edited`);
                 this.setState({ isSaving: false });
-                this.props.history.push(`/training/user/detail/${this.props.match.params.id}`);
+
+                if (valueExam) {
+                  sessionStorage.setItem('showModalAssignee', 'true');
+                  this.goBack();
+                } else {
+                  this.props.history.push(`/training/user/detail/${this.props.match.params.id}`);
+                }
               }
             }
           }
@@ -1089,7 +1096,7 @@ class FormUser extends Component {
                                     disabled={!this.state.selectedDistrict || this.state.disabledForm}
                                   />
 
-                                  <label for="rt" className='mt-3'>
+                                  <label for="rt" className="mt-3">
                                     RT<required>*</required>
                                   </label>
                                   <input
@@ -1109,7 +1116,7 @@ class FormUser extends Component {
                                     disabled={!this.state.selectedSubDistrict || this.state.disabledForm}
                                   />
 
-                                  <label for="rw" className='mt-3'>
+                                  <label for="rw" className="mt-3">
                                     RW<required>*</required>
                                   </label>
                                   <input
@@ -1280,7 +1287,7 @@ class FormUser extends Component {
                                     }
                                   />
 
-                                  <label for="currentRt" className='mt-3'>
+                                  <label for="currentRt" className="mt-3">
                                     Current RT<required>*</required>
                                   </label>
                                   <input
@@ -1304,7 +1311,7 @@ class FormUser extends Component {
                                     }
                                   />
 
-                                  <label for="currentRw" className='mt-3'>
+                                  <label for="currentRw" className="mt-3">
                                     Current RW<required>*</required>
                                   </label>
                                   <input
@@ -1327,7 +1334,6 @@ class FormUser extends Component {
                                       this.state.switchButtonAddressSame
                                     }
                                   />
-
                                 </div>
                               </div>
 

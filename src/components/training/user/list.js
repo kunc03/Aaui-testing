@@ -26,7 +26,7 @@ class User extends Component {
       dataCity: null,
       usersData: null,
       userId: '',
-      companyId: '',
+      companyId: sessionStorage.getItem('companyId') || '',
       data: [],
       filter: '',
       isSending: false,
@@ -45,7 +45,7 @@ class User extends Component {
       isUploading: false,
       isLoading: false,
       modalAssignee: false,
-      userAssigneeId: '',
+      userAssigneeId: sessionStorage.getItem('userAssigneeId') || '',
       assignee: [
         {
           name: '',
@@ -53,7 +53,7 @@ class User extends Component {
         },
       ],
       optionsExam: [],
-      valueExam: [],
+      valueExam: [] || sessionStorage.getItem,
       optionsCompany: [],
       valueCompany: [],
       isSaving: false,
@@ -62,6 +62,8 @@ class User extends Component {
       searchResults: [],
       isSearching: false,
       showSearchResults: false,
+      isUpdateProfile: null,
+      showModalAfterUpdateProfile: false,
     };
     this.goBack = this.goBack.bind(this);
   }
@@ -74,34 +76,82 @@ class User extends Component {
   };
   closeModalAssignee = (e) => {
     this.setState({ modalAssignee: false, userAssigneeId: '', valueExam: [] });
+    sessionStorage.clear();
   };
   closeModalActivate = (e) => {
     this.setState({ modalActivate: false, activateId: '' });
   };
 
-  assign() {
-    this.setState({ isSaving: true });
+  closeNotifikasi = () => {
+    this.setState({ isUpdateProfile: true });
+  };
+
+  editProfile = () => {
+    const userAssigneeId = sessionStorage.getItem('userAssigneeId');
+    if (userAssigneeId) {
+      window.location.href = '/training/user/edit/' + userAssigneeId;
+    } else {
+      console.error('User ID is not defined');
+    }
+  };
+
+  updateProfile = async () => {
+    try {
+      if (!this.state.userAssigneeId) {
+        console.error('User ID is not defined');
+        return false;
+      }
+
+      const res = await API.get(`${API_SERVER}v2/training/assign/check/${this.state.userAssigneeId}`);
+      if (res && res.data.response) {
+        this.setState({ isUpdateProfile: res.data.response });
+        console.log('Profile update check:', res.data.response);
+        return !res.data.response;
+      }
+      return false;
+    } catch (error) {
+      console.log('Error:', error.response);
+      this.setState({ isUpdateProfile: false });
+      // this.closeModalAssignee();
+      return false;
+    }
+    // if (isUpdateData) {
+    //   this.setState({ isUpdateData: false });
+    // }
+  };
+
+  async assign() {
     if (this.state.valueExam.length) {
+      sessionStorage.setItem('valueExam', this.state.valueExam);
+
+      const valueExamp = sessionStorage.getItem('valueExamp');
+
       let form = {
-        exam_id: String(this.state.valueExam),
+        exam_id: String(this.state.valueExam || valueExamp),
         training_user_id: this.state.userAssigneeId,
         created_by: this.state.userId,
       };
-      API.post(`${API_SERVER}v2/training/assign`, form).then((res) => {
-        if (res.data.error) {
-          toast.error(`Error assign`);
-          this.setState({ isSaving: false });
-        } else {
-          if (res.data.result === 'validationError') {
-            toast.error(res.data.message);
+
+      console.log(form);
+      await this.updateProfile();
+      if (this.state.isUpdateProfile === true) {
+        this.setState({ isSaving: true });
+        API.post(`${API_SERVER}v2/training/assign`, form).then((res) => {
+          if (res.data.error) {
+            toast.error(`Error assign`);
             this.setState({ isSaving: false });
           } else {
-            this.readAssign(form.training_user_id);
-            toast.success(`Assignment success`);
-            this.setState({ isSaving: false });
+            if (res.data.result === 'validationError') {
+              toast.error(res.data.message);
+              this.setState({ isSaving: false });
+            } else {
+              this.readAssign(form.training_user_id);
+              toast.success(`Assignment success`);
+              this.setState({ isSaving: false });
+            }
           }
-        }
-      });
+        });
+      }
     } else {
       toast.warning('Select exam');
       this.setState({ isSaving: false });
@@ -201,7 +251,7 @@ class User extends Component {
   filter = (e) => {
     e.preventDefault();
     const val = e.target.value;
-    if(val.length > 3){
+    if (val.length > 3) {
       setTimeout(() => {
         this.setState({ filter: val });
       }, 1000);
@@ -356,6 +406,11 @@ class User extends Component {
   };
 
   readAssign(id) {
+    sessionStorage.setItem('userAssigneeId', id);
+    sessionStorage.setItem('companyId', this.state.companyId);
+
+    console.log('company', this.state.companyId);
+
     this.setState(
       {
         modalAssignee: true,
@@ -366,6 +421,7 @@ class User extends Component {
         this.setState({ optionsExam: [] });
       },
     );
+
     this.getExam(this.state.companyId, id);
 
     API.get(`${API_SERVER}v2/training/assignee/${id}`).then((res) => {
@@ -478,11 +534,11 @@ class User extends Component {
   };
 
   onDownloadTemplate = (companyId) => {
-    if(parseInt(companyId) === 88){
-      return window.location.href = `${API_SERVER}template-excel/template-import-training-user-aaui.xlsx`;
+    if (parseInt(companyId) === 88) {
+      return (window.location.href = `${API_SERVER}template-excel/template-import-training-user-aaui.xlsx`);
     }
-    return window.location.href = `${API_SERVER}template-excel/template-import-training-user.xlsx`;
-  }
+    return (window.location.href = `${API_SERVER}template-excel/template-import-training-user.xlsx`);
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.selectedProvince !== this.state.selectedProvince) {
@@ -495,6 +551,13 @@ class User extends Component {
   }
 
   componentDidMount() {
+    const showModalAssignee = sessionStorage.getItem('showModalAssignee');
+
+    if (showModalAssignee === 'true') {
+      this.setState({ modalAssignee: true });
+      this.readAssign(this.state.userAssigneeId);
+    }
+
     this.fetchProvince();
     this.getUserData(true);
     this.setState({
@@ -524,26 +587,40 @@ class User extends Component {
             (!selectedCity || str.city_name === selectedCity.label) &&
             (!selectedCompany || str.company === selectedCompany.label)
           ) {
-           let obj;
-            if(parseInt(idCompany) === 88){
+            let obj;
+            if (parseInt(idCompany) === 88) {
               obj = {
-                'No': filteredIndex + 1,
+                No: filteredIndex + 1,
                 'ID No': str.identity,
                 'Agent Name': str.name || '-',
                 'Insurance Company': str.company || '-',
                 // 'Sub Sub Sector ID' : idCompany || str.company_id ||  '-',
                 'License Number': str.license_number || '-',
-                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_expired).format('YYYY-MM-DD') : '-',
-                'License No': (str.license_no === null || str.license_no === undefined || str.license_no === "null" || str.license_no === "undefined") ? '-' : str.license_no,
-                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_date).format('YYYY-MM-DD') : '-',
-                'Email': str.email || '-',
-                'Address': str.address || '-',
-                'RT': str.rt || '-',
-                'RW': str.rw || '-',
-                'District': str.district || '-',
+                'License Expired': moment(str.license_expired).isValid()
+                  ? moment(str.license_expired).format('YYYY-MM-DD') === '1970-01-01'
+                    ? '-'
+                    : moment(str.license_expired).format('YYYY-MM-DD')
+                  : '-',
+                'License No':
+                  str.license_no === null ||
+                  str.license_no === undefined ||
+                  str.license_no === 'null' ||
+                  str.license_no === 'undefined'
+                    ? '-'
+                    : str.license_no,
+                'License Date': moment(str.license_date).isValid()
+                  ? moment(str.license_date).format('YYYY-MM-DD') === '1970-01-01'
+                    ? '-'
+                    : moment(str.license_date).format('YYYY-MM-DD')
+                  : '-',
+                Email: str.email || '-',
+                Address: str.address || '-',
+                RT: str.rt || '-',
+                RW: str.rw || '-',
+                District: str.district || '-',
                 'Sub District': str.sub_district || '-',
-                'City': str.city_name || '-',
-                'Province': str.prov_name || '-',
+                City: str.city_name || '-',
+                Province: str.prov_name || '-',
                 'Current Address': str.current_address || '-',
                 'Current RT': str.current_rt || '-',
                 'Current Rw': str.current_rw || '-',
@@ -552,36 +629,50 @@ class User extends Component {
                 'Current City': str.current_city || '-',
                 'Current Province': str.current_province || '-',
               };
-            }else{
+            } else {
               obj = {
-                'No': filteredIndex + 1,
-                'Name': str.name || '-',
-                'Address': str.address || '-',
+                No: filteredIndex + 1,
+                Name: str.name || '-',
+                Address: str.address || '-',
                 'Current Address': str.current_address || '-',
-                'City': str.city_name || '-',
+                City: str.city_name || '-',
                 'Current City': str.current_city || '-',
-                'Province': str.prov_name || '-',
+                Province: str.prov_name || '-',
                 'Current Province': str.current_province || '-',
-                'District': str.district || '-',
+                District: str.district || '-',
                 'Current District': str.current_district || '-',
                 'Sub District': str.sub_district || '-',
                 'Current Sub District': str.current_sub_district || '-',
-                'RW': str.rw || '-',
+                RW: str.rw || '-',
                 'Current Rw': str.current_rw || '-',
-                'RT': str.rt || '-',
+                RT: str.rt || '-',
                 'Current RT': str.current_rt || '-',
                 'Date Of Birth': moment(str.born_date).format('DD-MM-YYYY') || '-',
                 'Place Of Birth': str.born_place || '-',
-                'Company': str.company || '-',
-                'Email': str.email || '-',
-                'Gender': str.gender || '-',
-                'Identity': str.identity || '-',
-                'Phone': str.phone || '-',
+                Company: str.company || '-',
+                Email: str.email || '-',
+                Gender: str.gender || '-',
+                Identity: str.identity || '-',
+                Phone: str.phone || '-',
                 'License Number': str.license_number || '-',
-                'License Expired': moment(str.license_expired).isValid() ? moment(str.license_expired).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_expired).format('YYYY-MM-DD') : '-',
-                'License No': (str.license_no === null || str.license_no === undefined || str.license_no === "null" || str.license_no === "undefined") ? '-' : str.license_no,
-                'License Date': moment(str.license_date).isValid() ? moment(str.license_date).format('YYYY-MM-DD') === '1970-01-01' ? '-' : moment(str.license_date).format('YYYY-MM-DD') : '-',
-                'Level': str.level || '-',
+                'License Expired': moment(str.license_expired).isValid()
+                  ? moment(str.license_expired).format('YYYY-MM-DD') === '1970-01-01'
+                    ? '-'
+                    : moment(str.license_expired).format('YYYY-MM-DD')
+                  : '-',
+                'License No':
+                  str.license_no === null ||
+                  str.license_no === undefined ||
+                  str.license_no === 'null' ||
+                  str.license_no === 'undefined'
+                    ? '-'
+                    : str.license_no,
+                'License Date': moment(str.license_date).isValid()
+                  ? moment(str.license_date).format('YYYY-MM-DD') === '1970-01-01'
+                    ? '-'
+                    : moment(str.license_date).format('YYYY-MM-DD')
+                  : '-',
+                Level: str.level || '-',
               };
             }
 
@@ -988,10 +1079,10 @@ class User extends Component {
                     </strong>
                   </div>
                   <div className="col-sm-12 m-b-20">
-                      <button className="button-bordered" onClick={() => this.onDownloadTemplate(this.state.companyId)}>
-                        <i className="fa fa-download" style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }} />
-                        Download Template
-                      </button>
+                    <button className="button-bordered" onClick={() => this.onDownloadTemplate(this.state.companyId)}>
+                      <i className="fa fa-download" style={{ fontSize: 14, marginRight: 10, color: '#0091FF' }} />
+                      Download Template
+                    </button>
                   </div>
                   <form className="col-sm-12 form-field-top-label" onSubmit={this.uploadData}>
                     <label
@@ -1053,8 +1144,8 @@ class User extends Component {
                 <div className="col-md">
                   <div className="col-sm-12 m-b-20">
                     <strong className="f-w-bold f-18" style={{ color: '#000' }}>
-                      Export Users 
-                    </strong> 
+                      Export Users
+                    </strong>
                   </div>
                   <div className="col-sm-12 m-b-20">
                     <ExportCSV
@@ -1260,7 +1351,11 @@ class User extends Component {
             </button>
           </Modal.Footer>
         </Modal>
-        <Modal show={this.state.modalAssignee} onHide={this.closeModalAssignee} dialogClassName="modal-lg">
+        <Modal
+          show={this.state.modalAssignee}
+          onHide={this.closeModalAssignee}
+          dialogClassName={`${this.state.isUpdateProfile === false && 'modal-bottom '} modal-lg`}
+        >
           <Modal.Header closeButton>
             <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
               Assignment : {this.state.assignee.name}
@@ -1389,6 +1484,34 @@ class User extends Component {
               disabled={this.state.isSending}
             >
               <i className="fa fa-paper-plane"></i> {this.state.isSending ? 'Sending...' : 'Send'}
+            </button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal
+          show={this.state.isUpdateProfile === false}
+          onHide={this.closeNotifikasi}
+          dialogClassName="assign-update"
+        >
+          <Modal.Header>
+            <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+              Update Your Profile
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <p style={{ color: 'black', margin: '20px 0px' }} className="text-muted">
+              Please complete the user information before continuing
+            </p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <button type="button" className="btn btm-icademy-primary btn-icademy-grey" onClick={this.closeNotifikasi}>
+              Close
+            </button>
+
+            <button type="button" className="btn btn-icademy-primary" onClick={this.editProfile}>
+              Continue
             </button>
           </Modal.Footer>
         </Modal>

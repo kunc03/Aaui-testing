@@ -4,6 +4,7 @@ import API, { USER_ME, USER, API_SERVER } from '../../repository/api';
 import Storage from '../../repository/storage';
 import ReactSelect from 'react-select';
 import { toast } from 'react-toastify';
+import { formatDate } from 'amazon-chime-sdk-component-library-react';
 
 class Profile extends Component {
   state = {
@@ -25,6 +26,9 @@ class Profile extends Component {
       branch_id: '',
       group: [],
       training_user: [],
+
+      identity_image: '',
+      tempIdentity_image: '',
 
       avatar: '',
       tempAvatar: '',
@@ -54,20 +58,25 @@ class Profile extends Component {
     subDistrict: [],
     kursusDiikuti: [],
     isModalAvatar: false,
+    isModalImgIdentity: false,
     toggle_alert: false,
+
+    imageIdentity: '',
+    imageIdentityPreview: 'assets/images/no-image.png',
 
     isUpdateData: false,
     isNotifikasi: false,
     isiNotifikasi: '',
+    isSaving: false,
     switchButtonAddressSame: false,
   };
 
   handleSwitchButton = () => {
     this.setState((prevState) => {
       const switchButtonAddressSame = !prevState.switchButtonAddressSame;
-  
+
       let updatedUserData = { ...prevState.user_data };
-  
+
       if (switchButtonAddressSame) {
         updatedUserData = {
           ...updatedUserData,
@@ -91,14 +100,13 @@ class Profile extends Component {
           selectedCurrentSubDistrict: '',
         };
       }
-  
+
       return {
         switchButtonAddressSame,
         user_data: updatedUserData,
       };
     });
   };
-  
 
   fetchProvince = async () => {
     try {
@@ -201,24 +209,72 @@ class Profile extends Component {
     });
   };
 
+  handleModalImgIdentityClose = (e) => {
+    this.setState({
+      isModalImgIdentity: false,
+      user_data: { ...this.state.user_data, tempIdentity_image: '' },
+    });
+  };
+
   onClickModalAvatar = (e) => {
     e.preventDefault();
     this.setState({ isModalAvatar: true });
   };
 
+  onClickModalImgIdentity = (e) => {
+    e.preventDefault();
+    this.setState({ isModalImgIdentity: true });
+  };
+
   onClickSubmitModal = (e) => {
     e.preventDefault();
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('avatar', this.state.user_data.tempAvatar);
+
     API.put(`${API_SERVER}v1/user/avatar/${this.state.user_data.user_id}`, formData).then((res) => {
       if (res.status === 200) {
         this.setState({
-          user_data: { ...this.state.user_data, avatar: res.data.result },
+          user_data: { ...this.state.user_data, avatar: res.data.result.avatar },
           isModalAvatar: false,
         });
         window.location.reload();
       }
     });
+  };
+
+  onClickSubmitModalImgIdentity = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { user_data } = this.state;
+
+      if (!user_data.tempIdentity_image) {
+        toast.warning('Please select an image first');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', user_data.tempIdentity_image);
+
+      API.put(`${API_SERVER}v1/user/image-identity/${user_data.user_id}`, formData).then((res) => {
+        this.setState({ isSaving: true });
+        if (res.status === 200) {
+          this.setState({
+            user_data: { ...this.state.user_data, imageIdentity: res.data.result.identity_image },
+            isModalAvatar: false,
+          });
+          this.handleModalImgIdentityClose();
+          window.location.reload();
+          toast.success('Identity image updated successfully');
+        }
+      });
+      console.log(formData);
+    } catch (error) {
+      console.error('Error uploading identity image:', error);
+      // toast.error(error.response?.data?.message || 'Failed to update identity image');
+    } finally {
+      this.setState({ isSaving: false });
+    }
   };
 
   onClickSubmitModalDelete = (e) => {
@@ -242,44 +298,56 @@ class Profile extends Component {
         if (!res.data.error) {
           const resData = res.data.result.training_user[0];
           if (
-            resData && resData.address &&
-            resData && resData.current_address &&
-            resData && resData.city &&
-            resData && resData.current_city &&
-            resData && resData.district &&
-            resData && resData.current_district &&
-            resData && resData.sub_district &&
-            resData && resData.current_sub_district &&
-            resData && resData.rw &&
-            resData && resData.current_rw &&
-            resData && resData.rt &&
-            resData && resData.current_rt
+            resData &&
+            resData.address &&
+            resData &&
+            resData.current_address &&
+            resData &&
+            resData.city &&
+            resData &&
+            resData.current_city &&
+            resData &&
+            resData.district &&
+            resData &&
+            resData.current_district &&
+            resData &&
+            resData.sub_district &&
+            resData &&
+            resData.current_sub_district &&
+            resData &&
+            resData.rw &&
+            resData &&
+            resData.current_rw &&
+            resData &&
+            resData.rt &&
+            resData &&
+            resData.current_rt
           ) {
             // const tagSecurity = document.getElementById('security');
             Storage.set('dataAddressCompleted', true);
             Storage.set('isUpdateData', false);
             this.setState({ isUpdateData: false });
             // tagSecurity.click();
-            if(Storage.set('dataAddressCompleted', true) && Storage.set('isUpdateData', false)){
+            if (Storage.set('dataAddressCompleted', true) && Storage.set('isUpdateData', false)) {
               window.location.href = `${window.location.origin}`;
             }
           } else {
             Storage.set('dataAddressCompleted', false);
-            if(Storage.get('isUpdateData') === false){
+            if (Storage.get('isUpdateData') === false) {
               Storage.set('isUpdateData', false);
-            }else{
+            } else {
               Storage.set('isUpdateData', true);
             }
           }
-          if(Storage.get('dataAddressCompleted') == false){
-            if(Storage.get('isUpdateData') === true){
+          if (Storage.get('dataAddressCompleted') == false) {
+            if (Storage.get('isUpdateData') === true) {
               this.setState({ isUpdateData: true });
             }
           }
-          // console.log('res: ', res.data)
+          console.log('res: ', res.data);
           this.setState({
             ...this.state,
-            switchButtonAddressSame: resData && resData.auto_fill || res.data.result.auto_fill,
+            switchButtonAddressSame: (resData && resData.auto_fill) || res.data.result.auto_fill,
             user_data: {
               ...this.state.user_data,
               avatar: res.data.result.avatar ? res.data.result.avatar : '/assets/images/user/avatar-1.png',
@@ -292,27 +360,36 @@ class Profile extends Component {
               email: res.data.result.email,
               name: res.data.result.name,
               identity: res.data.result.identity,
-              address: resData && resData.address || res.data.result.address,
-              city: resData && resData.city || res.data.result.city,
+              identity_image:
+                res.data.result.training_user &&
+                res.data.result.training_user[0] &&
+                res.data.result.training_user[0].identity_image
+                  ? res.data.result.training_user[0].identity_image
+                  : 'assets/images/no-image.png',
+              address: (resData && resData.address) || res.data.result.address,
+              city: (resData && resData.city) || res.data.result.city,
               phone: res.data.result.phone,
               unlimited: res.data.result.unlimited,
               validity: res.data.result.validity ? res.data.result.validity.toString().substring(0, 10) : '0000-00-00',
               training_user: res.data.result.training_user,
               //address
-              rw: resData && resData.rw || res.data.result.rw,
-              rt: resData && resData.rt || res.data.result.rt,
-              selectedProvince: { label: resData && resData.province || res.data.result.current_province },
-              selectedCity: { label: resData && resData.city || res.data.result.current_city },
-              selectedDistrict: resData && resData.district || res.data.result.current_district,
-              selectedSubDistrict: resData && resData.sub_district || res.data.result.current_sub_district,
+              rw: (resData && resData.rw) || res.data.result.rw,
+              rt: (resData && resData.rt) || res.data.result.rt,
+              selectedProvince: { label: (resData && resData.province) || res.data.result.current_province },
+              selectedCity: { label: (resData && resData.city) || res.data.result.current_city },
+              selectedDistrict: (resData && resData.district) || res.data.result.current_district,
+              selectedSubDistrict: (resData && resData.sub_district) || res.data.result.current_sub_district,
               //current
-              currentRw: resData && resData.current_rw || res.data.result.current_rw,
-              currentRt: resData && resData.current_rt || res.data.result.current_rt,
-              currentAddress: resData && resData.current_address || res.data.result.current_address,
-              selectedCurrentProvince: { label: resData && resData.current_province || res.data.result.current_province },
-              selectedCurrentCity: { label: resData && resData.current_city || res.data.result.current_city},
-              selectedCurrentDistrict: resData && resData.current_district || res.data.result.current_district,
-              selectedCurrentSubDistrict: resData && resData.current_sub_district || res.data.result.current_sub_district,
+              currentRw: (resData && resData.current_rw) || res.data.result.current_rw,
+              currentRt: (resData && resData.current_rt) || res.data.result.current_rt,
+              currentAddress: (resData && resData.current_address) || res.data.result.current_address,
+              selectedCurrentProvince: {
+                label: (resData && resData.current_province) || res.data.result.current_province,
+              },
+              selectedCurrentCity: { label: (resData && resData.current_city) || res.data.result.current_city },
+              selectedCurrentDistrict: (resData && resData.current_district) || res.data.result.current_district,
+              selectedCurrentSubDistrict:
+                (resData && resData.current_sub_district) || res.data.result.current_sub_district,
             },
           });
           // if (this.state.user_data.level==='client'){
@@ -321,6 +398,7 @@ class Profile extends Component {
           // level:'user'
           // }})
           // }
+          console.log(this.state.user_data);
         }
       }
     });
@@ -331,6 +409,7 @@ class Profile extends Component {
     const { user_data, switchButtonAddressSame } = this.state;
     if (!user_data.name) return toast.warning('Completed your data name');
     if (!user_data.identity) return toast.warning('Completed your data identity');
+    if (!user_data.identity_image) return toast.warning('Completed your data identity image');
     if (!user_data.phone) return toast.warning('Completed your data phone');
     if (!user_data.address) return toast.warning('Completed your data address');
     if (!user_data.currentAddress) return toast.warning('Completed your data current Address');
@@ -389,10 +468,14 @@ class Profile extends Component {
   };
 
   handleChange = (e) => {
-    if (e.target.name === 'avatar') {
-      if (e.target.files[0].size <= 500000) {
+    const { name, files } = e.target;
+
+    // Handle Avatar Upload
+    if (name === 'avatar') {
+      const avatarFile = files[0];
+      if (avatarFile && avatarFile.size <= 500000) {
         this.setState({
-          user_data: { ...this.state.user_data, tempAvatar: e.target.files[0] },
+          user_data: { ...this.state.user_data, tempAvatar: avatarFile },
         });
       } else {
         e.target.value = null;
@@ -402,15 +485,36 @@ class Profile extends Component {
           isiNotifikasi: 'The file does not match the format, please check again.',
         });
       }
-    } else {
-      this.setState({
-        user_data: {
-          ...this.state.user_data,
-          [e.target.name]: e.target.value,
-        },
-      });
+    }
+
+    // Handle Identity Image Upload
+    else if (name === 'identity-image') {
+      const identityImageFile = files[0];
+      if (identityImageFile && identityImageFile.size <= 5000000) {
+        this.setState({
+          user_data: {
+            ...this.state.user_data,
+            tempIdentity_image: identityImageFile, // Simpan file untuk upload
+          },
+          imageIdentityPreview: URL.createObjectURL(identityImageFile), // Untuk preview
+        });
+      } else {
+        e.target.value = null;
+        toast.warning('Identity Image size cannot be larger than 5MB');
+      }
+    }
+
+    // Handle Other Inputs
+    else {
+      this.setState({ [name]: e.target.value });
     }
   };
+
+  componentWillUnmount() {
+    if (this.state.imageIdentityPreview) {
+      URL.revokeObjectURL(this.state.imageIdentityPreview);
+    }
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.user_data.selectedProvince !== this.state.user_data.selectedProvince) {
@@ -578,6 +682,74 @@ class Profile extends Component {
                   />
                 </div>
 
+                {/* Image ID */}
+                <div className="form-group mt-3 mb-3" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <label className="label-input">Identity Card Photo</label>
+                  <div className="image-container">
+                    <img
+                      alt=""
+                      // Gunakan existing image atau preview
+                      src={this.state.user_data.identity_image || '/path/to/default-image.png'}
+                      className="id_image"
+                      style={{ maxWidth: '350px', height: '250px', padding: '10px', cursor: 'pointer' }}
+                    />
+                    <div className="hover-text" onClick={this.onClickModalImgIdentity}>
+                      Upload Image
+                    </div>
+                  </div>
+                </div>
+
+                <Modal show={this.state.isModalImgIdentity} onHide={this.handleModalImgIdentityClose}>
+                  <Modal.Body>
+                    <Modal.Title className="text-c-purple3 f-w-bold">Change Image</Modal.Title>
+                    <div style={{ marginTop: '20px' }} className="form-group">
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label>Upload Your ID</label>
+                        {/* Tampilkan preview jika ada */}
+                        {this.state.imageIdentityPreview && (
+                          <img
+                            src={this.state.imageIdentityPreview}
+                            alt="Identity Preview"
+                            className="img-preview mt-1 mb-1"
+                            style={{ width: '30%', objectFit: 'cover' }}
+                          />
+                        )}
+                      </div>
+                      <input
+                        accept="image/*"
+                        className="form-control"
+                        name="identity-image"
+                        type="file"
+                        onChange={this.handleChange}
+                        required
+                      />
+                      <Form.Text className="text-muted">
+                        Make sure the file format is png, jpg, jpeg, or gif and the file size is not more than 10MB
+                      </Form.Text>
+                    </div>
+                    <div className="float-right">
+                      <button
+                        type="button"
+                        onClick={this.onClickSubmitModalImgIdentity}
+                        className="btn btn-icademy-primary ml-2"
+                        disabled={!this.state.user_data.tempIdentity_image || this.state.isSaving}
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-icademy-block ml-2"
+                        onClick={this.handleModalImgIdentityClose}
+                        disabled={this.state.isSaving}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </Modal.Body>
+                </Modal>
+
+                {/* Image ID end */}
+
                 <div className="form-group">
                   <div className="col-sm-6 m-b-20">
                     <strong>Address is the same as Current Address</strong>
@@ -701,7 +873,6 @@ class Profile extends Component {
                         onChange={this.handleChange}
                       />
                     </div>
-
                   </div>
 
                   {/* current address */}
@@ -800,7 +971,7 @@ class Profile extends Component {
                         disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
-                    
+
                     <div className="form-group">
                       <label className="label-input" htmlFor>
                         Current RW <required>*</required>
@@ -817,7 +988,6 @@ class Profile extends Component {
                         disabled={this.state.switchButtonAddressSame}
                       />
                     </div>
-
                   </div>
                 </div>
 
@@ -829,6 +999,7 @@ class Profile extends Component {
                     {user_data.level === 'client' ? 'User' : user_data.level}
                   </label>
                 </div>
+
                 <button
                   className="btn btn btn-icademy-primary float-right mt-3"
                   onClick={(event) => this.updateProfile(event)}
@@ -907,11 +1078,21 @@ class Profile extends Component {
               </button>
             </Modal.Body>
           </Modal>
+          {/* this.state.isUpdateData */}
+          <Modal show={this.state.isUpdateData} onHide={() => this.closeNotifikasi('isUpdateData')} centered>
+            <Modal.Header>
+              <Modal.Title className="text-c-purple3 f-w-bold" style={{ color: '#00478C' }}>
+                Update Your Profile
+              </Modal.Title>
+            </Modal.Header>
 
-          <Modal show={this.state.isUpdateData} onHide={() => this.closeNotifikasi('isUpdateData')}>
             <Modal.Body>
-              <Modal.Title className="text-c-purple3 f-w-bold text-center">Update Your Data profile</Modal.Title>
+              <p style={{ color: 'black', margin: '20px 0px' }} className="text-muted">
+                Update your profile details to ensure your information is always up-to-date
+              </p>
+            </Modal.Body>
 
+            <Modal.Footer>
               <button
                 type="button"
                 className="btn btn-block f-w-bold mt-2"
@@ -919,7 +1100,7 @@ class Profile extends Component {
               >
                 Close
               </button>
-            </Modal.Body>
+            </Modal.Footer>
           </Modal>
         </div>
       </div>
