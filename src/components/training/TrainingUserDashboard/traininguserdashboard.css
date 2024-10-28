@@ -1,0 +1,225 @@
+@media (min-height: 500px) {
+    .positionFixed {
+      position: fixed !important;
+      left: 80% !important;
+    }
+  }
+  
+  .positionFixed {
+  
+  }
+  
+  .no-pointer{
+    cursor: inherit !important;
+  }
+  
+  .liUserTabFont {
+      font-family: 'Segoe UI';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 20px !important;
+      line-height: 27px;
+      color: #000000 !important;
+  }
+  
+  .flexex { 
+      flex: 1 1 16.667%;
+      display: flex;
+      max-width: 16.667%;
+      padding: 0px 8px 25px;
+      box-sizing: border-box;
+  }
+  
+  .eleg {
+      position: relative;
+      background-color: var(--N0,#FFFFFF);
+      display: -webkit-inline-box;
+      display: -webkit-inline-flex;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      -webkit-align-items: stretch;
+      -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+      align-items: stretch;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      box-sizing: border-box;
+  }
+  
+  .divBackgroundAccess { 
+      /* background: #E7F8FF; */
+      border-radius: 10px;
+      min-height: 195px;
+  }
+  
+  .opacity-6{
+    opacity: 0.3 !important;
+  }
+  
+  .divBackgroundRestrict { 
+      /* filter: blur(1px); */
+      opacity: 0.6;
+      /* background: #FEF3ED; */
+      border-radius: 10px;
+      min-height: 195px;
+  }
+  
+  .fontTitleAccess {
+      font-family: 'Segoe UI';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 27px;
+  
+      /* color: #0072D8; */
+  }
+  
+  .fontTitleRestrict {
+      font-family: 'Segoe UI';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 27px;
+  
+      /* Orange */
+  
+      color: #FF9900;
+  }
+  
+  .fontDefault {
+      font-family: 'Segoe UI';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 19px;
+      /* identical to box height */
+  
+  
+      /* Black */
+  
+      color: #000000;
+  }
+  
+  .fontDefaulBold {
+      font-family: 'Segoe UI';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 19px;
+  
+      /* Black */
+  
+      color: #000000;
+  }
+  
+  .fontDefaultGrey { 
+      font-family: 'Segoe UI';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
+  
+      color: #6D7278;
+  }
+  
+  .buttonActive { 
+      background: #0072D8;
+      border-radius: 14px;
+      color:#FFFFFF;
+      cursor: pointer;
+      width: 80px;
+      height: 21.61px;
+  }
+  
+  .fontWhite {
+      font-family: 'Segoe UI';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  
+  color: #FFFFFF;
+  }
+  
+  .tab-menu-training{
+      display:inline-block;
+      margin-bottom: 0px;
+      margin-top: 20px;
+    }
+  
+    .tab-menu-training li{
+      display:inline;
+      padding:10px;
+      padding-top:14px;
+      margin-left:14px;
+      border-radius: 7px 7px 0px 0px;
+      display:inline-block;
+      vertical-align: top;
+      height:62px;
+      font-size:16px;
+      color:#B9B9B9;
+      font-size:16px;
+      cursor:pointer;
+    }
+  
+    .tab-menu-training .active{
+      border-bottom: 5px solid #FF9900;
+    }
+  
+    .buttonBack {
+      background: #F8FBFF;
+      border: 1px solid #0072D8 !important;
+      box-sizing: border-box;
+      color: #0072D8 !important;
+    }
+  
+    .width200 {
+        width: 200px;
+    }
+  
+    .buttonSubmitBlue {
+      width: inherit;
+      height: 40px;
+      background: #0072D8;
+      border-radius: 10px;
+      border: 1px solid;
+      cursor: pointer;
+      font-size: 15px;
+    }
+  
+    .pointer{
+        cursor: pointer;
+    }
+  
+    .buttonExamOrange {
+      background: #FF9900;
+      border-radius: 14px;
+      color:#FFFFFF;
+      cursor: pointer;
+      width: 100px;
+      height: 21.61px;
+    }
+  
+    .buttonExamRed {
+      background: #df0707;
+      border-radius: 14px;
+      color:#FFFFFF;
+      cursor: pointer;
+      width: 60px;
+      height: 21.61px;
+    }
+  
+    .buttonExamGreen {
+      background: #00B187;
+      border-radius: 14px;
+      color:#FFFFFF;
+      cursor: pointer;
+      width: 60px;
+      height: 21.61px;
+    }
+  
+    .modal-width {
+      width: 200px !important;
+    }
