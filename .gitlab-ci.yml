@@ -1,0 +1,69 @@
+stages:
+  - build_development
+  - deploy_development
+  - build_staging
+  - deploy_staging
+
+build_development:
+  stage: build_development
+  only:
+    - staging
+  tags:
+    - development
+  script:
+    - cd /home/ubuntu/ideku-react && sudo git stash
+    - if [ "$(docker ps -a | grep icademy-app)" ]; then 
+        echo "Container Exists";
+        docker rm -f icademy-app;
+        docker rmi -f icademy/app:latest;
+      else
+        echo "Container Not Found";
+      fi
+    - cd /home/ubuntu/ideku-react && sudo git pull origin staging
+    - sudo cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
+    - cd /home/ubuntu/ideku-react && sudo npm install
+    - cd /home/ubuntu/ideku-react && sudo npm run build
+    - cd /home/ubuntu/ideku-react && docker build -t icademy/app:latest .
+
+deploy_development:
+  stage: deploy_development
+  only:
+    - staging
+  tags:
+    - development
+  environment:
+    name: "Dev Icademy App"
+    url: https://app.icademy.dev.kelola.co.id
+  script:
+    - if [ "$(docker ps -a | grep icademy-app)" ]; then 
+        echo "Container Exists";
+        docker rm -f icademy-app;
+      else
+        echo "Container Not Found";
+      fi
+    - cd /home/ubuntu/ideku-react && docker run --name icademy-app --restart=always -dit -p 3000:80 icademy/app:latest
+
+build_staging:
+  stage: build_staging
+  only:
+    - staging
+  tags:
+    - staging
+  script:
+    - cd /home/ubuntu/ideku-react && sudo git stash
+    - cd /home/ubuntu/ideku-react && sudo git pull origin staging
+    - sudo cp /docker/icademy-app/api.js /home/ubuntu/ideku-react/src/repository
+
+deploy_staging:
+  stage: deploy_staging
+  only:
+    - staging
+  tags:
+    - staging
+  environment:
+    name: "Stg Icademy App"
+    url: https://app.icademy.stg.kelola.co.id
+  script:
+    - cd /home/ubuntu/ideku-react && sudo npm install
+    - cd /home/ubuntu/ideku-react && CI=false sudo npm run build
+

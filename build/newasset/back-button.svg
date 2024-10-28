@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>A73469CF-1813-4842-9BCC-24959C35757E@0,5x</title>
+    <defs>
+        <filter x="-67.0%" y="-67.0%" width="234.0%" height="234.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="6" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.25 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <path d="M34,25.5 L15,25.5" id="path-2"></path>
+    </defs>
+    <g id="Role-Webinar-Project-Admin" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Projek-1" transform="translate(-58.000000, -49.000000)">
+            <g id="Group-2" transform="translate(83.000000, 74.000000)">
+                <g id="Group" filter="url(#filter-1)">
+                    <circle id="Oval" fill="#FFFFFF" cx="25" cy="25" r="25"></circle>
+                    <mask id="mask-3" fill="white">
+                        <use xlink:href="#path-2"></use>
+                    </mask>
+                    <use id="Combined-Shape" stroke="#B9B9B9" stroke-width="3" stroke-linecap="round" xlink:href="#path-2"></use>
+                </g>
+                <polyline id="Path-3" stroke="#B9B9B9" stroke-width="3" stroke-linecap="round" transform="translate(16.947717, 21.213028) rotate(11.000000) translate(-16.947717, -21.213028) " points="14.0661393 25.9630279 16.2353449 22.3873039 19.8292948 16.4630279"></polyline>
+                <polyline id="Path-3" stroke="#B9B9B9" stroke-width="3" stroke-linecap="round" transform="translate(17.330628, 29.409235) rotate(-258.000000) translate(-17.330628, -29.409235) " points="14.4490503 34.1592354 16.6182559 30.5835115 20.2122058 24.6592354"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="65px" height="66px" viewBox="0 0 65 66" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>B3FDBC7C-27EA-4BD1-B52C-42EE97E0A206@0,5x</title>
+    <defs>
+        <path d="M1077.5,1129.9375 L1077.5,1188.0625 M1107,1160.5 L1048,1160.5" id="path-1"></path>
+    </defs>
+    <g id="Learning-Role-Admin" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Dashboard" transform="translate(-1045.000000, -1126.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Combined-Shape" stroke="#6D7278" stroke-width="6" opacity="0.5" stroke-linecap="round" xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

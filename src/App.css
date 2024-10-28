@@ -1,0 +1,946 @@
+/* @import "../node_modules/bootstrap/dist/css/bootstrap.css"; */
+
+.timer-wrapper {
+  float: right;
+}
+
+.score-exam {
+  position: absolute;
+  right: 16px;
+  top: 24px;
+  border: 1px solid #e9e9e9;
+  padding: 20px 40px;
+}
+
+.soal {
+  padding: 12px;
+  border: 1px solid #e9e9e9;
+}
+
+.timeline-active {
+  border: 1px solid #28a745 !important;
+}
+
+.silabus {
+  border: 1px solid #e9e9e9;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.react-calendar {
+  width: 100%;
+  border: 0px;
+  margin-bottom: 12px;
+  background: #f3f3f3;
+}
+
+.borderLeftCalender {
+  border-left-color: antiquewhite;
+  border-left: solid 1px #f3f3f3;
+}
+
+#new-toolbox > div.toolbox-content > div.button-group-right > div:nth-child(2) {
+  display: none;
+}
+
+#root > div > div > nav > div > div.navbar-brand.header-logo > a.b-brand > div > span {
+  margin-left: 176px;
+}
+
+.logo-sidebar {
+  width: auto !important;
+  height: auto !important;
+}
+
+.menu-mati {
+  color: #949495;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+}
+
+/* RESPONSIVE IMAGE */
+.responsive-image-banner {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50vh;
+  width: 100%;
+  background-position: center;
+}
+.responsive-image-content {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 20vh;
+  width: 100%;
+  background-position: center;
+}
+
+.responsive-image-profile {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 10vh;
+  width: 100%;
+  background-position: center;
+}
+
+.responsive-image-forum {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 12vh;
+  width: 25%;
+  background-position: center;
+}
+/* END */
+
+/* Create a simple white box, and add the shadow for the initial state */
+.box {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Create the hidden pseudo-element */
+/* include the shadow for the end state */
+/* .box-chat {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: opacity 0.3s ease-in-out;
+} */
+
+/* Scale up the box */
+/* .box-chat:hover {
+  transform: scale(1.2, 1.2);
+} */
+
+/* Fade in the pseudo-element with the bigger shadow */
+/* .box-chat:hover:after {
+  opacity: 1;
+} */
+
+.box-chat {
+  height: 50vh;
+  background-color: white;
+  /* width: 60vh; */
+  /* margin-bottom: 5vh; */
+  border: 1px solid #d6d4d4;
+  overflow: auto;
+  /* box-shadow: -1px 1px 8px 0px; */
+}
+.box-chat-send {
+  /* height: 10vh; */
+  background-color: white;
+  /* width: 60vh; */
+  margin-bottom: 5vh;
+  border: 1px solid #d6d4d4;
+  /* box-shadow: -1px 1px 8px 0px; */
+}
+.box-chat-send-left {
+  /* background-color: #f1f1f1; */
+  /* float: left; */
+  /* padding: 10px; */
+  margin: 10px;
+  /* border-radius: 10px; */
+  border-bottom: 0.5px solid #ddd;
+}
+
+/* Checkbox custom css  */
+/* The container */
+.container {
+  /*display: block; */
+  position: relative;
+  padding-left: 31px;
+  /* margin-bottom: 12px; */
+  cursor: pointer;
+  font-size: 22px;
+  /* -webkit-user-select: none; */
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  /* position: absolute; */
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #0079dc;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 3px;
+  width: 8px;
+  height: 15px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+input[type='file'] {
+  /* width:90px; */
+  color: transparent;
+}
+
+.modal-xlg {
+  max-width: 1200px !important;
+}
+
+.mt-10 {
+  margin-top: 12rem !important;
+}
+
+.badge-notif {
+  color: white;
+  font-size: 10px;
+  padding: 1px 3px;
+  position: absolute;
+  top: 0;
+  right: 8px;
+  background-color: #fa3e3e;
+  border-radius: 50%;
+}
+
+.header-kartu {
+  color: #0091ff;
+  font-family: Lato;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 22px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196f3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+[data-toggle='collapse'] .fa:before {
+  content: '\f139';
+}
+
+[data-toggle='collapse'].collapsed .fa:before {
+  content: '\f13a';
+}
+
+.agenda-chat {
+  background: #fff;
+  border-radius: 4px;
+  padding: 12px;
+  width: 100%;
+  border-left: 4px solid #004887;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  height: 40px;
+  width: 40px;
+  outline: black;
+  background-size: 100%, 100%;
+  border-radius: 50%;
+  border: 1px solid #6f6f6f;
+  background-image: none;
+  background: white;
+}
+
+.carousel-control-next-icon:after {
+  content: '>';
+  font-size: 50px;
+  color: #3d3d3d;
+  position: relative;
+  top: 7px;
+  left: 1px;
+}
+
+.carousel-control-prev-icon:after {
+  content: '<';
+  font-size: 50px;
+  color: #3d3d3d;
+  position: relative;
+  top: 7px;
+  left: 1px;
+}
+
+.carousel-control-next {
+  right: -50px;
+}
+
+.carousel-control-prev {
+  left: -50px;
+}
+
+.carousel-indicators {
+  display: none;
+}
+
+.carousel-caption {
+  position: absolute;
+  right: 15%;
+  bottom: -11px;
+  left: 15%;
+  z-index: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: #000;
+  text-align: center;
+  font-size: 17px;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.viewResultButton {
+  width: 136px;
+  height: 31px;
+
+  background: #4190f7;
+  border: 1px solid #4190f7;
+  box-sizing: border-box;
+  border-radius: 5px;
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.detailResultScoreBody {
+  height: 60px;
+  background: rgba(85, 220, 180, 0.2);
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 48px;
+  line-height: 64px;
+  text-align: center;
+  color: #228c6d;
+}
+
+.detailResultScoreHeader {
+  height: 24px;
+  background: rgba(85, 220, 180, 0.5);
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 21px;
+  color: #0b7052;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.detailResultMinBody {
+  height: 30px;
+  background: rgba(85, 220, 180, 0.2);
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  text-align: center;
+  color: #000;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.detailResultCourse {
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 24px;
+  margin-bottom: 14px;
+
+  color: #000000;
+}
+
+.prevCourseButton {
+  background: #d8d8d8;
+  border-radius: 3px;
+  width: 140px;
+  height: 35px;
+  padding: 8px;
+  margin-right: 10px;
+  text-align: center;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.nextCourseButton {
+  background: #005dff;
+  border-radius: 3px;
+  width: 140px;
+  height: 35px;
+  padding: 8px;
+  text-align: center;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.divLeftListExam {
+  background: #d8d8d8;
+  border-radius: 3px;
+  width: 20px;
+  height: 20.73px;
+  text-align: center;
+  margin-left: 15px;
+  margin-bottom: 10px;
+}
+
+.divLeftListExam {
+  background: #d8d8d8;
+  border-radius: 3px;
+  width: 20px;
+  height: 20.73px;
+  text-align: center;
+  margin-left: 15px;
+  margin-bottom: 10px;
+}
+
+.divBox {
+  width: 52px;
+  height: 50px;
+  background: #ffffff;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 10px;
+  padding: 15px;
+  color: #000;
+}
+
+.fontBlack {
+  color: #000 !important;
+}
+
+.examBlue {
+  background: #0072d8;
+  color: #fff;
+  height: auto;
+}
+
+.examRed {
+  background: #cf4d4e;
+  color: #ffffff;
+  height: auto;
+}
+
+.answerRed {
+  background-color: #ffeeee !important;
+}
+
+.examGreen {
+  background: #6ec9ae;
+  color: #ffffff;
+  height: auto;
+}
+
+.examDefault {
+  background: rgba(199, 223, 255, 0.7);
+  color: #000;
+  height: auto;
+}
+
+.examWhite {
+  background: #ffffff;
+  color: #000;
+}
+
+.divAnswerOption {
+  background: rgba(199, 223, 255, 0.5);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+
+.divAnswerNumber {
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.divAnswerBlue {
+  display: flex;
+  /* margin-bottom: 20px; */
+  background: #f8fcff;
+  /* Button on */
+  border: 1px solid #0072d8;
+  box-sizing: border-box;
+  border-radius: 10px;
+  /* margin-left: 10px; */
+}
+
+.divAnswerGreen {
+  display: flex;
+  /* margin-bottom: 20px; */
+  background: #effbf7;
+  border: 1px solid #6ec9ae;
+  box-sizing: border-box;
+  border-radius: 10px;
+  /* margin-left: 10px; */
+}
+
+.divOptionDefault {
+  display: flex;
+  /* margin-bottom: 20px; */
+  background: #c7dfff80;
+  border: 1px solid #6ec9ae;
+  box-sizing: border-box;
+  border-radius: 10px;
+  /* margin-left: 10px; */
+}
+
+.divAnswerDefault {
+  display: flex;
+  /* margin-bottom: 20px; */
+  background: #fbfbfb;
+  border: 1px solid #d8d8d8;
+  box-sizing: border-box;
+  border-radius: 10px;
+  /* margin-left: 10px; */
+}
+
+.divAnswerRed {
+  display: flex;
+  /* margin-bottom: 20px; */
+  border-radius: 10px;
+  /* margin-left: 10px; */
+  background: #ffeeee;
+  border: 1px solid #fc7373;
+  box-sizing: border-box;
+  /* border-radius: 10px; */
+}
+
+.divAnswerDefault {
+  display: flex;
+  /* margin-bottom: 20px; */
+  border-radius: 10px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.divAnswerSelected {
+  display: flex;
+  /* margin-bottom: 20px; */
+  border-radius: 10px;
+  background: #0072d8;
+  box-sizing: border-box;
+}
+
+.backgroundOption {
+  background: rgba(199, 223, 255, 0.7);
+}
+
+.backgroundExam {
+  background: rgba(199, 223, 255, 0.5) !important;
+}
+
+.backgroundDefault {
+  background: #ffffff;
+}
+
+.p-15 {
+  padding: 15px;
+}
+
+.fontAnswerGreen {
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 16px;
+
+  color: #4fbc9c;
+}
+
+.fontTitleAnswer {
+  font-family: Segoe UI;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 27px;
+  color: #000000;
+  margin-bottom: 10px;
+  /* margin-right: 10px; */
+}
+
+.iconDetailAnswer {
+  background: #005dff;
+  width: 20px;
+  border-radius: 3px;
+  font-size: 20px;
+  color: white;
+  text-align: center;
+}
+
+.iconGreenChecklist {
+  color: green;
+  margin-right: 5px;
+  float: right;
+  font-size: 20;
+}
+
+.iconRedChecklist {
+  color: red;
+  margin-right: 5px;
+  float: right;
+  font-size: 20;
+}
+
+.divQuestionBox {
+  padding: 5px;
+  background: #ffffff;
+  margin-bottom: 15px;
+}
+
+.divActiveSelected {
+  /* color:#000; */
+  /* background: #E3EFFF; */
+  border: 3px solid #3f8ff7;
+  border-radius: 5px;
+}
+
+.backgroundIconPagination {
+  background: #005dff;
+}
+
+.upcomingElipsisText {
+  /* right: 0%; */
+  color: #0158a6;
+  font-weight: bold;
+  /* position: absolute; */
+  /* max-width: 100px; */
+  width: 100%;
+  /* line-height: 20px; */
+  /* text-overflow: ellipsis; */
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+}
+
+.upcomingElipsisText:hover {
+  /* width: 100%; */
+  /* padding-top: 20px; */
+}
+
+/**
+Hide Number */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.cursorPointer {
+  cursor: pointer;
+}
+
+.search {
+  position: relative;
+  box-shadow: 0 0 40px rgba(51, 51, 51, 0.1);
+}
+
+#column-id,
+#column-question,
+#column-totalView,
+#column-correctPercent,
+#column-incorrectPercent,
+#column-mostAnswerUser,
+#column-tag,
+#column-details,
+#column-seen,
+#column-first_answer,
+#column-option_label,
+#column-countPercent {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#column-correctAnswer {
+  font-size: 18px;
+  font-weight: bold;
+  color: #228c6d;
+}
+
+.squareRed {
+  display: inline-table;
+  height: 10px;
+  width: 10px;
+  background-color: rgb(252, 21, 21);
+}
+
+.squareGreen {
+  display: inline-table;
+  height: 10px;
+  width: 10px;
+  background-color: rgb(21, 252, 125);
+}
+
+/* .modal-content {
+  width: auto !important;
+} */
+
+.search input {
+  height: 50px;
+  text-indent: 25px;
+  border: 2px solid #d6d4d4;
+}
+
+.search input:focus {
+  box-shadow: none;
+  border: 2px solid blue;
+}
+
+.search .fa-search {
+  position: absolute;
+  top: 20px;
+  left: 16px;
+}
+
+.search button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: 40px;
+  width: 110px;
+  background: blue;
+}
+
+.preview-container {
+  margin-top: 10px;
+}
+
+.preview-image {
+  width: 150px;
+  height: auto;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+  width: 250px;
+  height: 250px;
+}
+
+.id_image {
+  cursor: pointer;
+  text-align: center;
+  width: 350px;
+}
+
+.hover-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 350px;
+  height: 250px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.image-container:hover .hover-text {
+  opacity: 1;
+}
+
+.modal-bottom {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 50%;
+  transform: none;
+}
+
+.assign-update {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 50%;
+  transform: none;
+}
